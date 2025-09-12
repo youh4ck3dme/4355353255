@@ -1,11 +1,11 @@
 'use client';
-import { stats, topProducts, recentSalesData, overviewData as rawOverviewData } from '@/lib/data';
+import { stats, topProducts, recentSalesData, overviewData } from '@/lib/data';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { OverviewChart } from '@/components/dashboard/overview-chart';
 import { RecentSales } from '@/components/dashboard/recent-sales';
 import * as Lucide from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { generateSalesSummary } from '@/ai/flows/generate-sales-summary';
 import type { GenerateSalesSummaryOutput } from '@/ai/flows/generate-sales-summary.model';
 import { Loader } from 'lucide-react';
@@ -15,20 +15,18 @@ type IconName = keyof typeof Lucide;
 export default function DashboardPage() {
   const [aiSummary, setAiSummary] = useState<GenerateSalesSummaryOutput | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [overviewData, setOverviewData] = useState(rawOverviewData);
-
-  useEffect(() => {
-    // This runs only on the client, after hydration
-    setOverviewData(rawOverviewData.map(d => ({...d, total: Math.floor(Math.random() * 5000) + 1000})));
-  }, []);
 
   const handleGenerateSummary = async () => {
     setIsGenerating(true);
     setAiSummary(null);
     try {
+      // In a real app, you'd fetch this data from your database
+      const revenue = stats.find(s => s.title === 'Dnešné tržby')?.value.replace('€', '').replace(',', '') || '0';
+      const orders = stats.find(s => s.title === 'Dnešné objednávky')?.value || '0';
+
       const summary = await generateSalesSummary({
-        revenue: 8450,
-        orders: 125,
+        revenue: parseFloat(revenue),
+        orders: parseInt(orders),
         topProducts: topProducts,
       });
       setAiSummary(summary);
@@ -62,7 +60,7 @@ export default function DashboardPage() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
         <Card className="col-span-4">
           <CardHeader>
-            <CardTitle>Tržby za posledných 30 dní</CardTitle>
+            <CardTitle>Tržby za posledných 12 mesiacov</CardTitle>
           </CardHeader>
           <CardContent className="pl-2">
             <OverviewChart data={overviewData} />

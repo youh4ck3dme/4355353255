@@ -3,13 +3,28 @@ import { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Button } from '../ui/button';
 import { Card, CardContent } from '../ui/card';
-import { UploadCloud, File as FileIcon, X } from 'lucide-react';
+import { UploadCloud, File as FileIcon, X, Loader } from 'lucide-react';
 import { Progress } from '../ui/progress';
+import { generateProjectStructure } from '@/ai/flows/generate-project-structure';
+import type { GenerateProjectStructureInput } from '@/ai/flows/generate-project-structure';
+import { useToast } from '@/hooks/use-toast';
+
+// Helper to read file as Data URI
+const readFileAsDataURI = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = (error) => reject(error);
+        reader.readAsDataURL(file);
+    });
+};
+
 
 export function ProjectStructurer() {
   const [files, setFiles] = useState<any[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [result, setResult] = useState('');
+  const { toast } = useToast();
 
   const onDrop = useCallback((acceptedFiles: any[]) => {
     const newFiles = acceptedFiles.map((file) =>
@@ -22,17 +37,19 @@ export function ProjectStructurer() {
 
     // Simulate upload progress
     newFiles.forEach((file) => {
+      let progress = 0;
       const timer = setInterval(() => {
+        progress += Math.random() * 20;
+        if (progress >= 100) {
+          progress = 100;
+          clearInterval(timer);
+        }
         setFiles((prevFiles) =>
-          prevFiles.map((f) => {
-            if (f.path === file.path && f.progress < 100) {
-              return { ...f, progress: f.progress + 10 };
-            }
-            return f;
-          })
+          prevFiles.map((f) =>
+            f.path === file.path ? { ...f, progress } : f
+          )
         );
       }, 200);
-      setTimeout(() => clearInterval(timer), 2200);
     });
   }, []);
 
@@ -42,27 +59,35 @@ export function ProjectStructurer() {
     setFiles(files.filter(f => f.path !== path));
   }
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     setIsGenerating(true);
-    // Here you would call the AI flow
-    setTimeout(() => {
-        setResult(`
-\`\`\`
-PROJECT_STRUCTURE/
-├── README.md
-├── assets/
-│   ├── image1.jpg
-│   └── logo.svg
-├── src/
-│   ├── components/
-│   │   ├── Button.js
-│   │   └── Card.js
-│   └── index.js
-└── package.json
-\`\`\`
-        `);
+    setResult('');
+    try {
+        const fileDescriptions = await Promise.all(
+            files.map(async (file) => ({
+                filename: file.name,
+                dataUri: await readFileAsDataURI(file),
+            }))
+        );
+
+        const input: GenerateProjectStructureInput = {
+            projectName: "My New Project",
+            fileDescriptions: fileDescriptions,
+        };
+
+        const response = await generateProjectStructure(input);
+        setResult(response.projectStructure);
+
+    } catch (error) {
+        console.error("Failed to generate project structure:", error);
+        toast({
+            title: 'Chyba',
+            description: 'Nepodarilo sa vygenerovať štruktúru projektu.',
+            variant: 'destructive',
+        });
+    } finally {
         setIsGenerating(false);
-    }, 2000);
+    }
   }
 
   return (
@@ -105,7 +130,7 @@ PROJECT_STRUCTURE/
         )}
         
         <Button onClick={handleGenerate} disabled={files.length === 0 || isGenerating} className="mt-6 w-full">
-            {isGenerating ? 'Generating...' : 'Generate Project Structure'}
+            {isGenerating ? <><Loader className="animate-spin mr-2"/>Generating...</> : 'Generate Project Structure'}
         </Button>
       </div>
       <div>
@@ -113,7 +138,10 @@ PROJECT_STRUCTURE/
         <Card className="min-h-[300px] bg-muted/50">
             <CardContent className="p-6">
                 {isGenerating ? (
-                    <p>AI is thinking...</p>
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                        <Loader className="animate-spin mr-2"/>
+                        AI is thinking...
+                    </div>
                 ) : result ? (
                     <pre className="text-sm bg-background p-4 rounded-md overflow-x-auto"><code>{result}</code></pre>
                 ) : (
