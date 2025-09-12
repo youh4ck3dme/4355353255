@@ -1,4 +1,6 @@
 import placeholderImages from './placeholder-images.json';
+import { Product } from '@/app/dashboard/products/schema';
+
 
 export const user = {
   name: 'Admin User',
@@ -84,13 +86,13 @@ export const tasks = [
     { id: 'task-7', title: 'Update dependencies', status: 'done', priority: 'low', dueDate: '2024-08-01' },
 ];
 
-export const products = [
-    { id: '1', name: 'Protein Whey 1kg', sku: 'PW-1000', price: 49.99, stock: 120, status: 'Aktívny', imageUrl: placeholderImages['product-1'] },
-    { id: '2', name: 'Fitness Legíny Pro', sku: 'FL-PRO-M', price: 39.90, stock: 80, status: 'Aktívny', imageUrl: placeholderImages['product-2'] },
-    { id: '3', name: 'Bežecký pás 2000', sku: 'TM-2000', price: 899.00, stock: 15, status: 'Aktívny', imageUrl: placeholderImages['product-3'] },
-    { id: '4', name: 'Sada činiek 20kg', sku: 'DB-SET-20', price: 79.99, stock: 50, status: 'Koncept', imageUrl: placeholderImages['product-4'] },
-    { id: '5', name: 'Yoga podložka Eco', sku: 'YM-ECO-BL', price: 25.00, stock: 200, status: 'Aktívny', imageUrl: placeholderImages['product-5'] },
-    { id: '6', name: 'Kreatín Monohydrát', sku: 'CM-500', price: 22.50, stock: 0, status: 'Vypredaný', imageUrl: placeholderImages['product-6'] },
+export let products: Product[] = [
+    { id: '1', name: 'Protein Whey 1kg', sku: 'PW-1000', price: 49.99, stock: 120, status: 'Aktívny', imageUrl: placeholderImages['product-1'], category: 'doplnky', description: 'Vysoko kvalitný srvátkový proteín pre rast svalov.' },
+    { id: '2', name: 'Fitness Legíny Pro', sku: 'FL-PRO-M', price: 39.90, stock: 80, status: 'Aktívny', imageUrl: placeholderImages['product-2'], category: 'oblecenie', description: 'Pohodlné a štýlové legíny na cvičenie.' },
+    { id: '3', name: 'Bežecký pás 2000', sku: 'TM-2000', price: 899.00, stock: 15, status: 'Aktívny', imageUrl: placeholderImages['product-3'], category: 'vybavenie', description: 'Profesionálny bežecký pás pre domáce použitie.' },
+    { id: '4', name: 'Sada činiek 20kg', sku: 'DB-SET-20', price: 79.99, stock: 50, status: 'Koncept', imageUrl: placeholderImages['product-4'], category: 'vybavenie', description: 'Nastaviteľná sada činiek pre silový tréning.' },
+    { id: '5', name: 'Yoga podložka Eco', sku: 'YM-ECO-BL', price: 25.00, stock: 200, status: 'Aktívny', imageUrl: placeholderImages['product-5'], category: 'vybavenie', description: 'Ekologická podložka na jogu a pilates.' },
+    { id: '6', name: 'Kreatín Monohydrát', sku: 'CM-500', price: 22.50, stock: 0, status: 'Vypredaný', imageUrl: placeholderImages['product-6'], category: 'doplnky', description: 'Zvýšte svoju silu a výkon s čistým kreatínom.' },
 ];
 
 export const customers = [

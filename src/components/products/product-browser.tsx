@@ -53,8 +53,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { useToast } from '@/hooks/use-toast';
-
-type Product = typeof initialProducts[0];
+import { Product, ProductFormValues, productSchema } from '@/app/dashboard/products/schema';
 
 const getStatusVariant = (status: string): VariantProps<typeof badgeVariants>['variant'] => {
     switch (status) {
@@ -65,20 +64,8 @@ const getStatusVariant = (status: string): VariantProps<typeof badgeVariants>['v
     }
 }
 
-const productSchema = z.object({
-  name: z.string().min(3, { message: 'Názov musí mať aspoň 3 znaky.' }),
-  description: z.string().optional(),
-  price: z.coerce.number().positive({ message: 'Cena musí byť kladné číslo.' }),
-  sku: z.string().optional(),
-  stock: z.coerce.number().int().nonnegative({ message: 'Skladové zásoby nemôžu byť záporné.' }),
-  category: z.enum(['doplnky', 'oblecenie', 'vybavenie'], { required_error: 'Musíte vybrať kategóriu.' }),
-});
-
-type ProductFormValues = z.infer<typeof productSchema>;
-
-
-export function ProductBrowser() {
-  const [products, setProducts] = React.useState(initialProducts);
+export function ProductBrowser({ products: serverProducts }: { products: Product[] }) {
+  const [products, setProducts] = React.useState(serverProducts);
   const [selected, setSelected] = React.useState<string[]>([]);
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
   const [editingProduct, setEditingProduct] = React.useState<Product | null>(null);
@@ -98,6 +85,10 @@ export function ProductBrowser() {
   });
   
   React.useEffect(() => {
+    setProducts(serverProducts);
+  }, [serverProducts]);
+
+  React.useEffect(() => {
     if (editingProduct) {
       form.reset({
         ...editingProduct,
@@ -111,6 +102,7 @@ export function ProductBrowser() {
           price: 0,
           sku: '',
           stock: 0,
+          category: 'doplnky',
       });
     }
   }, [editingProduct, form]);
@@ -120,9 +112,16 @@ export function ProductBrowser() {
     const toastDescription = `Produkt "${data.name}" bol úspešne ${editingProduct ? 'upravený' : 'pridaný'}.`;
     
     if (editingProduct) {
-        setProducts(products.map(p => p.id === editingProduct.id ? { ...p, ...data } : p));
+        setProducts(products.map(p => p.id === editingProduct.id ? { ...p, ...data, id: editingProduct.id } : p));
     } else {
-        const newProduct = { ...data, id: `prod-${Date.now()}`, status: 'Aktívny', imageUrl: 'https://picsum.photos/seed/new/40/40', description: data.description || null, sku: data.sku || null };
+        const newProduct: Product = { 
+            ...data, 
+            id: `prod-${Date.now()}`, 
+            status: 'Aktívny', 
+            imageUrl: `https://picsum.photos/seed/${Date.now()}/40/40`, 
+            description: data.description || null, 
+            sku: data.sku || null 
+        };
         setProducts([newProduct, ...products]);
     }
     
