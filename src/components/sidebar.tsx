@@ -45,7 +45,7 @@ export function AppSidebar() {
   const pathname = usePathname();
 
   return (
-    <Sidebar className="border-r">
+    <Sidebar className="border-r border-border/50">
       <SidebarHeader>
         <div className="flex items-center gap-2">
           <Logo />
@@ -60,7 +60,7 @@ export function AppSidebar() {
                 <SidebarMenuButton
                   isActive={pathname.startsWith(item.href) && (item.href !== '/dashboard' || pathname === '/dashboard')}
                   variant="default"
-                  className="w-full justify-start"
+                  className="w-full justify-start hover:bg-sidebar-accent/50 data-[active=true]:bg-primary data-[active=true]:text-primary-foreground"
                 >
                   <item.icon className="h-4 w-4 mr-2" />
                   {item.label}
@@ -83,13 +83,13 @@ export function AppSidebar() {
         </Button>
         <div className="space-y-1">
              <Link href="#" legacyBehavior passHref>
-                <SidebarMenuButton variant="ghost" className="w-full justify-start">
+                <SidebarMenuButton variant="ghost" className="w-full justify-start hover:bg-sidebar-accent/50">
                   <Settings className="h-4 w-4 mr-2" />
                   Settings
                 </SidebarMenuButton>
               </Link>
                <Link href="#" legacyBehavior passHref>
-                <SidebarMenuButton variant="ghost" className="w-full justify-start">
+                <SidebarMenuButton variant="ghost" className="w-full justify-start hover:bg-sidebar-accent/50">
                   <HelpCircle className="h-4 w-4 mr-2" />
                   Help
                 </SidebarMenuButton>

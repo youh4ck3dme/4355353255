@@ -22,6 +22,7 @@ import { Button } from '@/components/ui/button';
 import { MoreHorizontal, File, Folder, Download, Edit, Trash2, FileArchive, PlusCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Input } from '../ui/input';
+import { Card } from '../ui/card';
 
 export function FileBrowser() {
   const { toast } = useToast();
@@ -102,7 +103,7 @@ export function FileBrowser() {
         </TableHeader>
         <TableBody>
           {files.map((file) => (
-            <TableRow key={file.id}>
+            <TableRow key={file.id} className="hover:bg-accent/10">
               <TableCell>
                 <Checkbox
                   checked={selected.includes(file.id)}
@@ -147,10 +148,3 @@ export function FileBrowser() {
     </Card>
   );
 }
-
-// We need a card component for this to look good. I'll just use a div for now with border.
-const Card = ({ children, className }: { children: React.ReactNode, className?: string }) => (
-    <div className={`bg-card rounded-lg border shadow-sm ${className}`}>
-        {children}
-    </div>
-)
