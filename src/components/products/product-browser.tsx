@@ -38,6 +38,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card } from '../ui/card';
 import type { VariantProps } from 'class-variance-authority';
 import { badgeVariants } from '@/components/ui/badge';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
+import { useToast } from '@/hooks/use-toast';
 
 
 const getStatusVariant = (status: string): VariantProps<typeof badgeVariants>['variant'] => {
@@ -49,9 +54,44 @@ const getStatusVariant = (status: string): VariantProps<typeof badgeVariants>['v
     }
 }
 
+const productSchema = z.object({
+  name: z.string().min(3, { message: 'Názov musí mať aspoň 3 znaky.' }),
+  description: z.string().optional(),
+  price: z.coerce.number().positive({ message: 'Cena musí byť kladné číslo.' }),
+  sku: z.string().optional(),
+  stock: z.coerce.number().int().nonnegative({ message: 'Skladové zásoby nemôžu byť záporné.' }),
+  category: z.enum(['doplnky', 'oblecenie', 'vybavenie'], { required_error: 'Musíte vybrať kategóriu.' }),
+});
+
+type ProductFormValues = z.infer<typeof productSchema>;
+
 
 export function ProductBrowser() {
   const [selected, setSelected] = React.useState<string[]>([]);
+  const [isDialogOpen, setIsDialogOpen] = React.useState(false);
+  const { toast } = useToast();
+
+  const form = useForm<ProductFormValues>({
+    resolver: zodResolver(productSchema),
+    defaultValues: {
+      name: '',
+      description: '',
+      price: 0,
+      sku: '',
+      stock: 0,
+    },
+  });
+
+  function onSubmit(data: ProductFormValues) {
+    console.log(data);
+    toast({
+      title: 'Produkt uložený',
+      description: `Produkt "${data.name}" bol úspešne pridaný.`,
+    });
+    setIsDialogOpen(false);
+    form.reset();
+  }
+
 
   const handleSelectAll = (checked: boolean | 'indeterminate') => {
     if (checked === true) {
@@ -80,7 +120,7 @@ export function ProductBrowser() {
   return (
     <Card>
       <div className="flex items-center gap-4 p-4 border-b">
-         <Dialog>
+         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
                 <Button size="sm">
                     <PlusCircle className="mr-2 h-4 w-4" />
@@ -88,50 +128,120 @@ export function ProductBrowser() {
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[625px]">
-                <DialogHeader>
-                <DialogTitle>Pridať nový produkt</DialogTitle>
-                <DialogDescription>
-                    Vyplňte detaily o novom produkte. Kliknite na "Uložiť", keď budete hotoví.
-                </DialogDescription>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="name" className="text-right">Názov</Label>
-                        <Input id="name" placeholder="Názov produktu" className="col-span-3" />
-                    </div>
-                     <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="description" className="text-right">Popis</Label>
-                        <Textarea id="description" placeholder="Podrobný popis produktu..." className="col-span-3" />
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="price" className="text-right">Cena (€)</Label>
-                        <Input id="price" type="number" placeholder="49.99" className="col-span-3" />
-                    </div>
-                     <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="sku" className="text-right">SKU</Label>
-                        <Input id="sku" placeholder="PW-1000" className="col-span-3" />
-                    </div>
-                     <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="stock" className="text-right">Na sklade</Label>
-                        <Input id="stock" type="number" placeholder="100" className="col-span-3" />
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="category" className="text-right">Kategória</Label>
-                        <Select>
-                            <SelectTrigger className="col-span-3">
-                                <SelectValue placeholder="Vyberte kategóriu" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="doplnky">Doplnky</SelectItem>
-                                <SelectItem value="oblecenie">Oblečenie</SelectItem>
-                                <SelectItem value="vybavenie">Vybavenie</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-                </div>
-                <DialogFooter>
-                    <Button type="submit">Uložiť produkt</Button>
-                </DialogFooter>
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)}>
+                  <DialogHeader>
+                    <DialogTitle>Pridať nový produkt</DialogTitle>
+                    <DialogDescription>
+                        Vyplňte detaily o novom produkte. Kliknite na "Uložiť", keď budete hotoví.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="grid gap-4 py-4">
+                      <FormField
+                        control={form.control}
+                        name="name"
+                        render={({ field }) => (
+                          <FormItem className="grid grid-cols-4 items-center gap-4">
+                            <FormLabel className="text-right">Názov</FormLabel>
+                            <div className="col-span-3">
+                              <FormControl>
+                                <Input placeholder="Názov produktu" {...field} />
+                              </FormControl>
+                              <FormMessage className="mt-1" />
+                            </div>
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="description"
+                        render={({ field }) => (
+                          <FormItem className="grid grid-cols-4 items-center gap-4">
+                            <FormLabel className="text-right">Popis</FormLabel>
+                            <div className="col-span-3">
+                              <FormControl>
+                                <Textarea placeholder="Podrobný popis produktu..." {...field} />
+                              </FormControl>
+                              <FormMessage className="mt-1" />
+                            </div>
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="price"
+                        render={({ field }) => (
+                          <FormItem className="grid grid-cols-4 items-center gap-4">
+                            <FormLabel className="text-right">Cena (€)</FormLabel>
+                            <div className="col-span-3">
+                              <FormControl>
+                                <Input type="number" placeholder="49.99" {...field} />
+                              </FormControl>
+                              <FormMessage className="mt-1" />
+                            </div>
+                          </FormItem>
+                        )}
+                      />
+                       <FormField
+                        control={form.control}
+                        name="sku"
+                        render={({ field }) => (
+                          <FormItem className="grid grid-cols-4 items-center gap-4">
+                            <FormLabel className="text-right">SKU</FormLabel>
+                            <div className="col-span-3">
+                              <FormControl>
+                                <Input placeholder="PW-1000" {...field} />
+                              </FormControl>
+                              <FormMessage className="mt-1" />
+                            </div>
+                          </FormItem>
+                        )}
+                      />
+                       <FormField
+                        control={form.control}
+                        name="stock"
+                        render={({ field }) => (
+                          <FormItem className="grid grid-cols-4 items-center gap-4">
+                            <FormLabel className="text-right">Na sklade</FormLabel>
+                            <div className="col-span-3">
+                              <FormControl>
+                                <Input type="number" placeholder="100" {...field} />
+                              </FormControl>
+                              <FormMessage className="mt-1" />
+                            </div>
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="category"
+                        render={({ field }) => (
+                          <FormItem className="grid grid-cols-4 items-center gap-4">
+                            <FormLabel className="text-right">Kategória</FormLabel>
+                            <div className="col-span-3">
+                              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <FormControl>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Vyberte kategóriu" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem value="doplnky">Doplnky</SelectItem>
+                                  <SelectItem value="oblecenie">Oblečenie</SelectItem>
+                                  <SelectItem value="vybavenie">Vybavenie</SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <FormMessage className="mt-1" />
+                            </div>
+                          </FormItem>
+                        )}
+                      />
+                  </div>
+                  <DialogFooter>
+                      <Button type="submit">Uložiť produkt</Button>
+                  </DialogFooter>
+                </form>
+              </Form>
             </DialogContent>
         </Dialog>
       </div>
