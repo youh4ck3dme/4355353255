@@ -11,32 +11,7 @@ export const user = {
 };
 
 // Updated stats for e-commerce dashboard
-export const stats = [
-  {
-    title: 'Dnešné objednávky',
-    value: '0',
-    change: '',
-    icon: 'ShoppingCart',
-  },
-  {
-    title: 'Dnešné tržby',
-    value: '€0',
-    change: '',
-    icon: 'DollarSign',
-  },
-  {
-    title: 'Nové registrácie',
-    value: '0',
-    change: 'od polnoci',
-    icon: 'UserPlus',
-  },
-  {
-    title: 'Priem. hodnota objednávky',
-    value: '€0.00',
-    change: '',
-    icon: 'Activity',
-  },
-];
+export const stats: { title: string; value: string; change: string; icon: string; }[] = [];
 
 export const overviewData: {name: string; total: number}[] = [];
 
