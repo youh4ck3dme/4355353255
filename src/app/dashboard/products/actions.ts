@@ -1,13 +1,12 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { products as initialProducts } from '@/lib/data';
 import { Product, productSchema } from './schema';
 import { z } from 'zod';
 
 // This is a temporary in-memory store.
 // In a real application, you would use a database.
-let products: Product[] = [...initialProducts];
+let products: Product[] = [];
 
 export async function getProducts() {
   // Simulate network latency

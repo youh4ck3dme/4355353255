@@ -87,28 +87,3 @@ export const tasks = [
     { id: 'task-6', title: 'User testing session for new feature', status: 'backlog', priority: 'medium', dueDate: null },
     { id: 'task-7', title: 'Update dependencies', status: 'done', priority: 'low', dueDate: '2024-08-01' },
 ];
-
-export let products: Product[] = [
-    { id: '1', name: 'Protein Whey 1kg', sku: 'PW-1000', price: 49.99, stock: 120, status: 'Aktívny', imageUrl: placeholderImages['product-1'], category: 'doplnky', description: 'Vysoko kvalitný srvátkový proteín pre rast svalov.' },
-    { id: '2', name: 'Fitness Legíny Pro', sku: 'FL-PRO-M', price: 39.90, stock: 80, status: 'Aktívny', imageUrl: placeholderImages['product-2'], category: 'oblecenie', description: 'Pohodlné a štýlové legíny na cvičenie.' },
-    { id: '3', name: 'Bežecký pás 2000', sku: 'TM-2000', price: 899.00, stock: 15, status: 'Aktívny', imageUrl: placeholderImages['product-3'], category: 'vybavenie', description: 'Profesionálny bežecký pás pre domáce použitie.' },
-    { id: '4', name: 'Sada činiek 20kg', sku: 'DB-SET-20', price: 79.99, stock: 50, status: 'Koncept', imageUrl: placeholderImages['product-4'], category: 'vybavenie', description: 'Nastaviteľná sada činiek pre silový tréning.' },
-    { id: '5', name: 'Yoga podložka Eco', sku: 'YM-ECO-BL', price: 25.00, stock: 200, status: 'Aktívny', imageUrl: placeholderImages['product-5'], category: 'vybavenie', description: 'Ekologická podložka na jogu a pilates.' },
-    { id: '6', name: 'Kreatín Monohydrát', sku: 'CM-500', price: 22.50, stock: 0, status: 'Vypredaný', imageUrl: placeholderImages['product-6'], category: 'doplnky', description: 'Zvýšte svoju silu a výkon s čistým kreatínom.' },
-];
-
-export let customers: Customer[] = [
-    { id: 'cust-1', name: 'Ján Novák', email: 'jan.novak@example.com', registrationDate: '2023-01-15', totalOrders: 5, totalSpent: 350.50 },
-    { id: 'cust-2', name: 'Mária Kováčová', email: 'maria.kovacova@example.com', registrationDate: '2023-03-22', totalOrders: 12, totalSpent: 1250.00 },
-    { id: 'cust-3', name: 'Peter Horváth', email: 'peter.horvath@example.com', registrationDate: '2023-05-10', totalOrders: 2, totalSpent: 89.90 },
-    { id: 'cust-4', name: 'Eva Vargová', email: 'eva.vargova@example.com', registrationDate: '2023-07-19', totalOrders: 8, totalSpent: 620.25 },
-    { id: 'cust-5', name: 'Lukáš Molnár', email: 'lukas.molnar@example.com', registrationDate: '2023-09-01', totalOrders: 1, totalSpent: 49.99 },
-];
-
-export let orders: Order[] = [
-    { id: 'ORD-001', customerName: 'Ján Novák', customerId: 'cust-1', date: '2024-08-01', amount: 75.50, status: 'Odoslaná' },
-    { id: 'ORD-002', customerName: 'Mária Kováčová', customerId: 'cust-2', date: '2024-08-01', amount: 120.00, status: 'Spracováva sa' },
-    { id: 'ORD-003', customerName: 'Eva Vargová', customerId: 'cust-4', date: '2024-07-31', amount: 45.00, status: 'Doručená' },
-    { id: 'ORD-004', customerName: 'Peter Horváth', customerId: 'cust-3', date: '2024-07-30', amount: 89.90, status: 'Doručená' },
-    { id: 'ORD-005', customerName: 'Ján Novák', customerId: 'cust-1', date: '2024-07-29', amount: 210.00, status: 'Zrušená' },
-];

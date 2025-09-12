@@ -79,7 +79,6 @@ export function ProjectStructurer() {
         setResult(response.projectStructure);
 
     } catch (error) {
-        console.error("Failed to generate project structure:", error);
         toast({
             title: 'Chyba',
             description: 'Nepodarilo sa vygenerovať štruktúru projektu.',

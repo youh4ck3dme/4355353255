@@ -7,14 +7,16 @@ import * as Lucide from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { generateSalesSummary } from '@/ai/flows/generate-sales-summary';
-import type { GenerateSalesSummaryOutput } from '@/ai/flows/generate-sales-summary.model';
+import type { GenerateSalesSummaryOutput } from '@/ai/flows/generate-sales-summary';
 import { Loader } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 type IconName = keyof typeof Lucide;
 
 export default function DashboardPage() {
   const [aiSummary, setAiSummary] = useState<GenerateSalesSummaryOutput | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const { toast } = useToast();
 
   const handleGenerateSummary = async () => {
     setIsGenerating(true);
@@ -31,8 +33,11 @@ export default function DashboardPage() {
       });
       setAiSummary(summary);
     } catch (error) {
-      console.error("Failed to generate summary", error);
-      // You could show a toast notification here
+      toast({
+        title: 'Chyba pri generovaní',
+        description: 'Nepodarilo sa vygenerovať AI report.',
+        variant: 'destructive',
+      });
     } finally {
       setIsGenerating(false);
     }

@@ -1,11 +1,10 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { customers as initialCustomers } from '@/lib/data';
 import { Customer } from './schema';
 import { z } from 'zod';
 
-let customers: Customer[] = [...initialCustomers];
+let customers: Customer[] = [];
 
 const getCustomersSchema = z.object({
     query: z.string().optional(),

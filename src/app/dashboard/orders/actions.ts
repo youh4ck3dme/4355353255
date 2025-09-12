@@ -1,13 +1,12 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { orders as initialOrders, customers as initialCustomers } from '@/lib/data';
 import { Order, OrderStatus, orderSchema } from './schema';
 import { Customer } from '../customers/schema';
 import { z } from 'zod';
 
-let orders: Order[] = [...initialOrders];
-let customers: Customer[] = [...initialCustomers];
+let orders: Order[] = [];
+let customers: Customer[] = [];
 
 export async function getOrders() {
   // Simulate network latency
