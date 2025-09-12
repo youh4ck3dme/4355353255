@@ -11,25 +11,19 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
-import { Card } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Search } from 'lucide-react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useDebounce } from 'use-debounce';
+import { CustomerTable } from './customer-table';
 
 
 export function CustomerBrowser({ customers: initialCustomers }: { customers: Customer[]}) {
-  const [customers, setCustomers] = React.useState(initialCustomers);
-  
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [searchTerm, setSearchTerm] = React.useState(searchParams.get('q') || '');
   const [debouncedSearchTerm] = useDebounce(searchTerm, 300);
-
-
-  React.useEffect(() => {
-    setCustomers(initialCustomers);
-  }, [initialCustomers]);
 
   React.useEffect(() => {
     const params = new URLSearchParams(searchParams);
@@ -40,10 +34,6 @@ export function CustomerBrowser({ customers: initialCustomers }: { customers: Cu
     }
     router.replace(`${pathname}?${params.toString()}`);
   }, [debouncedSearchTerm, pathname, router, searchParams]);
-  
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('sk-SK', { style: 'currency', currency: 'EUR' }).format(amount);
-  }
 
   return (
     <Card>
@@ -59,32 +49,13 @@ export function CustomerBrowser({ customers: initialCustomers }: { customers: Cu
           />
         </div>
       </div>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Meno</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Dátum registrácie</TableHead>
-            <TableHead className="text-right">Počet objednávok</TableHead>
-            <TableHead className="text-right">Celková útrata</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {customers.map((customer) => (
-            <TableRow key={customer.id}>
-              <TableCell className="font-medium">{customer.name}</TableCell>
-              <TableCell>{customer.email}</TableCell>
-              <TableCell>{customer.registrationDate}</TableCell>
-              <TableCell className="text-right">{customer.totalOrders}</TableCell>
-              <TableCell className="text-right font-medium">{formatCurrency(customer.totalSpent)}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-       {customers.length === 0 && (
-          <div className="text-center p-8 text-muted-foreground">
-            Žiadni zákazníci sa nenašli.
-          </div>
+      <CustomerTable customers={initialCustomers} />
+       {initialCustomers.length === 0 && (
+          <CardContent>
+            <div className="text-center p-8 text-muted-foreground">
+              Žiadni zákazníci sa nenašli.
+            </div>
+          </CardContent>
         )}
     </Card>
   );

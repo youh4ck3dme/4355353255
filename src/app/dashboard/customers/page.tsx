@@ -1,8 +1,14 @@
 import { CustomerBrowser } from "@/components/customers/customer-browser";
 import { getCustomers } from "./actions";
 
-export default async function CustomersPage() {
-    const customers = await getCustomers();
+export default async function CustomersPage({
+    searchParams
+}: {
+    searchParams?: { q?: string; }
+}) {
+    const query = searchParams?.q || '';
+    const customers = await getCustomers(query);
+    
     return (
         <div>
             <h1 className="text-2xl font-bold mb-4">Správa zákazníkov</h1>

@@ -4,15 +4,6 @@ import * as React from 'react';
 import type { Order, OrderStatus } from '@/app/dashboard/orders/schema';
 import type { Customer } from '@/app/dashboard/customers/schema';
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
-import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -27,23 +18,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import type { VariantProps } from 'class-variance-authority';
-import { badgeVariants } from '@/components/ui/badge';
 import { updateOrderStatus } from '@/app/dashboard/orders/actions';
 import { useToast } from '@/hooks/use-toast';
 import { startTransition } from 'react';
-
-const getStatusVariant = (status: OrderStatus): VariantProps<typeof badgeVariants>['variant'] => {
-    switch (status) {
-        case 'Spracováva sa': return 'secondary';
-        case 'Odoslaná': return 'default';
-        case 'Doručená': return 'outline';
-        case 'Zrušená': return 'destructive';
-        default: return 'secondary';
-    }
-}
+import { OrderTable } from './order-table';
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '../ui/table';
 
 export function OrderBrowser({ orders: initialOrders, customers: initialCustomers }: { orders: Order[], customers: Record<string, Customer> }) {
   const [orders, setOrders] = React.useState(initialOrders);
@@ -95,30 +76,7 @@ export function OrderBrowser({ orders: initialOrders, customers: initialCustomer
   return (
     <>
       <Card>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>ID Objednávky</TableHead>
-              <TableHead>Zákazník</TableHead>
-              <TableHead>Dátum</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Suma</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {orders.map((order) => (
-              <TableRow key={order.id} onClick={() => handleRowClick(order)} className="cursor-pointer">
-                <TableCell className="font-medium">{order.id}</TableCell>
-                <TableCell>{order.customerName}</TableCell>
-                <TableCell>{order.date}</TableCell>
-                <TableCell>
-                  <Badge variant={getStatusVariant(order.status)}>{order.status}</Badge>
-                </TableCell>
-                <TableCell className="text-right font-medium">{formatCurrency(order.amount)}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+        <OrderTable orders={orders} onRowClick={handleRowClick} />
       </Card>
 
       <Dialog open={!!selectedOrder} onOpenChange={(isOpen) => !isOpen && setSelectedOrder(null)}>
