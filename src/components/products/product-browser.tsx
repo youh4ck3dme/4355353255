@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import Image from 'next/image';
-import { products } from '@/lib/data';
+import { products as initialProducts } from '@/lib/data';
 import {
   Table,
   TableBody,
@@ -31,6 +31,16 @@ import {
   DialogFooter,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -44,6 +54,7 @@ import * as z from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { useToast } from '@/hooks/use-toast';
 
+type Product = typeof initialProducts[0];
 
 const getStatusVariant = (status: string): VariantProps<typeof badgeVariants>['variant'] => {
     switch (status) {
@@ -67,8 +78,12 @@ type ProductFormValues = z.infer<typeof productSchema>;
 
 
 export function ProductBrowser() {
+  const [products, setProducts] = React.useState(initialProducts);
   const [selected, setSelected] = React.useState<string[]>([]);
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
+  const [editingProduct, setEditingProduct] = React.useState<Product | null>(null);
+  const [deletingProduct, setDeletingProduct] = React.useState<Product | null>(null);
+
   const { toast } = useToast();
 
   const form = useForm<ProductFormValues>({
@@ -81,15 +96,65 @@ export function ProductBrowser() {
       stock: 0,
     },
   });
+  
+  React.useEffect(() => {
+    if (editingProduct) {
+      form.reset({
+        ...editingProduct,
+        description: editingProduct.description || '',
+        sku: editingProduct.sku || '',
+      });
+    } else {
+      form.reset({
+          name: '',
+          description: '',
+          price: 0,
+          sku: '',
+          stock: 0,
+      });
+    }
+  }, [editingProduct, form]);
 
   function onSubmit(data: ProductFormValues) {
-    console.log(data);
+    const toastTitle = editingProduct ? 'Produkt upravený' : 'Produkt pridaný';
+    const toastDescription = `Produkt "${data.name}" bol úspešne ${editingProduct ? 'upravený' : 'pridaný'}.`;
+    
+    if (editingProduct) {
+        setProducts(products.map(p => p.id === editingProduct.id ? { ...p, ...data } : p));
+    } else {
+        const newProduct = { ...data, id: `prod-${Date.now()}`, status: 'Aktívny', imageUrl: 'https://picsum.photos/seed/new/40/40', description: data.description || null, sku: data.sku || null };
+        setProducts([newProduct, ...products]);
+    }
+    
     toast({
-      title: 'Produkt uložený',
-      description: `Produkt "${data.name}" bol úspešne pridaný.`,
+      title: toastTitle,
+      description: toastDescription,
     });
-    setIsDialogOpen(false);
-    form.reset();
+
+    closeDialog();
+  }
+  
+  const handleEdit = (product: Product) => {
+    setEditingProduct(product);
+    setIsDialogOpen(true);
+  }
+
+  const handleDeleteConfirm = () => {
+    if (deletingProduct) {
+        setProducts(products.filter(p => p.id !== deletingProduct.id));
+        toast({
+            title: "Produkt vymazaný",
+            description: `Produkt "${deletingProduct.name}" bol úspešne vymazaný.`,
+            variant: "destructive"
+        });
+        setDeletingProduct(null);
+    }
+  }
+  
+  const closeDialog = () => {
+      setIsDialogOpen(false);
+      setEditingProduct(null);
+      form.reset();
   }
 
 
@@ -109,7 +174,7 @@ export function ProductBrowser() {
     }
   };
 
-  const isAllSelected = selected.length === products.length;
+  const isAllSelected = products.length > 0 && selected.length === products.length;
   const isSomeSelected = selected.length > 0 && !isAllSelected;
   const selectAllState = isAllSelected ? true : isSomeSelected ? 'indeterminate' : false;
 
@@ -118,11 +183,12 @@ export function ProductBrowser() {
   }
 
   return (
+    <>
     <Card>
       <div className="flex items-center gap-4 p-4 border-b">
-         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+         <Dialog open={isDialogOpen} onOpenChange={(isOpen) => !isOpen && closeDialog()}>
             <DialogTrigger asChild>
-                <Button size="sm">
+                <Button size="sm" onClick={() => setIsDialogOpen(true)}>
                     <PlusCircle className="mr-2 h-4 w-4" />
                     Pridať produkt
                 </Button>
@@ -131,9 +197,9 @@ export function ProductBrowser() {
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                   <DialogHeader>
-                    <DialogTitle>Pridať nový produkt</DialogTitle>
+                    <DialogTitle>{editingProduct ? 'Upraviť produkt' : 'Pridať nový produkt'}</DialogTitle>
                     <DialogDescription>
-                        Vyplňte detaily o novom produkte. Kliknite na "Uložiť", keď budete hotoví.
+                        {editingProduct ? 'Upravte detaily produktu.' : 'Vyplňte detaily o novom produkte.'} Kliknite na "Uložiť", keď budete hotoví.
                     </DialogDescription>
                   </DialogHeader>
                   <div className="grid gap-4 py-4">
@@ -175,7 +241,7 @@ export function ProductBrowser() {
                             <FormLabel className="text-right">Cena (€)</FormLabel>
                             <div className="col-span-3">
                               <FormControl>
-                                <Input type="number" placeholder="49.99" {...field} />
+                                <Input type="number" step="0.01" placeholder="49.99" {...field} />
                               </FormControl>
                               <FormMessage className="mt-1" />
                             </div>
@@ -238,6 +304,7 @@ export function ProductBrowser() {
                       />
                   </div>
                   <DialogFooter>
+                      <Button type="button" variant="outline" onClick={closeDialog}>Zrušiť</Button>
                       <Button type="submit">Uložiť produkt</Button>
                   </DialogFooter>
                 </form>
@@ -300,9 +367,9 @@ export function ProductBrowser() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem><Edit className="mr-2 h-4 w-4" />Upraviť</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleEdit(product)}><Edit className="mr-2 h-4 w-4" />Upraviť</DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem className="text-destructive"><Trash2 className="mr-2 h-4 w-4" />Vymazať</DropdownMenuItem>
+                    <DropdownMenuItem className="text-destructive" onClick={() => setDeletingProduct(product)}><Trash2 className="mr-2 h-4 w-4" />Vymazať</DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </TableCell>
@@ -310,6 +377,26 @@ export function ProductBrowser() {
           ))}
         </TableBody>
       </Table>
+       {products.length === 0 && (
+          <div className="text-center p-8 text-muted-foreground">
+            Žiadne produkty sa nenašli.
+          </div>
+        )}
     </Card>
+     <AlertDialog open={!!deletingProduct} onOpenChange={(isOpen) => !isOpen && setDeletingProduct(null)}>
+        <AlertDialogContent>
+            <AlertDialogHeader>
+            <AlertDialogTitle>Naozaj chcete vymazať tento produkt?</AlertDialogTitle>
+            <AlertDialogDescription>
+                Táto akcia je trvalá a nemožno ju vrátiť späť. Produkt "{deletingProduct?.name}" bude natrvalo odstránený.
+            </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+            <AlertDialogCancel>Zrušiť</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteConfirm}>Vymazať</AlertDialogAction>
+            </AlertDialogFooter>
+        </AlertDialogContent>
+    </AlertDialog>
+    </>
   );
 }
