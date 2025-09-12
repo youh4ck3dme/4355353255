@@ -20,6 +20,9 @@ import {
   Folder,
   Settings,
   HelpCircle,
+  Package,
+  Users,
+  ShoppingCart
 } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { Button } from './ui/button';
@@ -28,6 +31,9 @@ import { Label } from './ui/label';
 
 const navItems = [
   { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+  { href: '/dashboard/orders', icon: ShoppingCart, label: 'Objednávky' },
+  { href: '/dashboard/products', icon: Package, label: 'Produkty' },
+  { href: '/dashboard/customers', icon: Users, label: 'Zákazníci' },
   { href: '/dashboard/files', icon: Folder, label: 'Cloud' },
   { href: '/dashboard/tasks', icon: ListTodo, label: 'Tasks' },
   { href: '/dashboard/ai-structurer', icon: Share2, label: 'AI Structurer' },
@@ -52,7 +58,7 @@ export function AppSidebar() {
             <SidebarMenuItem key={item.href}>
               <Link href={item.href} legacyBehavior passHref>
                 <SidebarMenuButton
-                  isActive={pathname === item.href}
+                  isActive={pathname.startsWith(item.href) && (item.href !== '/dashboard' || pathname === '/dashboard')}
                   variant="default"
                   className="w-full justify-start"
                 >
