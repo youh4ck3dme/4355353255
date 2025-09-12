@@ -4,28 +4,11 @@
  * @fileOverview An AI agent that generates a sales summary and recommendations.
  *
  * - generateSalesSummary - A function that handles sales summary generation.
- * - GenerateSalesSummaryInput - The input type for the generateSalesSummary function.
- * - GenerateSalesSummaryOutput - The return type for the generateSalesSummary function.
  */
 
 import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
-
-export const GenerateSalesSummaryInputSchema = z.object({
-  revenue: z.number().describe('Total revenue for the period.'),
-  orders: z.number().describe('Total number of orders for the period.'),
-  topProducts: z.array(z.object({
-      name: z.string(),
-      sold: z.number(),
-  })).describe('List of top selling products.'),
-});
-export type GenerateSalesSummaryInput = z.infer<typeof GenerateSalesSummaryInputSchema>;
-
-const GenerateSalesSummaryOutputSchema = z.object({
-  summary: z.string().describe('A concise, insightful summary of the sales performance.'),
-  recommendations: z.string().describe('Actionable recommendations based on the sales data.'),
-});
-export type GenerateSalesSummaryOutput = z.infer<typeof GenerateSalesSummaryOutputSchema>;
+import { GenerateSalesSummaryInputSchema, GenerateSalesSummaryOutputSchema, GenerateSalesSummaryInput } from './generate-sales-summary.model';
+import type { GenerateSalesSummaryOutput } from './generate-sales-summary.model';
 
 export async function generateSalesSummary(input: GenerateSalesSummaryInput): Promise<GenerateSalesSummaryOutput> {
   return generateSalesSummaryFlow(input);

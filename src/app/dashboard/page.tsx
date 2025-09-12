@@ -6,7 +6,8 @@ import { RecentSales } from '@/components/dashboard/recent-sales';
 import * as Lucide from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState, useEffect } from 'react';
-import { generateSalesSummary, GenerateSalesSummaryOutput } from '@/ai/flows/generate-sales-summary';
+import { generateSalesSummary } from '@/ai/flows/generate-sales-summary';
+import type { GenerateSalesSummaryOutput } from '@/ai/flows/generate-sales-summary.model';
 import { Loader } from 'lucide-react';
 
 type IconName = keyof typeof Lucide;
