@@ -7,7 +7,7 @@ export function RecentSales() {
       {recentSalesData.map((sale) => (
         <div className="flex items-center" key={sale.email}>
           <Avatar className="h-9 w-9">
-            <AvatarImage src={sale.avatar} alt="Avatar" data-ai-hint="user avatar" />
+            <AvatarImage src={sale.avatar} alt="Avatar" />
             <AvatarFallback>{sale.name.charAt(0)}</AvatarFallback>
           </Avatar>
           <div className="ml-4 space-y-1">
