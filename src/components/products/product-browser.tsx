@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import Image from 'next/image';
-import { products as initialProducts } from '@/lib/data';
 import {
   Table,
   TableBody,
@@ -54,6 +53,8 @@ import * as z from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { useToast } from '@/hooks/use-toast';
 import { Product, ProductFormValues, productSchema } from '@/app/dashboard/products/schema';
+import { addProduct, updateProduct, deleteProduct } from '@/app/dashboard/products/actions';
+import { startTransition } from 'react';
 
 const getStatusVariant = (status: string): VariantProps<typeof badgeVariants>['variant'] => {
     switch (status) {
@@ -108,29 +109,25 @@ export function ProductBrowser({ products: serverProducts }: { products: Product
   }, [editingProduct, form]);
 
   function onSubmit(data: ProductFormValues) {
-    const toastTitle = editingProduct ? 'Produkt upravený' : 'Produkt pridaný';
-    const toastDescription = `Produkt "${data.name}" bol úspešne ${editingProduct ? 'upravený' : 'pridaný'}.`;
-    
-    if (editingProduct) {
-        setProducts(products.map(p => p.id === editingProduct.id ? { ...p, ...data, id: editingProduct.id } : p));
-    } else {
-        const newProduct: Product = { 
-            ...data, 
-            id: `prod-${Date.now()}`, 
-            status: 'Aktívny', 
-            imageUrl: `https://picsum.photos/seed/${Date.now()}/40/40`, 
-            description: data.description || null, 
-            sku: data.sku || null 
-        };
-        setProducts([newProduct, ...products]);
-    }
-    
-    toast({
-      title: toastTitle,
-      description: toastDescription,
-    });
+    startTransition(async () => {
+      const result = editingProduct
+        ? await updateProduct({ ...data, id: editingProduct.id })
+        : await addProduct(data);
 
-    closeDialog();
+      if (result.success && result.product) {
+        toast({
+          title: editingProduct ? 'Produkt upravený' : 'Produkt pridaný',
+          description: `Produkt "${result.product.name}" bol úspešne ${editingProduct ? 'upravený' : 'pridaný'}.`,
+        });
+        closeDialog();
+      } else {
+        toast({
+          title: "Chyba",
+          description: "Nepodarilo sa uložiť produkt.",
+          variant: "destructive",
+        });
+      }
+    });
   }
   
   const handleEdit = (product: Product) => {
@@ -140,13 +137,23 @@ export function ProductBrowser({ products: serverProducts }: { products: Product
 
   const handleDeleteConfirm = () => {
     if (deletingProduct) {
-        setProducts(products.filter(p => p.id !== deletingProduct.id));
-        toast({
-            title: "Produkt vymazaný",
-            description: `Produkt "${deletingProduct.name}" bol úspešne vymazaný.`,
-            variant: "destructive"
-        });
+      startTransition(async () => {
+        const result = await deleteProduct({ id: deletingProduct.id });
+        if (result.success) {
+           toast({
+              title: "Produkt vymazaný",
+              description: `Produkt "${result.productName}" bol úspešne vymazaný.`,
+              variant: "destructive"
+           });
+        } else {
+          toast({
+            title: "Chyba",
+            description: "Nepodarilo sa vymazať produkt.",
+            variant: "destructive",
+          });
+        }
         setDeletingProduct(null);
+      });
     }
   }
   
@@ -155,7 +162,6 @@ export function ProductBrowser({ products: serverProducts }: { products: Product
       setEditingProduct(null);
       form.reset();
   }
-
 
   const handleSelectAll = (checked: boolean | 'indeterminate') => {
     if (checked === true) {
