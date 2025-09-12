@@ -20,6 +20,11 @@ export function RecentSales() {
           </div>
         </div>
       ))}
+       {recentSalesData.length === 0 && (
+          <div className="text-center p-8 text-muted-foreground">
+            Žiadne nedávne predaje.
+          </div>
+        )}
     </div>
   );
 }
