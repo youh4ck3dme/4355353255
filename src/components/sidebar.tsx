@@ -56,17 +56,18 @@ export function AppSidebar() {
         <SidebarMenu>
           {navItems.map((item) => (
             <SidebarMenuItem key={item.href}>
-              <Link href={item.href} legacyBehavior passHref>
-                <SidebarMenuButton
-                  isActive={pathname.startsWith(item.href) && (item.href !== '/dashboard' || pathname === '/dashboard')}
-                  variant="default"
-                  tooltip={item.label}
-                  className="w-full justify-start data-[active=true]:bg-primary data-[active=true]:text-primary-foreground"
-                >
+              <SidebarMenuButton
+                asChild
+                isActive={pathname.startsWith(item.href) && (item.href !== '/dashboard' || pathname === '/dashboard')}
+                variant="default"
+                tooltip={item.label}
+                className="w-full justify-start data-[active=true]:bg-primary data-[active=true]:text-primary-foreground"
+              >
+                <Link href={item.href}>
                   <item.icon className="h-5 w-5" />
                   <span>{item.label}</span>
-                </SidebarMenuButton>
-              </Link>
+                </Link>
+              </SidebarMenuButton>
             </SidebarMenuItem>
           ))}
         </SidebarMenu>
@@ -77,24 +78,24 @@ export function AppSidebar() {
             <Progress value={33} id="storage" />
             <p className="text-xs text-muted-foreground">2 GB of 10 GB used</p>
         </div>
-        <Button variant="outline" className="w-full">
+        <Button variant="outline" className="w-full" asChild>
             <Link href="#">
                 Upgrade Storage
             </Link>
         </Button>
         <div className="space-y-1">
-             <Link href="#" legacyBehavior passHref>
-                <SidebarMenuButton variant="ghost" className="w-full justify-start hover:bg-sidebar-accent/50">
+             <SidebarMenuButton asChild variant="ghost" className="w-full justify-start hover:bg-sidebar-accent/50">
+                <Link href="#">
                   <Settings className="h-4 w-4 mr-2" />
                   Settings
-                </SidebarMenuButton>
-              </Link>
-               <Link href="#" legacyBehavior passHref>
-                <SidebarMenuButton variant="ghost" className="w-full justify-start hover:bg-sidebar-accent/50">
+                </Link>
+              </SidebarMenuButton>
+               <SidebarMenuButton asChild variant="ghost" className="w-full justify-start hover:bg-sidebar-accent/50">
+                <Link href="#">
                   <HelpCircle className="h-4 w-4 mr-2" />
                   Help
-                </SidebarMenuButton>
-              </Link>
+                </Link>
+              </SidebarMenuButton>
         </div>
       </SidebarFooter>
     </Sidebar>
