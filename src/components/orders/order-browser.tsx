@@ -1,7 +1,8 @@
 'use client';
 
 import * as React from 'react';
-import { orders as initialOrders, customers } from '@/lib/data';
+import type { Order, OrderStatus } from '@/app/dashboard/orders/schema';
+import type { Customer } from '@/app/dashboard/customers/schema';
 import {
   Table,
   TableBody,
@@ -30,11 +31,11 @@ import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import type { VariantProps } from 'class-variance-authority';
 import { badgeVariants } from '@/components/ui/badge';
+import { updateOrderStatus } from '@/app/dashboard/orders/actions';
+import { useToast } from '@/hooks/use-toast';
+import { startTransition } from 'react';
 
-
-type Order = typeof initialOrders[0];
-
-const getStatusVariant = (status: string): VariantProps<typeof badgeVariants>['variant'] => {
+const getStatusVariant = (status: OrderStatus): VariantProps<typeof badgeVariants>['variant'] => {
     switch (status) {
         case 'Spracováva sa': return 'secondary';
         case 'Odoslaná': return 'default';
@@ -44,24 +45,44 @@ const getStatusVariant = (status: string): VariantProps<typeof badgeVariants>['v
     }
 }
 
-export function OrderBrowser() {
+export function OrderBrowser({ orders: initialOrders, customers: initialCustomers }: { orders: Order[], customers: Record<string, Customer> }) {
   const [orders, setOrders] = React.useState(initialOrders);
+  const [customers, setCustomers] = React.useState(initialCustomers);
   const [selectedOrder, setSelectedOrder] = React.useState<Order | null>(null);
+  const { toast } = useToast();
+
+  React.useEffect(() => {
+    setOrders(initialOrders);
+    setCustomers(initialCustomers);
+  }, [initialOrders, initialCustomers]);
 
   const handleRowClick = (order: Order) => {
     setSelectedOrder(order);
   };
 
-  const handleStatusChange = (newStatus: string) => {
+  const handleStatusChange = async (newStatus: OrderStatus) => {
     if (selectedOrder) {
-      // Update local state
-      const updatedOrders = orders.map(o => 
-        o.id === selectedOrder.id ? { ...o, status: newStatus } : o
-      );
-      setOrders(updatedOrders);
-
-      // Also update the selected order in the dialog
-      setSelectedOrder(prev => prev ? { ...prev, status: newStatus } : null);
+      startTransition(async () => {
+        const result = await updateOrderStatus({ orderId: selectedOrder.id, status: newStatus });
+        if (result.success && result.order) {
+            const updatedOrder = result.order;
+            // Update local state
+            setOrders(prevOrders => 
+              prevOrders.map(o => o.id === updatedOrder.id ? updatedOrder : o)
+            );
+            setSelectedOrder(updatedOrder);
+            toast({
+              title: "Status aktualizovaný",
+              description: `Status objednávky ${updatedOrder.id} bol zmenený na "${updatedOrder.status}".`,
+            });
+        } else {
+            toast({
+              title: "Chyba",
+              description: "Nepodarilo sa aktualizovať status objednávky.",
+              variant: "destructive"
+            });
+        }
+      });
     }
   }
 
@@ -69,7 +90,7 @@ export function OrderBrowser() {
     return new Intl.NumberFormat('sk-SK', { style: 'currency', currency: 'EUR' }).format(amount);
   }
   
-  const customerDetails = customers.find(c => c.name === selectedOrder?.customerName);
+  const customerDetails = selectedOrder ? customers[selectedOrder.customerId] : null;
 
   return (
     <>
@@ -149,7 +170,7 @@ export function OrderBrowser() {
               </div>
               <div className="flex items-center gap-4">
                 <h3 className="font-semibold">Status objednávky</h3>
-                 <Select value={selectedOrder.status} onValueChange={handleStatusChange}>
+                 <Select value={selectedOrder.status} onValueChange={(value: OrderStatus) => handleStatusChange(value)}>
                     <SelectTrigger className="w-[180px]">
                         <SelectValue placeholder="Zmeniť status" />
                     </SelectTrigger>

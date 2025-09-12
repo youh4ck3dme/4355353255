@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { customers as initialCustomers } from '@/lib/data';
+import type { Customer } from '@/app/dashboard/customers/schema';
 import {
   Table,
   TableBody,
@@ -13,21 +13,33 @@ import {
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Search } from 'lucide-react';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import { useDebounce } from 'use-debounce';
 
-export function CustomerBrowser() {
+
+export function CustomerBrowser({ customers: initialCustomers }: { customers: Customer[]}) {
   const [customers, setCustomers] = React.useState(initialCustomers);
-  const [searchTerm, setSearchTerm] = React.useState('');
+  
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const [searchTerm, setSearchTerm] = React.useState(searchParams.get('q') || '');
+  const [debouncedSearchTerm] = useDebounce(searchTerm, 300);
 
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const term = event.target.value.toLowerCase();
-    setSearchTerm(term);
-    const filteredCustomers = initialCustomers.filter(
-      (customer) =>
-        customer.name.toLowerCase().includes(term) ||
-        customer.email.toLowerCase().includes(term)
-    );
-    setCustomers(filteredCustomers);
-  };
+
+  React.useEffect(() => {
+    setCustomers(initialCustomers);
+  }, [initialCustomers]);
+
+  React.useEffect(() => {
+    const params = new URLSearchParams(searchParams);
+    if (debouncedSearchTerm) {
+      params.set('q', debouncedSearchTerm);
+    } else {
+      params.delete('q');
+    }
+    router.replace(`${pathname}?${params.toString()}`);
+  }, [debouncedSearchTerm, pathname, router, searchParams]);
   
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('sk-SK', { style: 'currency', currency: 'EUR' }).format(amount);
@@ -43,7 +55,7 @@ export function CustomerBrowser() {
             placeholder="Hľadať zákazníka podľa mena alebo emailu..."
             className="pl-8 w-full md:w-1/3"
             value={searchTerm}
-            onChange={handleSearch}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
       </div>

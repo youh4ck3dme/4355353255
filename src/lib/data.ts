@@ -1,5 +1,7 @@
 import placeholderImages from './placeholder-images.json';
 import { Product } from '@/app/dashboard/products/schema';
+import type { Order } from '@/app/dashboard/orders/schema';
+import type { Customer } from '@/app/dashboard/customers/schema';
 
 
 export const user = {
@@ -95,7 +97,7 @@ export let products: Product[] = [
     { id: '6', name: 'Kreatín Monohydrát', sku: 'CM-500', price: 22.50, stock: 0, status: 'Vypredaný', imageUrl: placeholderImages['product-6'], category: 'doplnky', description: 'Zvýšte svoju silu a výkon s čistým kreatínom.' },
 ];
 
-export const customers = [
+export let customers: Customer[] = [
     { id: 'cust-1', name: 'Ján Novák', email: 'jan.novak@example.com', registrationDate: '2023-01-15', totalOrders: 5, totalSpent: 350.50 },
     { id: 'cust-2', name: 'Mária Kováčová', email: 'maria.kovacova@example.com', registrationDate: '2023-03-22', totalOrders: 12, totalSpent: 1250.00 },
     { id: 'cust-3', name: 'Peter Horváth', email: 'peter.horvath@example.com', registrationDate: '2023-05-10', totalOrders: 2, totalSpent: 89.90 },
@@ -103,10 +105,10 @@ export const customers = [
     { id: 'cust-5', name: 'Lukáš Molnár', email: 'lukas.molnar@example.com', registrationDate: '2023-09-01', totalOrders: 1, totalSpent: 49.99 },
 ];
 
-export const orders = [
-    { id: 'ORD-001', customerName: 'Ján Novák', date: '2024-08-01', amount: 75.50, status: 'Odoslaná' },
-    { id: 'ORD-002', customerName: 'Mária Kováčová', date: '2024-08-01', amount: 120.00, status: 'Spracováva sa' },
-    { id: 'ORD-003', customerName: 'Eva Vargová', date: '2024-07-31', amount: 45.00, status: 'Doručená' },
-    { id: 'ORD-004', customerName: 'Peter Horváth', date: '2024-07-30', amount: 89.90, status: 'Doručená' },
-    { id: 'ORD-005', customerName: 'Ján Novák', date: '2024-07-29', amount: 210.00, status: 'Zrušená' },
+export let orders: Order[] = [
+    { id: 'ORD-001', customerName: 'Ján Novák', customerId: 'cust-1', date: '2024-08-01', amount: 75.50, status: 'Odoslaná' },
+    { id: 'ORD-002', customerName: 'Mária Kováčová', customerId: 'cust-2', date: '2024-08-01', amount: 120.00, status: 'Spracováva sa' },
+    { id: 'ORD-003', customerName: 'Eva Vargová', customerId: 'cust-4', date: '2024-07-31', amount: 45.00, status: 'Doručená' },
+    { id: 'ORD-004', customerName: 'Peter Horváth', customerId: 'cust-3', date: '2024-07-30', amount: 89.90, status: 'Doručená' },
+    { id: 'ORD-005', customerName: 'Ján Novák', customerId: 'cust-1', date: '2024-07-29', amount: 210.00, status: 'Zrušená' },
 ];
