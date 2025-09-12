@@ -45,11 +45,11 @@ export function AppSidebar() {
   const pathname = usePathname();
 
   return (
-    <Sidebar className="border-r border-border/50">
+    <Sidebar className="border-r border-white/10">
       <SidebarHeader>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 group-data-[state=expanded]:ml-2">
           <Logo />
-          <span className="text-lg font-semibold">WOOPANEL</span>
+          <span className="font-semibold text-lg group-data-[state=collapsed]:hidden">WOOPANEL</span>
         </div>
       </SidebarHeader>
       <SidebarContent className="p-2">
@@ -60,17 +60,18 @@ export function AppSidebar() {
                 <SidebarMenuButton
                   isActive={pathname.startsWith(item.href) && (item.href !== '/dashboard' || pathname === '/dashboard')}
                   variant="default"
-                  className="w-full justify-start hover:bg-sidebar-accent/50 data-[active=true]:bg-primary data-[active=true]:text-primary-foreground"
+                  tooltip={item.label}
+                  className="w-full justify-start data-[active=true]:bg-primary data-[active=true]:text-primary-foreground"
                 >
-                  <item.icon className="h-4 w-4 mr-2" />
-                  {item.label}
+                  <item.icon className="h-5 w-5" />
+                  <span>{item.label}</span>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
           ))}
         </SidebarMenu>
       </SidebarContent>
-      <SidebarFooter className="p-4 space-y-4">
+      <SidebarFooter className="p-4 space-y-4 group-data-[state=collapsed]:hidden">
         <div className="space-y-2">
             <Label htmlFor="storage" className="text-xs text-muted-foreground">Storage</Label>
             <Progress value={33} id="storage" />
