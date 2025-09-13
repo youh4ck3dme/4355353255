@@ -5,8 +5,8 @@ import type { Customer } from '@/app/dashboard/customers/schema';
 
 
 export const user = {
-  name: 'Admin User',
-  email: 'admin@woopanel.com',
+  name: 'youh4ck3dme',
+  email: 'h4ck3d@h4ck3d.me',
   avatar: placeholderImages['main-user-avatar'],
 };
 
