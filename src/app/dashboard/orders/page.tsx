@@ -2,8 +2,12 @@ import { OrderBrowser } from "@/components/orders/order-browser";
 import { getOrders, getCustomersForOrders } from "./actions";
 
 export default async function OrdersPage() {
-    const orders = await getOrders();
-    const customers = await getCustomersForOrders();
+    // These fetches can run in parallel
+    const [orders, customers] = await Promise.all([
+        getOrders(),
+        getCustomersForOrders()
+    ]);
+    
     return (
         <div>
             <h1 className="text-2xl font-bold mb-4">Správa objednávok</h1>
