@@ -19,7 +19,7 @@ export function AppHeader() {
           className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[320px]"
         />
       </div>
-      <div className="ml-auto flex items-center gap-2">
+      <div className="ml-2 flex items-center gap-2">
         <UserNav />
       </div>
     </header>

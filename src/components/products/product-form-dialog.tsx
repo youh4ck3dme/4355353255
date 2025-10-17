@@ -99,9 +99,9 @@ export function ProductFormDialog({ isOpen, closeDialog, editingProduct }: Produ
                   control={form.control}
                   name="name"
                   render={({ field }) => (
-                    <FormItem className="grid grid-cols-4 items-center gap-4">
-                      <FormLabel className="text-right">Názov</FormLabel>
-                      <div className="col-span-3">
+                    <FormItem className="grid grid-cols-1 md:grid-cols-4 items-center gap-2 md:gap-4">
+                      <FormLabel className="md:text-right">Názov</FormLabel>
+                      <div className="md:col-span-3">
                         <FormControl>
                           <Input placeholder="Názov produktu" {...field} />
                         </FormControl>
@@ -114,9 +114,9 @@ export function ProductFormDialog({ isOpen, closeDialog, editingProduct }: Produ
                   control={form.control}
                   name="description"
                   render={({ field }) => (
-                    <FormItem className="grid grid-cols-4 items-center gap-4">
-                      <FormLabel className="text-right">Popis</FormLabel>
-                      <div className="col-span-3">
+                    <FormItem className="grid grid-cols-1 md:grid-cols-4 items-start md:items-center gap-2 md:gap-4">
+                      <FormLabel className="md:text-right pt-1">Popis</FormLabel>
+                      <div className="md:col-span-3">
                         <FormControl>
                           <Textarea placeholder="Podrobný popis produktu..." {...field} />
                         </FormControl>
@@ -129,9 +129,9 @@ export function ProductFormDialog({ isOpen, closeDialog, editingProduct }: Produ
                   control={form.control}
                   name="price"
                   render={({ field }) => (
-                    <FormItem className="grid grid-cols-4 items-center gap-4">
-                      <FormLabel className="text-right">Cena (€)</FormLabel>
-                      <div className="col-span-3">
+                    <FormItem className="grid grid-cols-1 md:grid-cols-4 items-center gap-2 md:gap-4">
+                      <FormLabel className="md:text-right">Cena (€)</FormLabel>
+                      <div className="md:col-span-3">
                         <FormControl>
                           <Input type="number" step="0.01" placeholder="49.99" {...field} />
                         </FormControl>
@@ -144,9 +144,9 @@ export function ProductFormDialog({ isOpen, closeDialog, editingProduct }: Produ
                   control={form.control}
                   name="sku"
                   render={({ field }) => (
-                    <FormItem className="grid grid-cols-4 items-center gap-4">
-                      <FormLabel className="text-right">SKU</FormLabel>
-                      <div className="col-span-3">
+                    <FormItem className="grid grid-cols-1 md:grid-cols-4 items-center gap-2 md:gap-4">
+                      <FormLabel className="md:text-right">SKU</FormLabel>
+                      <div className="md:col-span-3">
                         <FormControl>
                           <Input placeholder="PW-1000" {...field} />
                         </FormControl>
@@ -159,9 +159,9 @@ export function ProductFormDialog({ isOpen, closeDialog, editingProduct }: Produ
                   control={form.control}
                   name="stock"
                   render={({ field }) => (
-                    <FormItem className="grid grid-cols-4 items-center gap-4">
-                      <FormLabel className="text-right">Na sklade</FormLabel>
-                      <div className="col-span-3">
+                    <FormItem className="grid grid-cols-1 md:grid-cols-4 items-center gap-2 md:gap-4">
+                      <FormLabel className="md:text-right">Na sklade</FormLabel>
+                      <div className="md:col-span-3">
                         <FormControl>
                           <Input type="number" placeholder="100" {...field} />
                         </FormControl>
@@ -174,9 +174,9 @@ export function ProductFormDialog({ isOpen, closeDialog, editingProduct }: Produ
                   control={form.control}
                   name="category"
                   render={({ field }) => (
-                    <FormItem className="grid grid-cols-4 items-center gap-4">
-                      <FormLabel className="text-right">Kategória</FormLabel>
-                      <div className="col-span-3">
+                    <FormItem className="grid grid-cols-1 md:grid-cols-4 items-center gap-2 md:gap-4">
+                      <FormLabel className="md:text-right">Kategória</FormLabel>
+                      <div className="md:col-span-3">
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
                             <SelectTrigger>

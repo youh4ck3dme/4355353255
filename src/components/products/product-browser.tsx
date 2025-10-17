@@ -133,71 +133,73 @@ export function ProductBrowser({ products: serverProducts }: { products: Product
               Pridať produkt
           </Button>
         </div>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[40px]">
-                <Checkbox
-                  checked={selectAllState}
-                  onCheckedChange={handleSelectAll}
-                  aria-label="Select all"
-                />
-              </TableHead>
-              <TableHead className="w-[80px]">Obrázok</TableHead>
-              <TableHead>Názov</TableHead>
-              <TableHead>SKU</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Na sklade</TableHead>
-              <TableHead className="text-right">Cena</TableHead>
-              <TableHead className="w-[50px]"></TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {products.map((product) => (
-              <TableRow key={product.id}>
-                <TableCell>
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[40px]">
                   <Checkbox
-                    checked={selected.includes(product.id)}
-                    onCheckedChange={(checked) => handleSelect(product.id, !!checked)}
-                    aria-label={`Select ${product.name}`}
+                    checked={selectAllState}
+                    onCheckedChange={handleSelectAll}
+                    aria-label="Select all"
                   />
-                </TableCell>
-                <TableCell>
-                  <Image 
-                      src={product.imageUrl} 
-                      alt={product.name} 
-                      width={40} 
-                      height={40}
-                      className="rounded-md object-cover"
-                      data-ai-hint="product image"
-                  />
-                </TableCell>
-                <TableCell className="font-medium">{product.name}</TableCell>
-                <TableCell>{product.sku}</TableCell>
-                <TableCell>
-                  <Badge variant={getStatusVariant(product.status)}>{product.status}</Badge>
-                </TableCell>
-                <TableCell className="text-right">{product.stock > 0 ? product.stock : '–'}</TableCell>
-                <TableCell className="text-right font-medium">{formatCurrency(product.price)}</TableCell>
-                <TableCell>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0">
-                        <span className="sr-only">Open menu</span>
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => handleEdit(product)}><Edit className="mr-2 h-4 w-4" />Upraviť</DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem className="text-destructive" onClick={() => setDeletingProduct(product)}><Trash2 className="mr-2 h-4 w-4" />Vymazať</DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
+                </TableHead>
+                <TableHead className="w-[80px]">Obrázok</TableHead>
+                <TableHead>Názov</TableHead>
+                <TableHead className="hidden md:table-cell">SKU</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead className="text-right hidden sm:table-cell">Na sklade</TableHead>
+                <TableHead className="text-right">Cena</TableHead>
+                <TableHead className="w-[50px]"></TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {products.map((product) => (
+                <TableRow key={product.id}>
+                  <TableCell>
+                    <Checkbox
+                      checked={selected.includes(product.id)}
+                      onCheckedChange={(checked) => handleSelect(product.id, !!checked)}
+                      aria-label={`Select ${product.name}`}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Image 
+                        src={product.imageUrl} 
+                        alt={product.name} 
+                        width={40} 
+                        height={40}
+                        className="rounded-md object-cover"
+                        data-ai-hint="product image"
+                    />
+                  </TableCell>
+                  <TableCell className="font-medium">{product.name}</TableCell>
+                  <TableCell className="hidden md:table-cell">{product.sku}</TableCell>
+                  <TableCell>
+                    <Badge variant={getStatusVariant(product.status)}>{product.status}</Badge>
+                  </TableCell>
+                  <TableCell className="text-right hidden sm:table-cell">{product.stock > 0 ? product.stock : '–'}</TableCell>
+                  <TableCell className="text-right font-medium">{formatCurrency(product.price)}</TableCell>
+                  <TableCell>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                          <span className="sr-only">Open menu</span>
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => handleEdit(product)}><Edit className="mr-2 h-4 w-4" />Upraviť</DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem className="text-destructive" onClick={() => setDeletingProduct(product)}><Trash2 className="mr-2 h-4 w-4" />Vymazať</DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
         {products.length === 0 && (
             <div className="text-center p-8 text-muted-foreground">
               Žiadne produkty sa nenašli.

@@ -14,27 +14,29 @@ function formatCurrency(amount: number) {
 
 export function CustomerTable({ customers }: { customers: Customer[]}) {
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Meno</TableHead>
-          <TableHead>Email</TableHead>
-          <TableHead>Dátum registrácie</TableHead>
-          <TableHead className="text-right">Počet objednávok</TableHead>
-          <TableHead className="text-right">Celková útrata</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {customers.map((customer) => (
-          <TableRow key={customer.id}>
-            <TableCell className="font-medium">{customer.name}</TableCell>
-            <TableCell>{customer.email}</TableCell>
-            <TableCell>{customer.registrationDate}</TableCell>
-            <TableCell className="text-right">{customer.totalOrders}</TableCell>
-            <TableCell className="text-right font-medium">{formatCurrency(customer.totalSpent)}</TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+    <div className="overflow-x-auto">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Meno</TableHead>
+              <TableHead className="hidden sm:table-cell">Email</TableHead>
+              <TableHead className="hidden md:table-cell">Dátum registrácie</TableHead>
+              <TableHead className="text-right">Počet objednávok</TableHead>
+              <TableHead className="text-right">Celková útrata</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {customers.map((customer) => (
+              <TableRow key={customer.id}>
+                <TableCell className="font-medium">{customer.name}</TableCell>
+                <TableCell className="hidden sm:table-cell">{customer.email}</TableCell>
+                <TableCell className="hidden md:table-cell">{customer.registrationDate}</TableCell>
+                <TableCell className="text-right">{customer.totalOrders}</TableCell>
+                <TableCell className="text-right font-medium">{formatCurrency(customer.totalSpent)}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+    </div>
   );
 }

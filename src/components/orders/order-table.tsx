@@ -31,29 +31,31 @@ interface OrderTableProps {
 
 export function OrderTable({ orders, onRowClick }: OrderTableProps) {
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>ID Objednávky</TableHead>
-          <TableHead>Zákazník</TableHead>
-          <TableHead>Dátum</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead className="text-right">Suma</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {orders.map((order) => (
-          <TableRow key={order.id} onClick={() => onRowClick(order)} className="cursor-pointer">
-            <TableCell className="font-medium">{order.id}</TableCell>
-            <TableCell>{order.customerName}</TableCell>
-            <TableCell>{order.date}</TableCell>
-            <TableCell>
-              <Badge variant={getStatusVariant(order.status)}>{order.status}</Badge>
-            </TableCell>
-            <TableCell className="text-right font-medium">{formatCurrency(order.amount)}</TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+    <div className="overflow-x-auto">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>ID Objednávky</TableHead>
+              <TableHead>Zákazník</TableHead>
+              <TableHead className="hidden md:table-cell">Dátum</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead className="text-right">Suma</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {orders.map((order) => (
+              <TableRow key={order.id} onClick={() => onRowClick(order)} className="cursor-pointer">
+                <TableCell className="font-medium">{order.id}</TableCell>
+                <TableCell>{order.customerName}</TableCell>
+                <TableCell className="hidden md:table-cell">{order.date}</TableCell>
+                <TableCell>
+                  <Badge variant={getStatusVariant(order.status)}>{order.status}</Badge>
+                </TableCell>
+                <TableCell className="text-right font-medium">{formatCurrency(order.amount)}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+    </div>
   );
 }
