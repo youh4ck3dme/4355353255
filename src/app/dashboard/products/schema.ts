@@ -1,20 +1,20 @@
 import * as z from 'zod';
 
-export const productSchema = z.object({
-  name: z.string().min(3, { message: 'Názov musí mať aspoň 3 znaky.' }),
-  description: z.string().optional(),
-  price: z.coerce.number().positive({ message: 'Cena musí byť kladné číslo.' }),
-  sku: z.string().optional(),
-  stock: z.coerce.number().int().nonnegative({ message: 'Skladové zásoby nemôžu byť záporné.' }),
-  category: z.enum(['doplnky', 'oblecenie', 'vybavenie'], { required_error: 'Musíte vybrať kategóriu.' }),
+// Upravené pre blogové príspevky
+export const postSchema = z.object({
+  title: z.string().min(3, { message: 'Názov musí mať aspoň 3 znaky.' }),
+  slug: z.string().min(3, { message: 'Slug musí mať aspoň 3 znaky.' }),
+  content: z.string().optional(),
+  author: z.string().optional(),
+  status: z.enum(['published', 'draft']),
+  tags: z.array(z.string()).optional(),
+  imageUrl: z.string().url().optional(),
 });
 
-export type ProductFormValues = z.infer<typeof productSchema>;
+export type PostFormValues = z.infer<typeof postSchema>;
 
-export type Product = ProductFormValues & {
+export type Post = PostFormValues & {
     id: string;
-    status: 'Aktívny' | 'Koncept' | 'Vypredaný';
-    imageUrl: string;
-    description: string | null;
-    sku: string | null;
+    createdAt: string;
+    updatedAt: string;
 }
