@@ -7,7 +7,7 @@ set -e
 
 # --- Konfigurácia (upravte iba pri prvom nasadení) ---
 APP_NAME="woopanel"                                           # Názov aplikácie pre PM2
-GIT_REPO_URL="https://github.com/youh4ck3dme/woopaneldashboard.git"    # URL vášho Git repozitára (iba pre prvé klonovanie)
+GIT_REPO_URL="https://github.com/woopanel/dashboard.git"    # URL vášho Git repozitára (iba pre prvé klonovanie)
 PROJECT_DIR="/var/www/woopanel"                               # Cesta k adresáru projektu na serveri
 NODE_VERSION="20"                                             # Verzia Node.js
 

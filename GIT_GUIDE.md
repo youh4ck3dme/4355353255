@@ -10,7 +10,7 @@ Predpokladáme, že máte vytvorený účet na službe ako [GitHub](https://gith
 
 1.  **Prihláste sa do svojho GitHub účtu.**
 2.  **Vytvorte nový repozitár:** Kliknite na tlačidlo **"New"** alebo prejdite na [github.com/new](https://github.com/new).
-3.  **Názov Repozitára:** Zadajte názov `woopaneldashboard`.
+3.  **Názov Repozitára:** Zadajte názov `dashboard`.
 4.  **Typ Repozitára:** Dôrazne odporúčame zvoliť **"Private"** (Súkromný), aby bol váš kód chránený.
 5.  **DÔLEŽITÉ:** **Nezaškrtávajte** žiadne z nasledujúcich polí:
     *   `Add a README file`
@@ -20,7 +20,7 @@ Predpokladáme, že máte vytvorený účet na službe ako [GitHub](https://gith
 6.  **Vytvorte repozitár:** Kliknite na tlačidlo **"Create repository"**.
 
 Po vytvorení repozitára vám GitHub zobrazí URL adresu. Mala by vyzerať takto:
-`https://github.com/youh4ck3dme/woopaneldashboard.git`
+`https://github.com/woopanel/dashboard.git`
 
 ---
 
@@ -45,7 +45,7 @@ Tieto príkazy spustite v termináli (príkazovom riadku) **na vašom lokálnom 
 
 4.  **Pripojte lokálny repozitár k vzdialenému (na GitHube):**
     ```bash
-    git remote add origin https://github.com/youh4ck3dme/woopaneldashboard.git
+    git remote add origin https://github.com/woopanel/dashboard.git
     ```
 
 5.  **Odošlite ("push") váš kód na GitHub:**
@@ -58,6 +58,6 @@ Tieto príkazy spustite v termináli (príkazovom riadku) **na vašom lokálnom 
 
 ### Hotovo!
 
-Váš kód je teraz bezpečne uložený vo vašom súkromnom Git repozitári `woopaneldashboard`.
+Váš kód je teraz bezpečne uložený vo vašom súkromnom Git repozitári `dashboard`.
 
-Teraz môžete pokračovať v nasadení na váš VPS podľa návodu v súbore `deploy.md`. Nezabudnite v skripte `deploy.sh` nastaviť premennú `GIT_REPO_URL` na `https://github.com/youh4ck3dme/woopaneldashboard.git`.
+Teraz môžete pokračovať v nasadení na váš VPS podľa návodu v súbore `deploy.md`. Nezabudnite v skripte `deploy.sh` nastaviť premennú `GIT_REPO_URL` na `https://github.com/woopanel/dashboard.git`.
