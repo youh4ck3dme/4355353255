@@ -1,6 +1,6 @@
 # WOOPANEL - Fitness E-Shop Dashboard
 
-WOOPANEL je moderný, rýchly a plne responzívny back-end dashboard postavený na Next.js a Firebase. Slúži ako administratívne rozhranie pre správu e-shopu zameraného na fitness produkty.
+WOOPANEL je moderný, rýchly a plne responzívny back-end dashboard postavený na Next.js. Slúži ako administratívne rozhranie pre správu e-shopu zameraného na fitness produkty.
 
 ## Kľúčové vlastnosti
 
@@ -11,6 +11,12 @@ WOOPANEL je moderný, rýchly a plne responzívny back-end dashboard postavený 
 - **AI Asistenti:** Integrácia generatívnej AI pre analýzu predajov a automatizáciu úloh.
 - **Cloud Storage:** Správa súborov a dokumentov.
 - **Plne responzívny dizajn:** Optimalizované pre desktopy, tablety aj mobilné zariadenia.
-- **Pripravené na nasadenie:** Obsahuje skripty a návody pre jednoduché nasadenie na vlastný VPS.
+- **Optimalizované pre Vercel:** Pripravené na jednoduché a rýchle nasadenie.
 
-Tento projekt bol vytvorený v prostredí Firebase Studio.
+## Nasadenie na Vercel
+
+Tento projekt je optimalizovaný pre nasadenie na platformu Vercel.
+
+1. **Pripojte svoje Git repozitárium:** Vytvorte nový projekt na Verceli a pripojte ho k vášmu GitHub/GitLab/Bitbucket repozitáru.
+2. **Nastavte premenné prostredia:** V nastaveniach projektu na Verceli pridajte premennú `GEMINI_API_KEY` s vaším API kľúčom.
+3. **Nasaďte:** Vercel automaticky deteguje, že ide o Next.js projekt, a spustí build a nasadenie.
