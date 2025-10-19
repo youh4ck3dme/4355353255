@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -40,15 +41,24 @@ export const BlogList = ({ initialPosts, initialCategory }: { initialPosts: Post
         const search = current.toString();
         const query = search ? `?${search}` : "";
 
-        router.push(`${pathname}${query}`);
+        router.push(`${pathname}${query}`, { scroll: false });
     };
 
     const filteredPosts = useMemo(() => {
-        return initialPosts.filter(post => {
-            const matchesCategory = selectedCategory ? (post.tags || []).includes(selectedCategory) : true;
-            const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase());
-            return matchesCategory && matchesSearch;
-        });
+        let postsToFilter = initialPosts;
+
+        if (selectedCategory) {
+            postsToFilter = postsToFilter.filter(post => (post.tags || []).includes(selectedCategory));
+        }
+
+        if (searchQuery) {
+            postsToFilter = postsToFilter.filter(post => 
+                post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                (post.excerpt && post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()))
+            );
+        }
+
+        return postsToFilter;
     }, [initialPosts, selectedCategory, searchQuery]);
 
     return (
@@ -92,7 +102,7 @@ export const BlogList = ({ initialPosts, initialCategory }: { initialPosts: Post
             {filteredPosts.length > 0 ? (
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
                     {filteredPosts.map(post => (
-                        <BlogCard key={post.id} post={post} />
+                        <BlogCard key={post.slug} post={post} />
                     ))}
                 </div>
             ) : (

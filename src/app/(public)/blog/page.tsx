@@ -55,8 +55,8 @@ export const metadata: Metadata = {
 
 export default async function BlogIndexPage({ searchParams }: { searchParams?: { [key: string]: string | string[] | undefined }}) {
   const posts = await getPublishedPosts();
-  const featuredPost = posts[0] ?? null;
-  const otherPosts = posts.slice(1);
+  const featuredPost = posts.length > 0 ? posts[0] : null;
+  const otherPosts = posts.length > 1 ? posts.slice(1) : [];
 
   const initialCategory = typeof searchParams?.category === 'string' ? searchParams.category : undefined;
 
@@ -78,12 +78,6 @@ export default async function BlogIndexPage({ searchParams }: { searchParams?: {
           </h2>
           <BlogList initialPosts={otherPosts} initialCategory={initialCategory} />
         </>
-      )}
-
-      {posts.length === 1 && !featuredPost && (
-         <p className="text-center text-brand-secondary-grey py-16">
-          Momentálne tu nie sú žiadne články.
-        </p>
       )}
 
       {posts.length === 1 && featuredPost && (
