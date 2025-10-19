@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useState, useEffect } from 'react';
 import { Menu, X, KeyRound } from 'lucide-react';
+import { ThemeToggle } from './ThemeToggle';
 
 export const Header = () => {
   const pathname = usePathname();
@@ -70,10 +71,12 @@ export const Header = () => {
                   <span className="absolute bottom-0 left-4 w-[22px] h-0.5 bg-brand-bright-green animate-fade-in"></span>
                 )}
             </Link>
+            <ThemeToggle />
           </nav>
 
           {/* Mobile Menu Button */}
-          <div className="sm:hidden">
+          <div className="sm:hidden flex items-center gap-2">
+            <ThemeToggle />
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="p-2 text-brand-dark-teal hover:text-brand-bright-green transition-colors"

@@ -8,19 +8,19 @@ const config: Config = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
-  darkMode: 'class',
+  darkMode: ["class", '[data-theme$="-dark"]', '[data-theme="vibrant-night"]'],
   theme: {
     extend: {
       fontFamily: {
         sans: ["var(--font-sans)", ...fontFamily.sans],
       },
       colors: {
-        'brand-dark-teal': '#1A5255',
-        'brand-bright-green': '#33CC66',
-        'brand-text': '#000000',
-        'brand-bg': '#FFFFFF',
-        'brand-light-gray': '#F8F8F8',
-        'brand-secondary-grey': '#64748b',
+        'brand-dark-teal': 'hsl(var(--brand-dark-teal) / <alpha-value>)',
+        'brand-bright-green': 'hsl(var(--brand-bright-green) / <alpha-value>)',
+        'brand-text': 'hsl(var(--brand-text) / <alpha-value>)',
+        'brand-bg': 'hsl(var(--brand-bg) / <alpha-value>)',
+        'brand-light-gray': 'hsl(var(--brand-light-gray) / <alpha-value>)',
+        'brand-secondary-grey': 'hsl(var(--brand-secondary-grey) / <alpha-value>)',
         // for shadcn/ui components
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
@@ -41,7 +41,7 @@ const config: Config = {
       },
        textShadow: {
         '3d': '1px 1px 0px rgba(0,0,0,0.1), 2px 2px 0px rgba(0,0,0,0.09), 3px 3px 0px rgba(0,0,0,0.08), 4px 4px 0px rgba(0,0,0,0.07), 5px 5px 0px rgba(0,0,0,0.06)',
-        '3d-green': '1px 1px 0px #1A5255, 2px 2px 0px #1a5255d1, 3px 3px 0px #1a5255b3, 4px 4px 0px #1a52558f',
+        '3d-green': '1px 1px 0px hsl(var(--brand-dark-teal)), 2px 2px 0px hsl(var(--brand-dark-teal) / 0.8), 3px 3px 0px hsl(var(--brand-dark-teal) / 0.7), 4px 4px 0px hsl(var(--brand-dark-teal) / 0.5)',
       },
       typography: ({ theme }: { theme: any }) => ({
         DEFAULT: {
@@ -94,7 +94,7 @@ const config: Config = {
         },
         "accordion-up": {
           from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
         },
       }
     },

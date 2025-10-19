@@ -7,7 +7,8 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Toaster } from "@/components/ui/toaster";
 import { FirebaseClientProvider } from "@/firebase/client-provider";
-import { Inter } from 'next/font/google'
+import { Inter } from 'next/font/google';
+import { ThemeProvider } from '@/components/ThemeProvider';
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -41,26 +42,32 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   };
 
   return (
-    <html lang="sk" className={`dark ${inter.variable}`}>
+    <html lang="sk" className={`${inter.variable}`} suppressHydrationWarning>
       <body>
-        {/* PWA behaviors */}
-        <PWAProvider />
-        <InstallPrompt />
+        <ThemeProvider
+            attribute="data-theme"
+            defaultTheme="default"
+            enableSystem={false}
+          >
+            {/* PWA behaviors */}
+            <PWAProvider />
+            <InstallPrompt />
 
-        {/* JSON-LD: MovingCompany */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
-        
-        <FirebaseClientProvider>
-          <Header />
-          <main id="main-content" className="pt-16 min-h-screen">
-            {children}
-          </main>
-          <Footer />
-          <Toaster />
-        </FirebaseClientProvider>
+            {/* JSON-LD: MovingCompany */}
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
+            
+            <FirebaseClientProvider>
+              <Header />
+              <main id="main-content" className="pt-16 min-h-screen">
+                {children}
+              </main>
+              <Footer />
+              <Toaster />
+            </FirebaseClientProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

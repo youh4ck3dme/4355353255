@@ -1,5 +1,213 @@
 <img src="https://r2cdn.perplexity.ai/pplx-full-logo-primary-dark%402x.png" style="height:64px;margin-right:32px"/>
 
+
+
+
+
+
+{
+  "routes": [
+    {
+      "path": "/",
+      "title": "Sťahovanie Bratislava a okolie | VI&MO",
+      "metaDescription": "Profesionálne sťahovacie služby v Bratislave. Sťahovanie bytov, firiem, klavírov a ťažkých bremien. Získajte nezáväznú cenovú ponuku online.",
+      "layoutZone": "public",
+      "priority": 1.0
+    },
+    {
+      "path": "/sluzby",
+      "title": "Služby | Profesionálne sťahovanie VI&MO",
+      "metaDescription": "Kompletný prehľad našich sťahovacích služieb v Bratislave: byty, firmy, klavíry, vypratávanie, montáž nábytku a autodoprava.",
+      "layoutZone": "public",
+      "priority": 0.9
+    },
+    {
+      "path": "/sluzby/stahovanie-bytov-domov",
+      "title": "Sťahovanie bytov a domov Bratislava | VI&MO",
+      "metaDescription": "Zabezpečíme bezstarostné sťahovanie vášho bytu alebo domu v rámci Bratislavy a okolia. Rýchlo, spoľahlivo a za férovú cenu.",
+      "layoutZone": "public",
+      "priority": 0.8
+    },
+    {
+      "path": "/sluzby/stahovanie-firiem",
+      "title": "Sťahovanie firiem a kancelárií Bratislava | VI&MO",
+      "metaDescription": "Efektívne sťahovanie firiem, kancelárií a prevádzok s minimálnym dopadom na váš biznis. Naplánujeme logistiku za vás.",
+      "layoutZone": "public",
+      "priority": 0.8
+    },
+    {
+      "path": "/sluzby/stahovanie-tazkych-bremien-klavirov",
+      "title": "Sťahovanie ťažkých bremien a klavírov Bratislava",
+      "metaDescription": "Špecializujeme sa na bezpečné sťahovanie klavírov, trezorov, serverov a iných ťažkých bremien. Profesionálna technika a skúsenosti.",
+      "layoutZone": "public",
+      "priority": 0.8
+    },
+    {
+      "path": "/sluzby/vypratavanie-likvidacia",
+      "title": "Vypratávanie bytov a odvoz odpadu Bratislava",
+      "metaDescription": "Postaráme sa o kompletné vypratanie bytov, pivníc, garáží a firiem vrátane ekologickej likvidácie starého nábytku a odpadu.",
+      "layoutZone": "public",
+      "priority": 0.8
+    },
+    {
+      "path": "/sluzby/autodoprava-s-vodicom",
+      "title": "Autodoprava a prenájom dodávky s vodičom Bratislava",
+      "metaDescription": "Potrebujete rýchlo a spoľahlivo prepraviť tovar alebo nábytok? Ponúkame prenájom dodávky so skúseným vodičom v Bratislave.",
+      "layoutZone": "public",
+      "priority": 0.7
+    },
+    {
+      "path": "/lokality",
+      "title": "Pôsobnosť a lokality sťahovania v Bratislave | VI&MO",
+      "metaDescription": "Sťahujeme vo všetkých mestských častiach Bratislavy. Prehľad lokalít, kde poskytujeme naše služby - od Petržalky po Devínsku Novú Ves.",
+      "layoutZone": "public",
+      "priority": 0.9
+    },
+    {
+      "path": "/blog",
+      "title": "Blog a rady pre sťahovanie | VI&MO",
+      "metaDescription": "Tipy, triky a užitočné rady, ako zvládnuť sťahovanie bez stresu. Prečítajte si náš blog plný praktických informácií.",
+      "layoutZone": "public",
+      "priority": 0.7
+    },
+    {
+      "path": "/cennik",
+      "title": "Cenník sťahovacích služieb Bratislava | VI&MO",
+      "metaDescription": "Transparentný cenník sťahovania a doplnkových služieb. Zistite ceny za pracovníkov, dopravu alebo si vypočítajte odhad online.",
+      "layoutZone": "public",
+      "priority": 0.9
+    },
+    {
+      "path": "/kontakt",
+      "title": "Kontakt | Nezáväzná cenová ponuka | VI&MO",
+      "metaDescription": "Kontaktujte nás pre bezplatnú a nezáväznú cenovú ponuku. Sme tu pre vás - telefonicky, emailom alebo cez kontaktný formulár.",
+      "layoutZone": "public",
+      "priority": 0.9
+    },
+    {
+      "path": "/admin",
+      "title": "Administrácia",
+      "metaDescription": "Správa obsahu.",
+      "layoutZone": "admin",
+      "priority": 0.1
+    }
+  ],
+  "navigation": {
+    "mainMenu": [
+      { "label": "Služby", "path": "/sluzby" },
+      { "label": "Lokality", "path": "/lokality" },
+      { "label": "Cenník", "path": "/cennik" },
+      { "label": "Blog", "path": "/blog" },
+      { "label": "Kontakt", "path": "/kontakt" }
+    ],
+    "footer": [
+      { "label": "Domov", "path": "/" },
+      { "label": "Služby", "path": "/sluzby" },
+      { "label": "Cenník", "path": "/cennik" },
+      { "label": "Kontakt", "path": "/kontakt" },
+      { "label": "Ochrana osobných údajov", "path": "/ochrana-osobnych-udajov" }
+    ]
+  },
+  "collections": {
+    "services": [
+      { "id": "stahovanie-bytov", "name": "Sťahovanie bytov a domov" },
+      { "id": "stahovanie-firiem", "name": "Sťahovanie firiem a kancelárií" },
+      { "id": "tazke-bremena", "name": "Sťahovanie ťažkých bremien / klavírov" },
+      { "id": "balenie", "name": "Baliace služby a materiál" },
+      { "id": "montaz-demontaz", "name": "Montáž a demontáž nábytku" },
+      { "id": "vypratavanie", "name": "Vypratávanie a likvidácia odpadu" },
+      { "id": "autodoprava", "name": "Autodoprava s vodičom" }
+    ],
+    "districts": [
+      { "id": "petrzalka", "name": "Petržalka" },
+      { "id": "ruzinov", "name": "Ružinov" },
+      { "id": "stare-mesto", "name": "Staré Mesto" },
+      { "id": "nove-mesto", "name": "Nové Mesto" },
+      { "id": "dubravka", "name": "Dúbravka" },
+      { "id": "karlova-ves", "name": "Karlova Ves" },
+      { "id": "raca", "name": "Rača" },
+      { "id": "vrakuna", "name": "Vrakuňa" },
+      { "id": "podunajske-biskupice", "name": "Podunajské Biskupice" },
+      { "id": "devinska-nova-ves", "name": "Devínska Nová Ves" },
+      { "id": "lamac", "name": "Lamač" }
+    ],
+    "blogCategories": [
+      { "id": "tipy-pre-stahovanie", "name": "Tipy pre sťahovanie" },
+      { "id": "balenie-a-priprava", "name": "Balenie a príprava" },
+      { "id": "stahovanie-specifickych-veci", "name": "Sťahovanie špecifických vecí" },
+      { "id": "vypratavanie-a-minimalizmus", "name": "Vypratávanie a minimalizmus" },
+      { "id": "zivot-v-bratislave", "name": "Život v Bratislave" },
+      { "id": "nase-pribehy-zo-stahovania", "name": "Naše príbehy zo sťahovania" }
+    ]
+  },
+  "internalLinks": [
+    { "from": "/", "to": "/cennik", "anchor": "Vypočítajte si odhadovanú cenu" },
+    { "from": "/", "to": "/kontakt", "anchor": "Získajte nezáväznú cenovú ponuku" },
+    { "from": "/sluzby", "to": "/sluzby/stahovanie-bytov-domov", "anchor": "Sťahovanie bytov a domov" },
+    { "from": "/cennik", "to": "/kontakt", "anchor": "presnú cenovú ponuku nás kontaktujte" }
+  ],
+  "fileTree": {
+    "description": "Štruktúra pre Next.js 14+ s App Routerom, zameraná na škálovateľnosť a prehľadnosť.",
+    "structure": [
+      "src/app/(public)/",
+      "  ├── page.tsx (Domov)",
+      "  ├── sluzby/",
+      "  │   ├── page.tsx (Prehľad služieb)",
+      "  │   └── [slug]/page.tsx (Detail služby)",
+      "  ├── lokality/page.tsx",
+      "  ├── cennik/page.tsx",
+      "  ├── blog/",
+      "  │   ├── page.tsx (Zoznam článkov)",
+      "  │   └── [slug]/page.tsx (Detail článku)",
+      "  ├── kontakt/page.tsx",
+      "  └── layout.tsx (Verejný layout s Headerom a Footerom)",
+      "src/app/(admin)/",
+      "  ├── admin/page.tsx (Dashboard)",
+      "  └── layout.tsx (Layout pre admin sekciu)",
+      "src/components/",
+      "  ├── layout/ (Header, Footer, Navigácia...)",
+      "  ├── ui/ (Tlačidlá, Karty...)",
+      "  └── features/ (Kalkulačka, Kontaktný formulár...)",
+      "src/lib/ (API volania, utility, definície typov)",
+      "src/content/ (Markdown súbory pre blog, ak by sa použil MDX)"
+    ]
+  },
+  "redirects": [
+    {
+      "source": "/www.app.viandmo.com/(.*)",
+      "destination": "/app.viandmo.com/$1",
+      "type": "301 (Permanent)",
+      "description": "Presmerovanie z www na non-www verziu."
+    },
+    {
+      "source": "/(.*)/$",
+      "destination": "/$1",
+      "type": "301 (Permanent)",
+      "description": "Odstránenie lomítka na konci URL (trailing slash)."
+    }
+  ],
+  "sitemap": [
+    "https://app.viandmo.com/",
+    "https://app.viandmo.com/sluzby",
+    "https://app.viandmo.com/sluzby/stahovanie-bytov-domov",
+    "https://app.viandmo.com/sluzby/stahovanie-firiem",
+    "https://app.viandmo.com/sluzby/stahovanie-tazkych-bremien-klavirov",
+    "https://app.viandmo.com/sluzby/vypratavanie-likvidacia",
+    "https://app.viandmo.com/sluzby/autodoprava-s-vodicom",
+    "https://app.viandmo.com/lokality",
+    "https://app.viandmo.com/blog",
+    "https://app.viandmo.com/cennik",
+    "https://app.viandmo.com/kontakt"
+  ]
+}
+
+
+
+
+
+
+
+
 # 10x Promptov do firebase studio, pre gemini AI - kazdy jeden pridava o 100÷ LEPAI VYSLDOK A DAJU SA OPAKOVAT DOOKOLA !
 
 10 PROMPTOV KTORY KAZDY Z NICH JE UNIKATNY A DOKONALY NA ZLEOAENIE VSETKYCH FUNKCII CO DANNY PROJEKT UZ OBSAHUJE UP 100÷
