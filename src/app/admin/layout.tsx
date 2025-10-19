@@ -72,7 +72,7 @@ export default function AdminLayout({
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-brand-light-gray dark:bg-brand-dark-teal p-4">
+      <div className="min-h-screen flex items-center justify-center bg-brand-light-gray dark:bg-brand-dark-teal p-4 text-center md:text-left">
         <div className="w-full max-w-sm mx-auto bg-brand-bg dark:bg-brand-dark-teal/80 rounded-2xl shadow-2xl p-8 backdrop-blur-sm border border-white/10">
           <div className="text-center mb-8">
             <ShieldCheck className="mx-auto h-16 w-16 text-brand-bright-green mb-4" />
@@ -102,7 +102,7 @@ export default function AdminLayout({
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full p-4 border-2 border-slate-300 dark:border-slate-600 rounded-lg focus:border-brand-bright-green 
                            focus:ring focus:ring-brand-bright-green/50 outline-none transition-all duration-300
-                           bg-brand-light-gray dark:bg-brand-dark-teal dark:text-brand-bg placeholder-brand-secondary-grey text-lg"
+                           bg-brand-light-gray dark:bg-brand-dark-teal dark:text-brand-bg placeholder-brand-secondary-grey text-lg text-center"
                 placeholder="• • • • • • • •"
               />
             </div>
