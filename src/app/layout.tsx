@@ -1,10 +1,13 @@
-import type { Metadata } from "next";
-import { Inter } from 'next/font/google'
-import "./globals.css";
+
+import type { Metadata } from 'next';
+import './globals.css';
+import PWAProvider from '@/components/PWAProvider';
+import InstallPrompt from '@/components/InstallPrompt';
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Toaster } from "@/components/ui/toaster";
 import { FirebaseClientProvider } from "@/firebase/client-provider";
+import { Inter } from 'next/font/google'
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -12,18 +15,44 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: "Bratislava sťahovanie | VI&MO | Tipy a Rady",
-  description: "Nájdete tu najlepšie tipy a rady pre sťahovanie, upratovanie a vypratávanie v Bratislave a okolí. Prečítajte si náš blog!",
+  title: 'VI&MO – Sťahovanie Bratislava',
+  description:
+    'Sťahovanie bytov a firiem v Bratislave. Kalkulačka ceny, vypratávanie, autodoprava.',
+  metadataBase: new URL('https://app.viandmo.com')
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'MovingCompany',
+    name: 'VI&MO – Sťahovanie Bratislava',
+    url: 'https://app.viandmo.com',
+    telephone: '+421 911 275 755',
+    priceRange: '€€',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: 'Karpatské námestie 7770/10A',
+      addressLocality: 'Bratislava',
+      postalCode: '831 06',
+      addressCountry: 'SK'
+    },
+    areaServed: 'Bratislava',
+    openingHours: ['Mo-Su 08:00-20:00']
+  };
+
   return (
     <html lang="sk" className={`dark ${inter.variable}`}>
       <body>
+        {/* PWA behaviors */}
+        <PWAProvider />
+        <InstallPrompt />
+
+        {/* JSON-LD: MovingCompany */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        
         <FirebaseClientProvider>
           <Header />
           <main id="main-content" className="pt-16 min-h-screen">
