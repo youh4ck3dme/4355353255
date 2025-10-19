@@ -1,5 +1,7 @@
+
 import type { MetadataRoute } from 'next';
 import { getPublishedPosts } from '@/lib/api';
+import { services } from '@/lib/services';
 
 const base = process.env.NEXT_PUBLIC_BASE_URL || 'https://app.viandmo.com';
 
@@ -22,6 +24,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: path === '/' ? 1 : 0.8,
   }));
 
+  // Dynamic service pages
+  const serviceUrls = services.map(service => ({
+    url: `${base}/sluzby/${service.id}`,
+    lastModified: now,
+    changeFrequency: 'monthly' as const,
+    priority: 0.9,
+  }));
+
   // Dynamic blog posts
   const posts = await getPublishedPosts();
   const postUrls = posts.map(post => ({
@@ -31,5 +41,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  return [...staticUrls, ...postUrls];
+  return [...staticUrls, ...serviceUrls, ...postUrls];
 }
