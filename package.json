@@ -1,7 +1,7 @@
 {
   "name": "vimo-blog-frontend",
   "version": "0.1.0",
-  "private": true,
+  "private": "true",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -17,7 +17,8 @@
     "clsx": "^2.1.1",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
-    "date-fns": "^3.6.0"
+    "date-fns": "^3.6.0",
+    "firebase": "^10.12.2"
   },
   "devDependencies": {
     "typescript": "^5",
