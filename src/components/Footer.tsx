@@ -12,7 +12,7 @@ const navLinks = [
 
 export const Footer = () => {
   return (
-    <footer className="bg-brand-dark-teal text-brand-bg/90 pt-16 pb-8">
+    <footer className="bg-black text-brand-bg/90 pt-16 pb-8">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-12 mb-12 text-center md:text-left">
           
@@ -23,7 +23,7 @@ export const Footer = () => {
               <div>
                 <p className="font-semibold text-slate-300">Sťahovanie</p>
                 <p className="text-sm text-slate-400">Miroslav Danihel</p>
-                <a href="tel:+421911275755" className="flex items-center justify-center md:justify-start space-x-2 text-slate-300 hover:text-brand-bright-green transition-colors group">
+                <a href="tel:+421911275755" className="liquid-glass-button flex items-center justify-center md:justify-start space-x-2 text-slate-300 hover:text-brand-bright-green transition-colors group">
                   <Phone size={16} className="text-brand-bright-green/80 group-hover:text-brand-bright-green" />
                   <span>+421 911 275 755</span>
                 </a>
@@ -31,13 +31,13 @@ export const Footer = () => {
               <div>
                 <p className="font-semibold text-slate-300">Upratovanie</p>
                 <p className="text-sm text-slate-400">Barbora Danihelová Huňková</p>
-                 <a href="tel:+421918895730" className="flex items-center justify-center md:justify-start space-x-2 text-slate-300 hover:text-brand-bright-green transition-colors group">
+                 <a href="tel:+421918895730" className="liquid-glass-button flex items-center justify-center md:justify-start space-x-2 text-slate-300 hover:text-brand-bright-green transition-colors group">
                   <Phone size={16} className="text-brand-bright-green/80 group-hover:text-brand-bright-green" />
                   <span>+421 918 895 730</span>
                 </a>
               </div>
               <div>
-                 <a href="mailto:info@viandmo.com" className="flex items-center justify-center md:justify-start space-x-2 text-slate-300 hover:text-brand-bright-green transition-colors group">
+                 <a href="mailto:info@viandmo.com" className="liquid-glass-button flex items-center justify-center md:justify-start space-x-2 text-slate-300 hover:text-brand-bright-green transition-colors group">
                   <Mail size={16} className="text-brand-bright-green/80 group-hover:text-brand-bright-green" />
                   <span>info@viandmo.com</span>
                 </a>
@@ -51,7 +51,7 @@ export const Footer = () => {
             <ul className="space-y-2">
               {navLinks.map(link => (
                 <li key={link.label}>
-                  <Link href={link.href} className="text-slate-300 hover:text-brand-bright-green hover:underline underline-offset-4 transition-colors">
+                  <Link href={link.href} className="liquid-glass-button text-slate-300 hover:text-brand-bright-green hover:underline underline-offset-4 transition-colors">
                     {link.label}
                   </Link>
                 </li>
@@ -78,11 +78,11 @@ export const Footer = () => {
         <div className="border-t border-white/10 pt-6 mt-8 text-center text-sm text-slate-400">
           <p>&copy; {new Date().getFullYear()} VI&MO S.R.O. Všetky práva vyhradené.</p>
           <div className="mt-2 space-x-4">
-             <a href="https://viandmo.com" target="_blank" rel="noopener noreferrer" className="hover:text-brand-bright-green transition-colors">
+             <a href="https://viandmo.com" target="_blank" rel="noopener noreferrer" className="liquid-glass-button hover:text-brand-bright-green transition-colors">
               viandmo.com
             </a>
             <span className="text-slate-600">|</span>
-            <Link href="/ochrana-sukromia" className="hover:text-brand-bright-green transition-colors">
+            <Link href="/ochrana-sukromia" className="liquid-glass-button hover:text-brand-bright-green transition-colors">
               Ochrana osobných údajov
             </Link>
           </div>

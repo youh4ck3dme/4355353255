@@ -166,7 +166,7 @@ export default function HomePage() {
           <div className="absolute inset-0 bg-brand-dark-teal/70"></div>
           <div className="relative z-10 animate-fade-in text-center">
             <h1 className="text-5xl md:text-7xl font-extrabold mb-4 text-brand-bright-green text-shadow-3d-green">
-              VI&MO
+              Bratislava sťahovanie
             </h1>
             <p className="text-2xl md:text-3xl font-light text-slate-200">
               Pevné ruky & poctivý prístup
@@ -207,9 +207,9 @@ export default function HomePage() {
                       </div>
                     </div>
                     <div className={`order-1 ${index % 2 === 0 ? 'md:order-1' : 'md:order-2'} text-center md:text-left`}>
-                       <div className="p-8 bg-brand-dark-teal/90 rounded-lg text-white shadow-subtle">
+                       <div className="p-8 bg-gradient-to-br from-green-700 to-green-900 rounded-lg text-white/90 shadow-subtle">
                           <h4 className="text-xl font-bold text-brand-bright-green mb-2">{index % 2 === 0 ? "Rýchlo, bezpečne a so zodpovednosťou" : "Efektívne plánovanie a spoľahlivá logistika"}</h4>
-                          <p className="text-slate-300">{service.description}</p>
+                          <p className="text-slate-200">{service.description}</p>
                       </div>
                     </div>
                   </div>
@@ -220,23 +220,23 @@ export default function HomePage() {
         </section>
 
         {/* FAQ Section */}
-        <section id="faq" className="min-h-screen flex flex-col justify-center py-16 bg-white text-black text-center md:text-left">
+        <section id="faq" className="min-h-screen flex flex-col justify-center py-16 bg-gradient-to-b from-green-900 via-brand-dark-teal to-slate-800 text-white text-center md:text-left">
             <div className="container mx-auto px-4 max-w-3xl">
                 <div className="text-center mb-12">
-                    <h2 className="text-3xl md:text-4xl font-bold text-brand-dark-teal text-shadow-3d-green">
+                    <h2 className="text-3xl md:text-4xl font-bold text-brand-bright-green text-shadow-3d-green">
                         Často Kladené Otázky
                     </h2>
-                    <p className="mt-4 text-lg text-brand-secondary-grey">
+                    <p className="mt-4 text-lg text-slate-300">
                         Rýchle odpovede na najčastejšie otázky. Ak tu nenájdete, čo hľadáte, neváhajte nás kontaktovať.
                     </p>
                 </div>
                 <Accordion type="single" collapsible className="w-full">
                     {faqItems.map((item, index) => (
-                        <AccordionItem key={index} value={`item-${index + 1}`} className="border-b border-gray-200">
-                            <AccordionTrigger className="text-lg text-center md:text-left font-semibold hover:no-underline text-brand-dark-teal">
+                        <AccordionItem key={index} value={`item-${index + 1}`} className="border-b border-green-400/20">
+                            <AccordionTrigger className="text-lg text-center md:text-left font-semibold hover:no-underline text-brand-bg">
                                 {item.question}
                             </AccordionTrigger>
-                            <AccordionContent className="text-brand-secondary-grey text-center md:text-left">
+                            <AccordionContent className="text-slate-300 text-center md:text-left">
                                 {item.answer}
                             </AccordionContent>
                         </AccordionItem>
