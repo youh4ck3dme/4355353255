@@ -2,12 +2,11 @@ import Link from 'next/link';
 import { Phone, Mail, MapPin, Facebook, Instagram } from 'lucide-react';
 
 const navLinks = [
-  { href: '/#sluzby', label: 'Sťahovanie bytov' },
-  { href: '/#sluzby', label: 'Sťahovanie firiem' },
-  { href: '/#sluzby', label: 'Vypratávanie' },
-  { href: '/#sluzby', label: 'Upratovanie' },
+  { href: '/', label: 'Domov' },
+  { href: '/sluzby', label: 'Služby' },
   { href: '/cennik', label: 'Cenník' },
-  { href: '/blog', label: 'Blog' },
+  { href: '/kontakt', label: 'Kontakt' },
+  { href: '/ochrana-sukromia', label: 'Ochrana osobných údajov' },
 ];
 
 export const Footer = () => {

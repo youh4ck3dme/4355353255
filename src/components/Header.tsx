@@ -12,10 +12,10 @@ export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navLinks = [
-    { href: '/', label: 'Domov' },
-    { href: '/blog', label: 'Články' },
+    { href: '/sluzby', label: 'Služby' },
     { href: '/cennik', label: 'Cenník' },
-    { href: '/o-nas', label: 'O nás' },
+    { href: '/blog', label: 'Blog' },
+    { href: '/kontakt', label: 'Kontakt' },
   ];
 
   useEffect(() => {
@@ -64,11 +64,11 @@ export const Header = () => {
                 href={link.href} 
                 className={cn(
                   "relative text-lg text-brand-text dark:text-brand-bg hover:text-brand-bright-green transition-colors pb-1",
-                  { "text-brand-bright-green font-bold": pathname === link.href }
+                  { "text-brand-bright-green font-bold": pathname.startsWith(link.href) && link.href !== '/' || pathname === link.href }
                 )}
               >
                 {link.label}
-                {pathname === link.href && (
+                {(pathname.startsWith(link.href) && link.href !== '/' || pathname === link.href) && (
                   <span className="absolute bottom-0 left-0 w-full h-0.5 bg-brand-bright-green animate-fade-in"></span>
                 )}
               </Link>
@@ -122,16 +122,26 @@ export const Header = () => {
           </div>
           
           <nav className="flex flex-col items-center justify-center flex-grow space-y-8">
+            <Link 
+                href="/"
+                className={cn(
+                  "text-3xl font-bold transition-all duration-300",
+                  pathname === "/" ? "text-brand-bright-green" : "text-brand-bg hover:text-brand-bright-green",
+                  isMenuOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4",
+                )}
+              >
+                Domov
+              </Link>
             {navLinks.map((link, index) => (
               <Link 
                 key={link.href}
                 href={link.href}
                 className={cn(
                   "text-3xl font-bold transition-all duration-300",
-                  pathname === link.href ? "text-brand-bright-green" : "text-brand-bg hover:text-brand-bright-green",
+                  pathname.startsWith(link.href) ? "text-brand-bright-green" : "text-brand-bg hover:text-brand-bright-green",
                   isMenuOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4",
                 )}
-                style={{ transitionDelay: `${index * 100}ms` }}
+                style={{ transitionDelay: `${(index + 1) * 100}ms` }}
               >
                 {link.label}
               </Link>
@@ -144,7 +154,7 @@ export const Header = () => {
                   pathname.startsWith('/admin') ? "text-brand-bright-green" : "text-brand-bg hover:text-brand-bright-green",
                   isMenuOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4",
                 )}
-                style={{ transitionDelay: `${navLinks.length * 100}ms` }}
+                style={{ transitionDelay: `${(navLinks.length + 1) * 100}ms` }}
               >
                 <KeyRound size={28} /> Admin
               </Link>

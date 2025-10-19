@@ -1,6 +1,6 @@
 
 import type { Metadata } from 'next';
-import './globals.css';
+import '../globals.css';
 import PWAProvider from '@/components/PWAProvider';
 import InstallPrompt from '@/components/InstallPrompt';
 import { Header } from "@/components/Header";

@@ -149,44 +149,6 @@ export default function AboutPage() {
               Naše služby poskytujeme najmä v lokalitách Bratislava (Ružinov, Petržalka, Nové Mesto, Rača, Karlova Ves, Dúbravka) a v okolí miest ako Senec, Pezinok, Šamorín a Malacky.
           </p>
         </section>
-
-        <section id="kontakt" className="mb-16">
-          <h2 className="text-3xl font-bold mb-8 text-center text-brand-dark-teal dark:text-brand-bg text-shadow-3d">Kontaktujte nás</h2>
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-              <div className="bg-brand-light-gray dark:bg-brand-dark-teal/80 p-6 rounded-lg shadow-lg text-center md:text-left">
-                  <h3 className="text-2xl font-bold text-brand-dark-teal dark:text-brand-bg mb-4">Kontaktné údaje</h3>
-                  <div className="space-y-4">
-                      <div>
-                          <h4 className="font-bold text-brand-secondary-grey dark:text-slate-400">Sťahovanie</h4>
-                          <p className="flex items-center justify-center md:justify-start text-brand-dark-teal dark:text-brand-bg font-semibold"><Phone className="w-4 h-4 mr-2 text-brand-bright-green" /> +421 911 275 755</p>
-                           <p className="flex items-center justify-center md:justify-start text-brand-dark-teal dark:text-brand-bg font-semibold"><Mail className="w-4 h-4 mr-2 text-brand-bright-green" /> info@viandmo.com</p>
-                          <p className="text-sm text-brand-secondary-grey dark:text-slate-400 mt-1">Miroslav Danihel</p>
-                      </div>
-                       <div>
-                          <h4 className="font-bold text-brand-secondary-grey dark:text-slate-400">Upratovanie</h4>
-                          <p className="flex items-center justify-center md:justify-start text-brand-dark-teal dark:text-brand-bg font-semibold"><Phone className="w-4 h-4 mr-2 text-brand-bright-green" /> +421 918 895 730</p>
-                      </div>
-                  </div>
-              </div>
-              <div className="bg-brand-light-gray dark:bg-brand-dark-teal/80 p-6 rounded-lg shadow-lg text-center md:text-left">
-                  <h3 className="text-2xl font-bold text-brand-dark-teal dark:text-brand-bg mb-4">Obchodné údaje</h3>
-                  <div className="space-y-2 text-brand-secondary-grey dark:text-slate-300">
-                      <p className="flex items-center justify-center md:justify-start"><Building className="w-4 h-4 mr-2 text-brand-bright-green" /> <strong>VI and MO s. r. o.</strong></p>
-                      <p>Karpatské námestie 7770/10A</p>
-                      <p>831 06 Bratislava - Rača, Slovensko</p>
-                      <p><strong>IČO:</strong> 56 811 322 | <strong>DIČ:</strong> 2122461176</p>
-                  </div>
-              </div>
-          </div>
-        </section>
-
-        <section>
-          <h2 className="text-3xl font-bold mb-8 text-center text-brand-dark-teal dark:text-brand-bg text-shadow-3d">Sťahujete sa? Napíšte nám.</h2>
-          <div className="max-w-2xl mx-auto bg-brand-light-gray dark:bg-brand-dark-teal/80 p-8 rounded-lg shadow-2xl">
-            <DynamicContactForm />
-          </div>
-        </section>
-
       </div>
     </>
   );
