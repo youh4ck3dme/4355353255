@@ -66,8 +66,7 @@ const categoryIcons: Record<Category, React.ElementType> = {
 
 const categories = Object.keys(allSuggestions) as Category[];
 
-// This is a client-only component.
-// It uses hooks that rely on client-side state (useContext, useState with random values).
+// This component uses hooks that rely on client-side state (useContext, useState with random values).
 // To prevent hydration errors, we must ensure it only renders on the client.
 const SuggestionsBannerClient = () => {
     const [currentCategory, setCurrentCategory] = useState<Category>('Funkcionalita');
@@ -82,8 +81,10 @@ const SuggestionsBannerClient = () => {
             setCurrentSuggestion(suggestions[randomIndex]);
         };
         
+        // Initial suggestion
         getNewSuggestion(currentCategory);
 
+        // Change suggestion every 7 seconds
         const intervalId = setInterval(() => {
             getNewSuggestion(currentCategory);
         }, 7000);
