@@ -6,7 +6,6 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useState, useEffect } from 'react';
 import { Menu, X, KeyRound } from 'lucide-react';
-import { ThemeToggle } from './ThemeToggle';
 
 export const Header = () => {
   const pathname = usePathname();
@@ -36,7 +35,7 @@ export const Header = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-50 bg-brand-bg/95 backdrop-blur-sm shadow-medium text-brand-text">
+      <header className="sticky top-0 z-50 bg-brand-bg/95 backdrop-blur-sm shadow-medium text-brand-text dark:bg-brand-dark-teal/95 dark:text-brand-bg">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center hover:opacity-90 transition-opacity" aria-label="Domov - VI&MO">
             <Image 
@@ -44,7 +43,16 @@ export const Header = () => {
               alt="VI&MO Logo" 
               width={120} 
               height={40} 
-              priority 
+              priority
+              className="dark:hidden"
+            />
+             <Image 
+              src="/images/viandmo-logo-white.svg" 
+              alt="VI&MO Logo" 
+              width={120} 
+              height={40} 
+              priority
+              className="hidden dark:block"
             />
           </Link>
           
@@ -55,7 +63,7 @@ export const Header = () => {
                 key={link.href}
                 href={link.href} 
                 className={cn(
-                  "relative text-lg text-brand-text hover:text-brand-bright-green transition-colors pb-1",
+                  "relative text-lg text-brand-text dark:text-brand-bg hover:text-brand-bright-green transition-colors pb-1",
                   { "text-brand-bright-green font-bold": pathname === link.href }
                 )}
               >
@@ -65,21 +73,19 @@ export const Header = () => {
                 )}
               </Link>
             ))}
-             <Link href="/admin" aria-label="Admin Login" className={cn("relative text-brand-text hover:text-brand-bright-green transition-colors pb-1 pl-4", { "text-brand-bright-green": pathname.startsWith('/admin') })}>
+             <Link href="/admin" aria-label="Admin Login" className={cn("relative text-brand-text dark:text-brand-bg hover:text-brand-bright-green transition-colors pb-1 pl-4", { "text-brand-bright-green": pathname.startsWith('/admin') })}>
                 <KeyRound size={22} />
                 {pathname.startsWith('/admin') && (
                   <span className="absolute bottom-0 left-4 w-[22px] h-0.5 bg-brand-bright-green animate-fade-in"></span>
                 )}
             </Link>
-            <ThemeToggle />
           </nav>
 
           {/* Mobile Menu Button */}
           <div className="sm:hidden flex items-center gap-2">
-            <ThemeToggle />
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="p-2 text-brand-dark-teal hover:text-brand-bright-green transition-colors"
+              className="p-2 text-brand-dark-teal dark:text-brand-bg hover:text-brand-bright-green transition-colors"
               aria-label="Otvoriť menu"
             >
               <Menu size={28} />

@@ -8,7 +8,7 @@ const config: Config = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
-  darkMode: ["class", '[data-theme$="-dark"]', '[data-theme="vibrant-night"]'],
+  darkMode: ["class"],
   theme: {
     extend: {
       fontFamily: {
@@ -40,8 +40,8 @@ const config: Config = {
         'inner-lg': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
       },
        textShadow: {
-        '3d': '1px 1px 0px rgba(0,0,0,0.1), 2px 2px 0px rgba(0,0,0,0.09), 3px 3px 0px rgba(0,0,0,0.08), 4px 4px 0px rgba(0,0,0,0.07), 5px 5px 0px rgba(0,0,0,0.06)',
-        '3d-green': '1px 1px 0px hsl(var(--brand-dark-teal)), 2px 2px 0px hsl(var(--brand-dark-teal) / 0.8), 3px 3px 0px hsl(var(--brand-dark-teal) / 0.7), 4px 4px 0px hsl(var(--brand-dark-teal) / 0.5)',
+        '3d': '1px 1px 0px rgba(0,0,0,0.1), 2px 2px 0px rgba(0,0,0,0.09), 3px 3px 0px rgba(0,0,0,0.08)',
+        '3d-green': '1px 1px 0px hsl(var(--brand-dark-teal)), 2px 2px 0px hsl(var(--brand-dark-teal) / 0.8), 3px 3px 0px hsl(var(--brand-dark-teal) / 0.7)',
       },
       typography: ({ theme }: { theme: any }) => ({
         DEFAULT: {

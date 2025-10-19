@@ -15,12 +15,10 @@ export default function AdminLayout({
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [isMounted, setIsMounted] = useState(false);
   const [isChecking, setIsChecking] = useState(false);
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    setIsMounted(true);
     try {
       if (sessionStorage.getItem(SESSION_STORAGE_KEY) === 'true') {
         setIsAuthenticated(true);
@@ -66,10 +64,6 @@ export default function AdminLayout({
     }, 2200); // Wait for animation to finish + a little buffer
   };
   
-  if (!isMounted) {
-    return null; 
-  }
-
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-brand-light-gray dark:bg-brand-dark-teal p-4 text-center md:text-left">

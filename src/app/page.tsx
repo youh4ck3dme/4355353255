@@ -179,10 +179,10 @@ export default function HomePage() {
         </section>
 
         {/* Services Section */}
-        <section id="sluzby" className="min-h-screen flex flex-col justify-center py-16 bg-white text-black text-center md:text-left">
+        <section id="sluzby" className="min-h-screen flex flex-col justify-center py-16 bg-brand-bg dark:bg-brand-dark-teal text-brand-text dark:text-brand-bg text-center md:text-left">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-brand-dark-teal text-shadow-3d-green">Naše Služby</h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-brand-dark-teal dark:text-brand-bright-green text-shadow-3d-green">Naše Služby</h2>
             </div>
             <div className="space-y-16">
               {services.map((service, index) => {
@@ -190,15 +190,15 @@ export default function HomePage() {
                 return (
                   <div key={index} className={`grid md:grid-cols-2 gap-8 lg:gap-16 items-center`}>
                     <div className={`order-2 text-center md:text-left ${index % 2 === 0 ? 'md:order-2' : 'md:order-1'}`}>
-                      <div className="bg-brand-light-gray p-6 lg:p-8 rounded-lg shadow-subtle hover:shadow-medium transition-shadow duration-300">
+                      <div className="bg-brand-light-gray dark:bg-brand-dark-teal/80 p-6 lg:p-8 rounded-lg shadow-subtle hover:shadow-medium transition-shadow duration-300">
                         <div className="flex items-center justify-center md:justify-start mb-4">
                           <Icon className="h-8 w-8 mr-4 text-brand-bright-green" />
-                          <h3 className="text-2xl font-bold text-brand-dark-teal">{service.title}</h3>
+                          <h3 className="text-2xl font-bold text-brand-dark-teal dark:text-brand-bg">{service.title}</h3>
                         </div>
                         <p className="font-semibold text-brand-secondary-grey italic mb-4">{service.shortDescription}</p>
                         <ul className="space-y-2">
                           {service.included.map((item, i) => (
-                            <li key={i} className="flex items-center justify-center md:justify-start text-brand-secondary-grey">
+                            <li key={i} className="flex items-center justify-center md:justify-start text-brand-secondary-grey dark:text-slate-300">
                               <CheckCircle className="h-5 w-5 mr-2 text-brand-bright-green flex-shrink-0" />
                               <span>{item}</span>
                             </li>
@@ -207,7 +207,7 @@ export default function HomePage() {
                       </div>
                     </div>
                     <div className={`order-1 ${index % 2 === 0 ? 'md:order-1' : 'md:order-2'} text-center md:text-left`}>
-                       <div className="p-8 bg-gradient-to-br from-green-700 to-green-900 rounded-lg text-white/90 shadow-subtle">
+                       <div className="p-8 bg-gradient-to-br from-green-700 to-green-900 dark:from-brand-bright-green/10 dark:to-brand-bright-green/5 rounded-lg text-white/90 shadow-subtle">
                           <h4 className="text-xl font-bold text-brand-bright-green mb-2">{service.secondaryDescription}</h4>
                           <p className="text-slate-200">{service.description}</p>
                       </div>
@@ -220,7 +220,7 @@ export default function HomePage() {
         </section>
 
         {/* FAQ Section */}
-        <section id="faq" className="min-h-screen flex flex-col justify-center py-16 bg-gradient-to-b from-green-900 via-brand-dark-teal to-slate-800 text-white text-center md:text-left">
+        <section id="faq" className="min-h-screen flex flex-col justify-center py-16 bg-gradient-to-b from-green-900 via-brand-dark-teal to-slate-800 dark:from-brand-dark-teal dark:to-black text-white text-center md:text-left">
             <div className="container mx-auto px-4 max-w-3xl">
                 <div className="text-center mb-12">
                      <HelpCircle className="h-12 w-12 mx-auto mb-4 text-brand-bright-green"/>
@@ -253,7 +253,7 @@ export default function HomePage() {
             <p className="max-w-3xl mx-auto mb-8 text-slate-300">
               Plánujete sťahovanie? Vyskúšajte našu interaktívnu kalkulačku pre rýchly odhad ceny, alebo nám rovno pošlite požiadavku cez formulár nižšie a my sa vám ozveme.
             </p>
-            <div className="max-w-2xl mx-auto bg-brand-dark-teal/90 p-8 rounded-2xl shadow-2xl mb-12">
+            <div className="max-w-2xl mx-auto bg-brand-dark-teal/90 dark:bg-black/20 p-8 rounded-2xl shadow-2xl mb-12">
               <h3 className="text-2xl font-bold text-white mb-6">1. Rýchly odhad ceny</h3>
               <DynamicPriceCalculator />
             </div>
