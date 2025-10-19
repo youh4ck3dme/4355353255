@@ -1,5 +1,5 @@
 
-import { getPostBySlug, getPublishedPosts } from '@/lib/api';
+import { getPostBySlug, getPublishedPosts } from '@/lib/mdx';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import { format } from 'date-fns';
@@ -9,8 +9,8 @@ import Link from 'next/link';
 
 // Helper function to extract meta description from post content using regex
 const getMetaDescription = (content: string): string | null => {
-    const match = content.match(/<div data-seo-meta="description".*?>(.*?)<\/div>/s);
-    return match ? match[1].trim().replace(/<[^>]*>?/gm, '') : null;
+    // This function can be simplified or removed if frontmatter is used exclusively
+    return null;
 };
 
 // Helper function to extract FAQ schema data from post content using regex
@@ -42,14 +42,6 @@ const getFaqSchema = (content: string): object | null => {
     };
 };
 
-// Helper function to remove special SEO blocks from the content to be rendered
-const cleanContent = (content: string): string => {
-    // Use the 's' flag (dotAll) to ensure '.' matches newline characters
-    return content
-        .replace(/<div data-seo-meta="description"[\s\S]*?<\/div>/, '')
-        .replace(/<h2>FAQ<\/h2>[\s\S]*/, '');
-};
-
 
 type BlogPostPageProps = {
     params: {
@@ -76,16 +68,10 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
   const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
   const postUrl = `${siteUrl}/blog/${post.slug}`;
   
-  let description = `Prečítajte si viac o téme "${post.title}" a získajte cenné tipy od expertov z VI&MO. Váš spoľahlivý partner pre sťahovanie a upratovanie v Bratislave.`;
-  if (post.content) {
-    const customDescription = getMetaDescription(post.content);
-    if (customDescription) {
-        description = customDescription;
-    }
-  }
+  const description = post.metaDescription || `Prečítajte si viac o téme "${post.title}" a získajte cenné tipy od expertov z VI&MO. Váš spoľahlivý partner pre sťahovanie a upratovanie v Bratislave.`;
   
   return {
-    title: `${post.title} | Bratislava sťahovanie | VI&MO`,
+    title: post.metaTitle || `${post.title} | VI&MO`,
     description: description,
     alternates: {
         canonical: postUrl,
@@ -96,7 +82,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
     const post = await getPostBySlug(params.slug);
     
-    if (!post || post.status !== 'published') {
+    if (!post) {
         notFound();
     }
     
@@ -106,14 +92,14 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     const postUrl = `${siteUrl}/blog/${post.slug}`;
     
     const relatedPosts = allPosts
-        .filter(p => p.id !== post.id && (post.tags || []).some(tag => (p.tags || []).includes(tag)))
+        .filter(p => p.slug !== post.slug && (post.tags || []).some(tag => (p.tags || []).includes(tag)))
         .slice(0, 3);
 
     const blogPostJsonLd = {
         '@context': 'https://schema.org',
         '@type': 'BlogPosting',
         headline: post.title,
-        description: getMetaDescription(post.content || '') || `Prečítajte si viac o téme "${post.title}" a získajte cenné tipy od expertov z VI&MO.`,
+        description: post.metaDescription || `Prečítajte si viac o téme "${post.title}" a získajte cenné tipy od expertov z VI&MO.`,
         image: post.imageUrl || `${siteUrl}/placeholder-logo.png`,
         author: {
             '@type': 'Organization',
@@ -128,8 +114,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 url: `${siteUrl}/logo.png`,
             },
         },
-        datePublished: post.createdAt,
-        dateModified: post.updatedAt,
+        datePublished: post.date,
+        dateModified: post.date,
         mainEntityOfPage: {
             '@type': 'WebPage',
             '@id': postUrl,
@@ -163,11 +149,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
 
     let finalContent = post.content || '';
-    let faqSchema = null;
-    if (post.content) {
-        faqSchema = getFaqSchema(finalContent);
-        finalContent = cleanContent(finalContent);
-    }
+    let faqSchema = getFaqSchema(finalContent);
 
     return (
         <>
@@ -190,7 +172,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                     <article className="bg-brand-light-gray dark:bg-brand-dark-teal/80 shadow-xl rounded-lg p-6 lg:p-10">
                         <h1 className="text-3xl md:text-5xl font-extrabold mb-2 text-brand-dark-teal dark:text-brand-bg text-center md:text-left">{post.title}</h1>
                         <div className="text-brand-secondary-grey dark:text-slate-300 text-sm mb-4 flex flex-col md:flex-row justify-center md:justify-between items-center text-center md:text-left">
-                            <span>Autor: <span className="font-medium">{post.author || 'VI&MO Team'}</span> | Publikované: {format(new Date(post.createdAt), 'd. M. yyyy')}</span>
+                            <span>Autor: <span className="font-medium">{post.author || 'VI&MO Team'}</span> | Publikované: {format(new Date(post.date), 'd. M. yyyy')}</span>
                         </div>
 
                         {post.tags && post.tags.length > 0 && (
@@ -229,7 +211,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                             <h2 className="text-2xl font-bold mb-6 text-center text-brand-dark-teal dark:text-brand-bg text-shadow-3d-green">Mohlo by vás zaujímať</h2>
                             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
                                 {relatedPosts.map(relPost => (
-                                    <BlogCard key={relPost.id} post={relPost} />
+                                    <BlogCard key={relPost.slug} post={relPost} />
                                 ))}
                             </div>
                         </section>

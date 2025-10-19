@@ -1,13 +1,23 @@
-// This corresponds to the Post type from the backend
+
+// This corresponds to the Post type from the backend and MDX frontmatter
 export type Post = {
-    id: string;
+    // from MDX
     title: string;
+    date: string;
+    author?: string;
+    imageUrl?: string;
+    tags?: string[];
+    excerpt?: string;
+    metaTitle?: string;
+    metaDescription?: string;
+    
+    // from both
     slug: string;
     content?: string;
-    author?: string;
     status: 'published' | 'draft';
-    tags?: string[];
-    imageUrl?: string;
-    createdAt: string;
-    updatedAt: string;
+
+    // from API - can be optional now
+    id?: string;
+    createdAt?: string;
+    updatedAt?: string;
 };

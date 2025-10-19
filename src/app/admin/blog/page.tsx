@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { getAllPosts, deletePost } from '@/lib/api';
+// import { getAllPosts, deletePost } from '@/lib/api'; // Temporarily disabled
 import { Post } from '@/lib/types';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
@@ -15,17 +15,19 @@ const PostRow = ({ post, onDelete }: { post: Post, onDelete: (slug: string) => v
     const { toast } = useToast();
 
     const handleDelete = async () => {
-        if (confirm(`Naozaj chcete zmazať článok "${post.title}"?`)) {
-            setIsDeleting(true);
-            const success = await deletePost(post.slug);
-            if (success) {
-                toast({ variant: 'success', title: "Článok zmazaný", description: "Článok bol úspešne odstránený." });
-                onDelete(post.slug);
-            } else {
-                toast({ variant: 'destructive', title: "Chyba", description: "Článok sa nepodarilo zmazať." });
-            }
-            setIsDeleting(false);
-        }
+        alert("Mazanie je pre statický blog dočasne deaktivované.");
+        return;
+        // if (confirm(`Naozaj chcete zmazať článok "${post.title}"?`)) {
+        //     setIsDeleting(true);
+        //     const success = await deletePost(post.slug);
+        //     if (success) {
+        //         toast({ variant: 'success', title: "Článok zmazaný", description: "Článok bol úspešne odstránený." });
+        //         onDelete(post.slug);
+        //     } else {
+        //         toast({ variant: 'destructive', title: "Chyba", description: "Článok sa nepodarilo zmazať." });
+        //     }
+        //     setIsDeleting(false);
+        // }
     };
 
     return (
@@ -33,19 +35,20 @@ const PostRow = ({ post, onDelete }: { post: Post, onDelete: (slug: string) => v
             <div className="md:col-span-2">
                 <h3 className="font-bold text-lg text-brand-dark-teal dark:text-brand-bg">{post.title}</h3>
                 <p className="text-sm text-brand-secondary-grey dark:text-slate-400">
-                    Vytvorené: {format(new Date(post.createdAt), 'd. M. yyyy HH:mm')}
+                    Vytvorené: {format(new Date(post.date), 'd. M. yyyy HH:mm')}
                 </p>
             </div>
             <div className="flex items-center gap-2">
-                <span className={cn(
+                {/* <span className={cn(
                     "px-3 py-1 text-xs font-bold rounded-full text-white",
                     post.status === 'published' ? 'bg-green-600' : 'bg-yellow-600'
                 )}>
                     {post.status === 'published' ? 'Publikovaný' : 'Koncept'}
-                </span>
+                </span> */}
             </div>
             <div className="flex items-center justify-start md:justify-end gap-2">
-                <Link href={`/admin/blog/edit/${post.slug}`} className="p-2 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors" aria-label="Upraviť článok">
+                <p className="text-sm text-gray-500 italic">Statický</p>
+                {/* <Link href={`/admin/blog/edit/${post.slug}`} className="p-2 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors" aria-label="Upraviť článok">
                     <Edit size={18} />
                 </Link>
                 <button
@@ -55,7 +58,7 @@ const PostRow = ({ post, onDelete }: { post: Post, onDelete: (slug: string) => v
                     aria-label="Zmazať článok"
                 >
                     {isDeleting ? <Loader2 size={18} className="animate-spin" /> : <Trash2 size={18} />}
-                </button>
+                </button> */}
             </div>
         </div>
     );
@@ -69,19 +72,11 @@ export default function AdminBlogPage() {
 
     const fetchPosts = useCallback(async () => {
         setIsLoading(true);
-        try {
-            const fetchedPosts = await getAllPosts();
-            setPosts(fetchedPosts);
-        } catch (error) {
-            console.error("Failed to fetch posts:", error);
-            toast({
-                variant: "destructive",
-                title: "Chyba pri načítaní",
-                description: "Nepodarilo sa načítať zoznam článkov.",
-            });
-        } finally {
-            setIsLoading(false);
-        }
+        toast({ title: 'Info', description: 'Správa blogu je v režime čítania. Obsah sa upravuje priamo v MDX súboroch.' });
+        // const fetchedPosts = await getAllPosts();
+        // setPosts(fetchedPosts);
+        setPosts([]); // Set to empty as we are not fetching
+        setIsLoading(false);
     }, [toast]);
 
     useEffect(() => {
@@ -90,7 +85,6 @@ export default function AdminBlogPage() {
 
     const handleRefresh = () => {
         fetchPosts();
-        toast({ title: 'Zoznam obnovený', description: 'Zoznam článkov bol úspešne znovu načítaný.' });
     };
 
     const handlePostDeleted = (deletedSlug: string) => {
@@ -108,20 +102,27 @@ export default function AdminBlogPage() {
                         </h1>
                     </div>
                     <p className="text-lg text-brand-secondary-grey dark:text-slate-300 mt-2">
-                        Vytvárajte, upravujte a spravujte obsah vášho blogu.
+                        Prehľad staticky generovaných článkov. Úprava prebieha priamo v kóde.
                     </p>
                 </div>
                 <div className="flex items-center gap-4 mt-4 md:mt-0">
                     <button onClick={handleRefresh} disabled={isLoading} className="p-3 bg-slate-200 dark:bg-slate-700 rounded-lg hover:bg-opacity-80 transition-colors duration-300 shadow-md disabled:opacity-50 disabled:cursor-wait" aria-label="Obnoviť zoznam">
                         <RefreshCw size={20} className={cn(isLoading && "animate-spin")} />
                     </button>
-                    <Link
-                        href="/admin/blog/new"
-                        className="inline-flex items-center gap-2 px-6 py-3 bg-brand-bright-green text-brand-dark-teal font-bold rounded-lg hover:bg-opacity-80 transition-colors duration-300 shadow-md"
-                    >
-                        <PlusCircle size={20} />
-                        Vytvoriť nový článok
-                    </Link>
+                    <div className="relative">
+                        <span className="absolute -top-2 -right-2 flex h-4 w-4">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-4 w-4 bg-yellow-500"></span>
+                        </span>
+                        <button
+                            disabled
+                            className="inline-flex items-center gap-2 px-6 py-3 bg-gray-400 text-white font-bold rounded-lg transition-colors duration-300 shadow-md cursor-not-allowed"
+                            aria-label="Vytvorenie nového článku je deaktivované"
+                        >
+                            <PlusCircle size={20} />
+                            Vytvoriť nový článok
+                        </button>
+                    </div>
                 </div>
             </header>
 
@@ -139,8 +140,8 @@ export default function AdminBlogPage() {
                     </div>
                 ) : (
                     <div className="text-center py-16">
-                        <h2 className="text-2xl font-bold text-brand-dark-teal dark:text-brand-bg mb-2">Žiadne články</h2>
-                        <p className="text-brand-secondary-grey dark:text-slate-300">Zatiaľ ste nevytvorili žiadne články. Kliknite na tlačidlo vyššie a začnite.</p>
+                        <h2 className="text-2xl font-bold text-brand-dark-teal dark:text-brand-bg mb-2">Statický Blog</h2>
+                        <p className="text-brand-secondary-grey dark:text-slate-300">Zoznam článkov je teraz generovaný staticky. Pre úpravu alebo pridanie nového článku, prosím, upravte MDX súbory v priečinku `src/content/blog`.</p>
                     </div>
                 )}
             </div>

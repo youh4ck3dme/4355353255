@@ -1,5 +1,6 @@
+
 import { BlogList } from '@/components/BlogList';
-import { getPublishedPosts } from '@/lib/api';
+import { getPublishedPosts } from '@/lib/mdx';
 import { Post } from '@/lib/types';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -27,15 +28,15 @@ const FeaturedPostCard = ({ post }: { post: Post }) => (
           <h2 className="text-2xl md:text-4xl font-extrabold text-brand-bg mb-4 line-clamp-3 group-hover:text-brand-bright-green transition-colors">
             {post.title}
           </h2>
-          {post.content && (
+          {post.excerpt && (
             <p className="text-slate-300 line-clamp-3 mb-4 hidden sm:block">
-              {post.content.replace(/<[^>]*>?/gm, '').substring(0, 150)}...
+              {post.excerpt}
             </p>
           )}
           <div className="flex items-center text-xs text-slate-400 mt-auto pt-4 border-t border-slate-700 justify-center md:justify-start">
             <span>{post.author || 'VI&MO Team'}</span>
             <span className="mx-2">|</span>
-            <span>{format(new Date(post.createdAt), 'd. M. yyyy')}</span>
+            <span>{format(new Date(post.date), 'd. M. yyyy')}</span>
           </div>
         </div>
       </div>

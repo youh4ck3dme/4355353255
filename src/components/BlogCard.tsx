@@ -39,7 +39,7 @@ export const BlogCard = ({ post }: BlogCardProps) => {
           </h3>
           <div className="flex justify-between items-center text-xs text-brand-secondary-grey dark:text-slate-400 pt-4 border-t border-slate-200 dark:border-slate-700 mt-auto">
             <span>{post.author || 'VI&MO Team'}</span>
-            <span>{format(new Date(post.createdAt), 'd. M. yyyy')}</span>
+            <span>{format(new Date(post.date), 'd. M. yyyy')}</span>
           </div>
         </div>
       </div>
