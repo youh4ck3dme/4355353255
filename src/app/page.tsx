@@ -68,15 +68,15 @@ export default function HomePage() {
           data-ai-hint="moving team"
         />
         <div className="absolute inset-0 bg-brand-dark-teal/70"></div>
-        <div className="relative z-10 animate-fade-in-up">
+        <div className="relative z-10 animate-fade-in">
           <h1 className="text-5xl md:text-7xl font-extrabold mb-4 text-brand-bright-green">
             VI&MO
           </h1>
           <p className="text-2xl md:text-3xl font-light text-slate-200">
             Pevné ruky & poctivý prístup
           </p>
-          <Link href="#sluzby" className="mt-8 inline-flex items-center px-8 py-4 bg-brand-bright-green text-brand-dark-teal font-bold rounded-lg hover:bg-opacity-90 transition-colors duration-300 shadow-xl">
-              Naše Služby <ArrowDown className="w-5 h-5 ml-2" />
+          <Link href="#sluzby" className="liquid-glass-button mt-8 inline-flex items-center px-8 py-4 bg-brand-bright-green text-brand-dark-teal font-bold rounded-lg hover:bg-opacity-90 transition-colors duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1">
+              Naše Služby <ArrowDown className="w-5 h-5 ml-2 transition-transform group-hover:translate-y-1" />
           </Link>
         </div>
       </section>
@@ -93,7 +93,7 @@ export default function HomePage() {
               return (
                 <div key={index} className={`grid md:grid-cols-2 gap-8 lg:gap-16 items-center`}>
                   <div className={`order-2 ${index % 2 === 0 ? 'md:order-2' : 'md:order-1'}`}>
-                    <div className="bg-brand-light-gray dark:bg-brand-dark-teal/80 p-6 lg:p-8 rounded-lg shadow-lg">
+                    <div className="bg-brand-light-gray dark:bg-brand-dark-teal/80 p-6 lg:p-8 rounded-lg shadow-subtle hover:shadow-medium transition-shadow duration-300">
                       <div className="flex items-center mb-4">
                         <Icon className="h-8 w-8 mr-4 text-brand-bright-green" />
                         <h3 className="text-2xl font-bold text-brand-dark-teal dark:text-brand-bg">{service.title}</h3>
@@ -111,7 +111,7 @@ export default function HomePage() {
                     </div>
                   </div>
                   <div className={`order-1 ${index % 2 === 0 ? 'md:order-1' : 'md:order-2'}`}>
-                     <div className="p-8 bg-brand-dark-teal/90 rounded-lg text-white text-center">
+                     <div className="p-8 bg-brand-dark-teal/90 rounded-lg text-white text-center shadow-subtle">
                         <h4 className="text-xl font-bold text-brand-bright-green mb-2">{index % 2 === 0 ? "Rýchlo, bezpečne a so zodpovednosťou" : "Efektívne plánovanie a spoľahlivá logistika"}</h4>
                         <p className="text-slate-300">{service.description}</p>
                     </div>
@@ -130,7 +130,7 @@ export default function HomePage() {
           <p className="max-w-2xl mx-auto mb-8">
             Plánujete sťahovanie v Bratislave alebo okolí? Vyplňte krátky formulár a my Vám bezplatne pripravíme cenovú ponuku šitú presne na Vaše potreby.
           </p>
-          <Link href="/o-nas#kontakt" className="inline-block px-8 py-4 bg-brand-dark-teal text-white font-bold rounded-lg hover:bg-opacity-90 transition-colors duration-300 shadow-xl">
+          <Link href="/o-nas#kontakt" className="liquid-glass-button inline-block px-8 py-4 bg-brand-dark-teal text-white font-bold rounded-lg hover:bg-opacity-90 transition-colors duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1">
             Získať cenovú ponuku
           </Link>
         </div>

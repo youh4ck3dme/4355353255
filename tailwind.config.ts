@@ -21,6 +21,11 @@ const config: Config = {
         'brand-light-gray': '#F8F8F8',
         'brand-secondary-grey': '#64748b',
       },
+      boxShadow: {
+        'subtle': '0 2px 4px rgba(0,0,0,0.02), 0 4px 8px rgba(0,0,0,0.03)',
+        'medium': '0 5px 15px rgba(0,0,0,0.05), 0 10px 20px rgba(0,0,0,0.05)',
+        'large': '0 15px 30px rgba(0,0,0,0.08), 0 25px 50px rgba(0,0,0,0.1)',
+      },
       typography: ({ theme }) => ({
         DEFAULT: {
           css: {
@@ -47,11 +52,11 @@ const config: Config = {
         },
       }),
       animation: {
-        'fade-in-up': 'fade-in-up 0.5s ease-out forwards',
+        'fade-in': 'fade-in 0.75s ease-out forwards',
       },
       keyframes: {
-        'fade-in-up': {
-          'from': { opacity: '0', transform: 'translateY(10px)' },
+        'fade-in': {
+          'from': { opacity: '0', transform: 'translateY(5px)' },
           'to': { opacity: '1', transform: 'translateY(0)' },
         }
       }

@@ -14,7 +14,7 @@ export const ContactForm = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setStatus('submitting');
-        setMessage('');
+        // setMessage(''); // Clearing message is handled by setting a new one
 
         // Basic validation
         if (!name || !phone || !email) {
@@ -100,7 +100,7 @@ export const ContactForm = () => {
                 <button
                     type="submit"
                     disabled={status === 'submitting'}
-                    className="w-full px-8 py-4 bg-brand-bright-green text-brand-dark-teal font-bold rounded-lg hover:bg-opacity-80 transition-colors duration-300 shadow-xl disabled:bg-opacity-50 disabled:cursor-not-allowed"
+                    className="liquid-glass-button w-full px-8 py-4 bg-brand-bright-green text-brand-dark-teal font-bold rounded-lg hover:bg-opacity-80 transition-colors duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 disabled:bg-opacity-50 disabled:cursor-not-allowed"
                 >
                     {status === 'submitting' ? 'Odosielam...' : 'Odoslať požiadavku'}
                 </button>
