@@ -4,7 +4,10 @@ import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ 
+  subsets: ['latin'],
+  variable: '--font-sans',
+})
 
 export const metadata: Metadata = {
   title: "VI&MO Blog | Sťahovanie a Upratovanie Bratislava",
@@ -17,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="sk" className={`dark ${inter.className}`}>
+    <html lang="sk" className={`dark ${inter.variable}`}>
       <body>
         <Header />
         <main id="main-content" className="pt-16 min-h-screen">
