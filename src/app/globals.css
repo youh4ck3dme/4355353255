@@ -32,4 +32,9 @@
   .liquid-glass-button:focus::after {
     @apply w-48 h-48;
   }
+
+  /* Prevent body scroll when mobile menu is open */
+  .overflow-hidden {
+    overflow: hidden;
+  }
 }

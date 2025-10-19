@@ -1,11 +1,15 @@
+
 'use client';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { useState, useEffect } from 'react';
+import { Menu, X } from 'lucide-react';
 
 export const Header = () => {
   const pathname = usePathname();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navLinks = [
     { href: '/', label: 'Domov' },
@@ -14,30 +18,100 @@ export const Header = () => {
     { href: '/o-nas', label: 'O nás' },
   ];
 
+  useEffect(() => {
+    // Prevent scrolling when menu is open
+    if (isMenuOpen) {
+      document.body.classList.add('overflow-hidden');
+    } else {
+      document.body.classList.remove('overflow-hidden');
+    }
+  }, [isMenuOpen]);
+  
+  // Close menu on route change
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [pathname]);
+
+
   return (
-    <header className="sticky top-0 z-50 bg-brand-dark-teal/95 backdrop-blur-sm shadow-medium text-brand-bg">
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <Link href="/" className="text-xl font-black tracking-wider text-brand-bright-green hover:opacity-90 transition-opacity" aria-label="Domov - Bratislava sťahovanie | VI&MO">
-          Bratislava sťahovanie | VI&MO
-        </Link>
-        <nav className="hidden sm:flex items-center space-x-6">
-          {navLinks.map(link => (
-            <Link 
-              key={link.href}
-              href={link.href} 
-              className={cn(
-                "relative text-lg hover:text-brand-bright-green transition-colors pb-1",
-                { "text-brand-bright-green": pathname === link.href }
-              )}
+    <>
+      <header className="sticky top-0 z-50 bg-brand-dark-teal/95 backdrop-blur-sm shadow-medium text-brand-bg">
+        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+          <Link href="/" className="text-xl font-black tracking-wider text-brand-bright-green hover:opacity-90 transition-opacity" aria-label="Domov - Bratislava sťahovanie | VI&MO">
+            Bratislava sťahovanie | VI&MO
+          </Link>
+          
+          {/* Desktop Navigation */}
+          <nav className="hidden sm:flex items-center space-x-6">
+            {navLinks.map(link => (
+              <Link 
+                key={link.href}
+                href={link.href} 
+                className={cn(
+                  "relative text-lg hover:text-brand-bright-green transition-colors pb-1",
+                  { "text-brand-bright-green": pathname === link.href }
+                )}
+              >
+                {link.label}
+                {pathname === link.href && (
+                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-brand-bright-green animate-fade-in"></span>
+                )}
+              </Link>
+            ))}
+          </nav>
+
+          {/* Mobile Menu Button */}
+          <div className="sm:hidden">
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="p-2 text-brand-bright-green hover:text-white transition-colors"
+              aria-label="Otvoriť menu"
             >
-              {link.label}
-              {pathname === link.href && (
-                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-brand-bright-green animate-fade-in"></span>
-              )}
+              <Menu size={28} />
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Mobile Menu Overlay */}
+      <div
+        className={cn(
+          "fixed inset-0 z-50 bg-brand-dark-teal/90 backdrop-blur-lg transition-opacity duration-500 sm:hidden",
+          isMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+        )}
+      >
+        <div className="container mx-auto px-4 h-full flex flex-col">
+          <div className="h-16 flex items-center justify-between">
+            <Link href="/" className="text-xl font-black tracking-wider text-brand-bright-green">
+              Bratislava sťahovanie | VI&MO
             </Link>
-          ))}
-        </nav>
+            <button
+              onClick={() => setIsMenuOpen(false)}
+              className="p-2 text-brand-bright-green hover:text-white transition-colors"
+              aria-label="Zavrieť menu"
+            >
+              <X size={32} />
+            </button>
+          </div>
+          
+          <nav className="flex flex-col items-center justify-center flex-grow space-y-8">
+            {navLinks.map((link, index) => (
+              <Link 
+                key={link.href}
+                href={link.href}
+                className={cn(
+                  "text-3xl font-bold transition-all duration-300",
+                  pathname === link.href ? "text-brand-bright-green" : "text-brand-bg hover:text-brand-bright-green",
+                  isMenuOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4",
+                )}
+                style={{ transitionDelay: `${index * 100}ms` }}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+        </div>
       </div>
-    </header>
+    </>
   );
 };
