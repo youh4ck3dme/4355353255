@@ -256,6 +256,37 @@
         "uploadDate",
         "url"
       ]
+    },
+    "ContactSubmission": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Contact Submission",
+      "type": "object",
+      "description": "Represents a submission from the contact form.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name or company of the person submitting the form."
+        },
+        "phone": {
+          "type": "string",
+          "description": "The phone number of the person."
+        },
+        "email": {
+          "type": "string",
+          "description": "The email address of the person.",
+          "format": "email"
+        },
+        "address": {
+          "type": "string",
+          "description": "The address provided by the person."
+        },
+        "submittedAt": {
+            "type": "string",
+            "description": "The date and time when the form was submitted.",
+            "format": "date-time"
+        }
+      },
+      "required": ["name", "phone", "email", "submittedAt"]
     }
   },
   "auth": {
@@ -398,6 +429,22 @@
             {
               "name": "projectFileId",
               "description": "The unique identifier for the project file."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/contact_submissions/{submissionId}",
+        "definition": {
+          "entityName": "ContactSubmission",
+          "schema": {
+            "$ref": "#/backend/entities/ContactSubmission"
+          },
+          "description": "Stores submissions from the public contact form.",
+          "params": [
+            {
+              "name": "submissionId",
+              "description": "The unique identifier for the submission."
             }
           ]
         }

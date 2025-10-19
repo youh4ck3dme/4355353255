@@ -2,73 +2,129 @@
 'use client';
 
 import { useState } from 'react';
+import { useToast } from '@/components/ui/use-toast';
+import { z } from 'zod';
+import { useFirestore } from '@/firebase';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { Loader2 } from 'lucide-react';
+import { errorEmitter } from '@/firebase/error-emitter';
+import { FirestorePermissionError } from '@/firebase/errors';
+
+
+const contactFormSchema = z.object({
+  name: z.string().min(2, { message: 'Meno musí mať aspoň 2 znaky.' }),
+  phone: z.string().min(9, { message: 'Telefónne číslo musí mať aspoň 9 číslic.' }),
+  email: z.string().email({ message: 'Zadajte platnú emailovú adresu.' }),
+  address: z.string().optional(),
+});
+
+type ContactFormValues = z.infer<typeof contactFormSchema>;
+type FormErrors = z.inferFlattenedErrors<typeof contactFormSchema>;
+
 
 export const ContactForm = () => {
-    const [name, setName] = useState('');
-    const [phone, setPhone] = useState('');
-    const [email, setEmail] = useState('');
-    const [address, setAddress] = useState('');
-    const [message, setMessage] = useState('');
-    const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+    const [values, setValues] = useState<ContactFormValues>({
+        name: '',
+        phone: '',
+        email: '',
+        address: '',
+    });
+    const [errors, setErrors] = useState<FormErrors['fieldErrors'] | null>(null);
+    const [status, setStatus] = useState<'idle' | 'submitting'>('idle');
+    const { toast } = useToast();
+    const firestore = useFirestore();
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setValues({ ...values, [e.target.id]: e.target.value });
+    };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setStatus('submitting');
-        // setMessage(''); // Clearing message is handled by setting a new one
+        setErrors(null);
 
-        // Basic validation
-        if (!name || !phone || !email) {
-            setStatus('error');
-            setMessage('Polia Meno/Firma, Mobil a Email sú povinné.');
+        const validationResult = contactFormSchema.safeParse(values);
+
+        if (!validationResult.success) {
+            const zodErrors = validationResult.error.flatten();
+            setErrors(zodErrors.fieldErrors);
+            setStatus('idle');
             return;
         }
 
-        // Here you would typically send the data to a server endpoint
-        // For this example, we'll just simulate a network request
         try {
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            console.log({ name, phone, email, address });
-            setStatus('success');
-            setMessage('Ďakujeme! Vaša požiadavka bola odoslaná.');
-            // Reset form
-            setName('');
-            setPhone('');
-            setEmail('');
-            setAddress('');
+            const submissionsCollection = collection(firestore, 'contact_submissions');
+            
+            // Non-blocking write
+            addDoc(submissionsCollection, {
+                ...validationResult.data,
+                submittedAt: serverTimestamp(),
+            }).catch((serverError) => {
+                const permissionError = new FirestorePermissionError({
+                  path: submissionsCollection.path,
+                  operation: 'create',
+                  requestResourceData: validationResult.data,
+                });
+                errorEmitter.emit('permission-error', permissionError);
+                
+                // Also show a toast to the user
+                toast({
+                  variant: "destructive",
+                  title: "Chyba pri odosielaní",
+                  description: "Vyskytla sa chyba. Skúste to prosím znova.",
+                });
+            });
+
+
+            toast({
+                variant: 'success',
+                title: 'Požiadavka odoslaná!',
+                description: 'Ďakujeme! Čoskoro sa vám ozveme.',
+            });
+            
+            // Reset form optimistically
+            setValues({ name: '', phone: '', email: '', address: '' });
+
         } catch (error) {
-            setStatus('error');
-            setMessage('Pri odosielaní požiadavky nastala chyba. Skúste to prosím neskôr.');
+            console.error("Error adding document: ", error);
+             toast({
+                variant: "destructive",
+                title: "Vyskytla sa neočakávaná chyba",
+                description: "Prosím, skúste to znova neskôr alebo nás kontaktujte priamo.",
+            });
+        } finally {
+            setStatus('idle');
         }
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label htmlFor="name" className="block text-sm font-medium text-brand-secondary-grey dark:text-slate-300 mb-1">Meno / Firma *</label>
                     <input
                         type="text"
                         id="name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        required
+                        value={values.name}
+                        onChange={handleChange}
                         className="w-full p-3 border-2 border-slate-300 dark:border-slate-600 rounded-lg focus:border-brand-bright-green 
                                    focus:ring focus:ring-brand-bright-green/50 outline-none transition-colors 
                                    bg-brand-bg dark:bg-brand-dark-teal dark:text-brand-bg placeholder-brand-secondary-grey"
                     />
+                    {errors?.name && <p className="text-red-500 text-sm mt-1">{errors.name[0]}</p>}
                 </div>
                 <div>
                     <label htmlFor="phone" className="block text-sm font-medium text-brand-secondary-grey dark:text-slate-300 mb-1">Mobil *</label>
                     <input
                         type="tel"
                         id="phone"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        required
+                        value={values.phone}
+                        onChange={handleChange}
                         className="w-full p-3 border-2 border-slate-300 dark:border-slate-600 rounded-lg focus:border-brand-bright-green 
                                    focus:ring focus:ring-brand-bright-green/50 outline-none transition-colors 
                                    bg-brand-bg dark:bg-brand-dark-teal dark:text-brand-bg placeholder-brand-secondary-grey"
                     />
+                     {errors?.phone && <p className="text-red-500 text-sm mt-1">{errors.phone[0]}</p>}
                 </div>
             </div>
             <div>
@@ -76,21 +132,22 @@ export const ContactForm = () => {
                 <input
                     type="email"
                     id="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
+                    value={values.email}
+                    onChange={handleChange}
                     className="w-full p-3 border-2 border-slate-300 dark:border-slate-600 rounded-lg focus:border-brand-bright-green 
                                focus:ring focus:ring-brand-bright-green/50 outline-none transition-colors 
                                bg-brand-bg dark:bg-brand-dark-teal dark:text-brand-bg placeholder-brand-secondary-grey"
                 />
+                {errors?.email && <p className="text-red-500 text-sm mt-1">{errors.email[0]}</p>}
             </div>
             <div>
-                <label htmlFor="address" className="block text-sm font-medium text-brand-secondary-grey dark:text-slate-300 mb-1">Adresa</label>
+                <label htmlFor="address" className="block text-sm font-medium text-brand-secondary-grey dark:text-slate-300 mb-1">Adresa sťahovania</label>
                 <input
                     type="text"
                     id="address"
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
+                    value={values.address}
+                    onChange={handleChange}
+                    placeholder='Odkiaľ a kam sa sťahujete?'
                     className="w-full p-3 border-2 border-slate-300 dark:border-slate-600 rounded-lg focus:border-brand-bright-green 
                                focus:ring focus:ring-brand-bright-green/50 outline-none transition-colors 
                                bg-brand-bg dark:bg-brand-dark-teal dark:text-brand-bg placeholder-brand-secondary-grey"
@@ -100,16 +157,18 @@ export const ContactForm = () => {
                 <button
                     type="submit"
                     disabled={status === 'submitting'}
-                    className="liquid-glass-button w-full px-8 py-4 bg-brand-bright-green text-brand-dark-teal font-bold rounded-lg hover:bg-opacity-80 transition-colors duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 disabled:bg-opacity-50 disabled:cursor-not-allowed"
+                    className="liquid-glass-button w-full px-8 py-4 bg-brand-bright-green text-brand-dark-teal font-bold rounded-lg hover:bg-opacity-80 transition-colors duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 disabled:bg-opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                 >
-                    {status === 'submitting' ? 'Odosielam...' : 'Odoslať požiadavku'}
+                    {status === 'submitting' ? (
+                        <>
+                            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                            Odosielam...
+                        </>
+                    ) : (
+                        'Odoslať požiadavku'
+                    )}
                 </button>
             </div>
-            {message && (
-                <p className={`text-center font-medium ${status === 'success' ? 'text-green-500' : 'text-red-500'}`}>
-                    {message}
-                </p>
-            )}
         </form>
     );
 };

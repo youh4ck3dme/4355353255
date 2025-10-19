@@ -21,6 +21,17 @@ const config: Config = {
         'brand-bg': '#FFFFFF',
         'brand-light-gray': '#F8F8F8',
         'brand-secondary-grey': '#64748b',
+        // for toasts
+        background: 'hsl(0 0% 100%)',
+        foreground: 'hsl(222.2 84% 4.9%)',
+        destructive: {
+          DEFAULT: 'hsl(0 84.2% 60.2%)',
+          foreground: 'hsl(0 0% 98%)',
+        },
+        muted: {
+          DEFAULT: 'hsl(210 40% 96.1%)',
+          foreground: 'hsl(215.4 16.3% 46.9%)',
+        },
       },
       boxShadow: {
         'subtle': '0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03)',
@@ -59,12 +70,22 @@ const config: Config = {
       }),
       animation: {
         'fade-in': 'fade-in 0.75s ease-out forwards',
+        'toast-in': 'toast-in 0.5s ease-out forwards',
+        'toast-out': 'toast-out 0.5s ease-in forwards',
       },
       keyframes: {
         'fade-in': {
           'from': { opacity: '0', transform: 'translateY(10px)' },
           'to': { opacity: '1', transform: 'translateY(0)' },
-        }
+        },
+        'toast-in': {
+          'from': { transform: 'translateY(100%)', opacity: '0' },
+          'to': { transform: 'translateY(0)', opacity: '1' },
+        },
+        'toast-out': {
+            'from': { transform: 'translateY(0)', opacity: '1' },
+            'to': { transform: 'translateY(100%)', opacity: '0' },
+        },
       }
     },
   },

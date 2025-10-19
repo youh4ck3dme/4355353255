@@ -3,6 +3,8 @@ import { Inter } from 'next/font/google'
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { Toaster } from "@/components/ui/toaster";
+import { FirebaseClientProvider } from "@/firebase/client-provider";
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -22,11 +24,14 @@ export default function RootLayout({
   return (
     <html lang="sk" className={`dark ${inter.variable}`}>
       <body>
-        <Header />
-        <main id="main-content" className="pt-16 min-h-screen">
-          {children}
-        </main>
-        <Footer />
+        <FirebaseClientProvider>
+          <Header />
+          <main id="main-content" className="pt-16 min-h-screen">
+            {children}
+          </main>
+          <Footer />
+          <Toaster />
+        </FirebaseClientProvider>
       </body>
     </html>
   );
