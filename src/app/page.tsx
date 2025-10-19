@@ -245,15 +245,20 @@ export default function HomePage() {
             </div>
         </section>
         
-        {/* CTA Section with Calculator */}
-        <section className="bg-brand-dark-teal/90 min-h-screen flex flex-col justify-center py-16 px-4 text-center md:text-left">
+        {/* CTA Section with Calculator and Form */}
+        <section className="bg-brand-dark-teal/90 min-h-screen flex flex-col justify-center py-16 px-4">
           <div className="container mx-auto text-center">
             <h2 className="text-3xl font-extrabold mb-4 text-brand-bright-green text-shadow-3d-green">Nezáväzná cenová ponuka už dnes</h2>
-            <p className="max-w-2xl mx-auto mb-8 text-slate-300">
-              Plánujete sťahovanie v Bratislave alebo okolí? Vyskúšajte našu interaktívnu kalkulačku a získajte okamžitý odhad ceny.
+            <p className="max-w-3xl mx-auto mb-8 text-slate-300">
+              Plánujete sťahovanie? Vyskúšajte našu interaktívnu kalkulačku pre rýchly odhad ceny, alebo nám rovno pošlite požiadavku cez formulár nižšie a my sa vám ozveme.
             </p>
-            <div className="max-w-2xl mx-auto bg-brand-dark-teal/90 p-8 rounded-2xl shadow-2xl">
+            <div className="max-w-2xl mx-auto bg-brand-dark-teal/90 p-8 rounded-2xl shadow-2xl mb-12">
+              <h3 className="text-2xl font-bold text-white mb-6">1. Rýchly odhad ceny</h3>
               <DynamicPriceCalculator />
+            </div>
+             <div className="max-w-2xl mx-auto bg-brand-light-gray dark:bg-brand-dark-teal/80 p-8 rounded-lg shadow-2xl">
+              <h3 className="text-2xl font-bold text-brand-dark-teal dark:text-brand-bg mb-6">2. Požiadajte o presnú ponuku</h3>
+              <DynamicContactForm />
             </div>
           </div>
         </section>
