@@ -73,8 +73,8 @@ export default function PricingPage() {
         <section className="mb-16">
           <h2 className="text-3xl font-bold mb-8 text-center text-brand-dark-teal dark:text-brand-bg text-shadow-3d">Ceny za pracovníkov a dopravu</h2>
           <div className="grid md:grid-cols-2 gap-8">
-              <div className="bg-brand-light-gray dark:bg-brand-dark-teal/80 p-6 rounded-lg shadow-lg">
-                  <div className="flex items-center mb-4">
+              <div className="bg-brand-light-gray dark:bg-brand-dark-teal/80 p-6 rounded-lg shadow-lg text-center md:text-left">
+                  <div className="flex items-center justify-center md:justify-start mb-4">
                       <div className="bg-brand-bright-green p-3 rounded-full mr-4">
                           <Users className="h-6 w-6 text-brand-dark-teal" />
                       </div>
@@ -86,8 +86,8 @@ export default function PricingPage() {
                       <li>Traja a viac pracovníkov: <span className="font-bold">Cena dohodou</span></li>
                   </ul>
               </div>
-               <div className="bg-brand-light-gray dark:bg-brand-dark-teal/80 p-6 rounded-lg shadow-lg">
-                  <div className="flex items-center mb-4">
+               <div className="bg-brand-light-gray dark:bg-brand-dark-teal/80 p-6 rounded-lg shadow-lg text-center md:text-left">
+                  <div className="flex items-center justify-center md:justify-start mb-4">
                       <div className="bg-brand-bright-green p-3 rounded-full mr-4">
                           <Truck className="h-6 w-6 text-brand-dark-teal" />
                       </div>

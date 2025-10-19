@@ -8,42 +8,42 @@ import Link from 'next/link';
 
 // Helper functions to parse content
 const getMetaDescription = (content: string): string | null => {
-    if (typeof document === 'undefined') return null; // Run only on server/build time with a DOM parser
-    
-    // Na serveri nemáme DOM, takže použijeme jednoduchý regex. Pre robustnejšie riešenie by bola potrebná knižnica ako cheerio.
-    const match = content.match(/<div data-seo-meta="description".*?>(.*?)<\/div>/);
-    return match ? match[1] : null;
+    if (typeof document === 'undefined') {
+      const match = content.match(/<div data-seo-meta="description".*?>(.*?)<\/div>/);
+      return match ? match[1] : null;
+    }
+    return null;
 };
 
 const getFaqSchema = (content: string): object | null => {
-    if (typeof document === 'undefined') return null;
+    if (typeof document === 'undefined') {
+        const faqRegex = /<h2>FAQ<\/h2>([\s\S]*)/;
+        const faqSectionMatch = content.match(faqRegex);
+        if (!faqSectionMatch) return null;
 
-    // Podobne ako vyššie, toto je zjednodušená extrakcia.
-    const faqRegex = /<h2>FAQ<\/h2>([\s\S]*)/;
-    const faqSectionMatch = content.match(faqRegex);
-    if (!faqSectionMatch) return null;
+        const questionRegex = /<h3>(.*?)<\/h3>\s*<p>(.*?)<\/p>/g;
+        let match;
+        const mainEntity = [];
+        while ((match = questionRegex.exec(faqSectionMatch[1])) !== null) {
+            mainEntity.push({
+                "@type": "Question",
+                name: match[1],
+                acceptedAnswer: {
+                    "@type": "Answer",
+                    text: match[2].replace(/<[^>]*>?/gm, '') // Strip HTML from answer
+                }
+            });
+        }
 
-    const questionRegex = /<h3>(.*?)<\/h3>\s*<p>(.*?)<\/p>/g;
-    let match;
-    const mainEntity = [];
-    while ((match = questionRegex.exec(faqSectionMatch[1])) !== null) {
-        mainEntity.push({
-            "@type": "Question",
-            name: match[1],
-            acceptedAnswer: {
-                "@type": "Answer",
-                text: match[2]
-            }
-        });
+        if (mainEntity.length === 0) return null;
+
+        return {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity
+        };
     }
-
-    if (mainEntity.length === 0) return null;
-
-    return {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        mainEntity
-    };
+    return null;
 };
 
 const cleanContent = (content: string): string => {
@@ -142,10 +142,6 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     let finalContent = post.content || '';
     let faqSchema = null;
     if (post.content) {
-        // Since we can't run DOM parsing on the server easily without a library,
-        // we'll stick to regex which is brittle. A better solution is a library like 'cheerio'.
-        // For now, this is a conceptual implementation.
-        // In a real app, you would parse the HTML to extract this data.
         faqSchema = getFaqSchema(finalContent);
         finalContent = cleanContent(finalContent);
     }
@@ -163,14 +159,14 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 />
             )}
             <div className="container mx-auto px-4 py-8 max-w-5xl">
-                <article className="bg-brand-light-gray dark:bg-brand-dark-teal/80 shadow-xl rounded-lg p-6 lg:p-10">
+                <article className="bg-brand-light-gray dark:bg-brand-dark-teal/80 shadow-xl rounded-lg p-6 lg:p-10 text-center md:text-left">
                     <h1 className="text-3xl md:text-5xl font-extrabold mb-4 text-brand-dark-teal dark:text-brand-bg">{post.title}</h1>
-                    <div className="text-brand-secondary-grey dark:text-slate-300 text-sm mb-4 flex justify-between items-center">
+                    <div className="text-brand-secondary-grey dark:text-slate-300 text-sm mb-4 flex flex-col md:flex-row justify-center md:justify-between items-center">
                         <span>Autor: <span className="font-medium">{post.author || 'VI&MO Team'}</span> | Publikované: {format(new Date(post.createdAt), 'd. M. yyyy')}</span>
                     </div>
 
                     {post.tags && post.tags.length > 0 && (
-                        <div className="flex flex-wrap gap-2 mb-6">
+                        <div className="flex flex-wrap gap-2 mb-6 justify-center md:justify-start">
                             {post.tags.map(tag => (
                                 <Link key={tag} href={`/blog?category=${encodeURIComponent(tag)}`} className="bg-brand-bright-green/20 text-brand-dark-teal dark:bg-brand-bright-green dark:text-brand-dark-teal text-xs font-bold px-3 py-1 rounded-full hover:bg-brand-bright-green/40 transition-colors">
                                     {tag}

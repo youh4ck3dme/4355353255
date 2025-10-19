@@ -14,10 +14,10 @@ export const Footer = () => {
   return (
     <footer className="bg-brand-dark-teal text-brand-bg/90 pt-16 pb-8">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12 text-center md:text-left">
           
           {/* Column 1: Brand & Social */}
-          <div className="space-y-4">
+          <div className="space-y-4 flex flex-col items-center md:items-start">
             <h3 className="text-2xl font-black tracking-wider text-brand-bright-green">
               Bratislava sťahovanie | VI&MO
             </h3>
@@ -55,7 +55,7 @@ export const Footer = () => {
               <div>
                 <p className="font-semibold text-slate-300">Sťahovanie</p>
                 <p className="text-sm text-slate-400">Miroslav Danihel</p>
-                <a href="tel:+421911275755" className="flex items-center space-x-2 text-slate-300 hover:text-brand-bright-green transition-colors group">
+                <a href="tel:+421911275755" className="flex items-center justify-center md:justify-start space-x-2 text-slate-300 hover:text-brand-bright-green transition-colors group">
                   <Phone size={16} className="text-brand-bright-green/80 group-hover:text-brand-bright-green" />
                   <span>+421 911 275 755</span>
                 </a>
@@ -63,13 +63,13 @@ export const Footer = () => {
               <div>
                 <p className="font-semibold text-slate-300">Upratovanie</p>
                 <p className="text-sm text-slate-400">Barbora Danihelová Huňková</p>
-                 <a href="tel:+421918895730" className="flex items-center space-x-2 text-slate-300 hover:text-brand-bright-green transition-colors group">
+                 <a href="tel:+421918895730" className="flex items-center justify-center md:justify-start space-x-2 text-slate-300 hover:text-brand-bright-green transition-colors group">
                   <Phone size={16} className="text-brand-bright-green/80 group-hover:text-brand-bright-green" />
                   <span>+421 918 895 730</span>
                 </a>
               </div>
               <div>
-                 <a href="mailto:info@viandmo.com" className="flex items-center space-x-2 text-slate-300 hover:text-brand-bright-green transition-colors group">
+                 <a href="mailto:info@viandmo.com" className="flex items-center justify-center md:justify-start space-x-2 text-slate-300 hover:text-brand-bright-green transition-colors group">
                   <Mail size={16} className="text-brand-bright-green/80 group-hover:text-brand-bright-green" />
                   <span>info@viandmo.com</span>
                 </a>

@@ -186,9 +186,9 @@ export default function HomePage() {
                 const Icon = service.icon;
                 return (
                   <div key={index} className={`grid md:grid-cols-2 gap-8 lg:gap-16 items-center`}>
-                    <div className={`order-2 ${index % 2 === 0 ? 'md:order-2' : 'md:order-1'}`}>
+                    <div className={`order-2 text-center md:text-left ${index % 2 === 0 ? 'md:order-2' : 'md:order-1'}`}>
                       <div className="bg-brand-light-gray dark:bg-brand-dark-teal/80 p-6 lg:p-8 rounded-lg shadow-subtle hover:shadow-medium transition-shadow duration-300">
-                        <div className="flex items-center mb-4">
+                        <div className="flex items-center justify-center md:justify-start mb-4">
                           <Icon className="h-8 w-8 mr-4 text-brand-bright-green" />
                           <h3 className="text-2xl font-bold text-brand-dark-teal dark:text-brand-bg">{service.title}</h3>
                         </div>
@@ -196,7 +196,7 @@ export default function HomePage() {
                         <p className="text-brand-secondary-grey dark:text-slate-300 mb-6">{service.description}</p>
                         <ul className="space-y-2">
                           {service.included.map((item, i) => (
-                            <li key={i} className="flex items-center text-brand-secondary-grey dark:text-slate-300">
+                            <li key={i} className="flex items-center justify-center md:justify-start text-brand-secondary-grey dark:text-slate-300">
                               <CheckCircle className="h-5 w-5 mr-2 text-brand-bright-green flex-shrink-0" />
                               <span>{item}</span>
                             </li>
@@ -231,10 +231,10 @@ export default function HomePage() {
                 <Accordion type="single" collapsible className="w-full">
                     {faqItems.map((item, index) => (
                         <AccordionItem key={index} value={`item-${index + 1}`}>
-                            <AccordionTrigger className="text-lg font-semibold text-left hover:no-underline text-brand-dark-teal dark:text-brand-bg">
+                            <AccordionTrigger className="text-lg text-center md:text-left font-semibold hover:no-underline text-brand-dark-teal dark:text-brand-bg">
                                 {item.question}
                             </AccordionTrigger>
-                            <AccordionContent className="text-brand-secondary-grey dark:text-slate-300">
+                            <AccordionContent className="text-brand-secondary-grey dark:text-slate-300 text-center md:text-left">
                                 {item.answer}
                             </AccordionContent>
                         </AccordionItem>
