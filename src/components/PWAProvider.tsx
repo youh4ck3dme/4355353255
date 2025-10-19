@@ -1,7 +1,7 @@
 'use client';
 import { useEffect } from 'react';
 
-export default function PWAProvider() {
+export function PWAProvider() {
   useEffect(() => {
     // --- Service Worker register ---
     if ('serviceWorker' in navigator) {
