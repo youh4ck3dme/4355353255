@@ -60,7 +60,7 @@ export default function HomePage() {
       {/* Hero Section */}
       <section className="relative h-[60vh] min-h-[400px] flex items-center justify-center text-center text-white px-4">
         <Image 
-          src="https://picsum.photos/seed/moving-team/1920/1080"
+          src="/images/f27ddb6a-9fbe-4410-946b-766230e10a60.png"
           alt="Profesionálny sťahovací tím pri práci"
           fill
           className="object-cover"
