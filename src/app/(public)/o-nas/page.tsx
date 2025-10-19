@@ -1,14 +1,10 @@
 
 import Image from 'next/image';
 import { Metadata } from 'next';
-import { Users, Target, Sparkles, Phone, Mail, Building, Home, Briefcase, Trash2, MapPin } from 'lucide-react';
-import { ContactForm } from '@/components/ContactForm';
+import { Phone, Mail, Building, MapPin } from 'lucide-react';
 import placeholderImages from '@/lib/placeholder-images.json';
-import dynamic from 'next/dynamic';
 import { services } from '@/lib/services';
 import Link from 'next/link';
-
-const DynamicContactForm = dynamic(() => import('@/components/ContactForm').then(mod => mod.ContactForm), { ssr: false });
 
 export const metadata: Metadata = {
   title: 'O nás - Profesionálne sťahovanie a upratovanie v Bratislave | VI&MO',

@@ -7,6 +7,7 @@ const footerLinks = [
   { href: '/sluzby', label: 'Služby' },
   { href: '/cennik', label: 'Cenník' },
   { href: '/kontakt', label: 'Kontakt' },
+  { href: '/o-nas', label: 'O nás' },
   { href: '/ochrana-sukromia', label: 'Ochrana osobných údajov' },
 ];
 
