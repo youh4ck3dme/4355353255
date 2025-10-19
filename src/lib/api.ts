@@ -25,6 +25,12 @@ export async function getPublishedPosts(): Promise<Post[]> {
     return posts || [];
 }
 
+export async function getAllPosts(): Promise<Post[]> {
+    const posts = await fetcher<Post[]>(`${API_URL}/posts`);
+    return posts || [];
+}
+
+
 export async function getPostBySlug(slug: string): Promise<Post | null> {
     const post = await fetcher<Post>(`${API_URL}/posts/${slug}`);
     return post;
