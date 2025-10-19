@@ -1,7 +1,6 @@
 
 import { Metadata } from 'next';
-import { Euro, Users, Truck, Home } from 'lucide-react';
-import { PriceCalculator } from '@/components/PriceCalculator';
+import { Users, Truck, Home } from 'lucide-react';
 import dynamic from 'next/dynamic';
 
 const DynamicPriceCalculator = dynamic(() => import('@/components/PriceCalculator').then(mod => mod.PriceCalculator), { ssr: false });
@@ -21,12 +20,11 @@ const priceItems = [
 ];
 
 export default function PricingPage() {
-  const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
   const offerCatalogJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'OfferCatalog',
     name: 'Cenník sťahovacích služieb',
-    itemListElement: priceItems.filter(item => item.priceNumeric !== null).map((item, index) => ({
+    itemListElement: priceItems.filter(item => item.priceNumeric !== null).map((item) => ({
       '@type': 'Offer',
       itemOffered: {
         '@type': 'Service',
@@ -36,7 +34,7 @@ export default function PricingPage() {
         '@type': 'PriceSpecification',
         price: item.priceNumeric,
         priceCurrency: 'EUR',
-        valueAddedTaxIncluded: false, // Alebo true, ak je DPH zahrnutá
+        valueAddedTaxIncluded: false, 
         description: 'Cena je orientačná, začína od uvedenej sumy.'
       }
     }))
