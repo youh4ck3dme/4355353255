@@ -1,0 +1,12 @@
+{
+  "aboutTeam": {
+    "src": "https://picsum.photos/seed/vimo-team/1200/800",
+    "alt": "Tím VI&MO pri práci",
+    "hint": "team working moving"
+  },
+  "hero": {
+    "src": "/images/f27ddb6a-9fbe-4410-946b-766230e10a60.png",
+    "alt": "Profesionálny sťahovací tím pri práci",
+    "hint": "moving team"
+  }
+}

@@ -1,6 +1,7 @@
 import { CheckCircle, Truck, Building, Sparkles, Trash2, ArrowDown } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import placeholderImages from '@/lib/placeholder-images.json';
 
 const services = [
   {
@@ -86,6 +87,8 @@ export default function HomePage() {
       'query-input': 'required name=search_term_string'
     }
   };
+  
+  const heroImage = placeholderImages.hero;
 
   return (
     <>
@@ -101,12 +104,12 @@ export default function HomePage() {
         {/* Hero Section */}
         <section className="relative h-[60vh] min-h-[400px] flex items-center justify-center text-center text-white px-4">
           <Image 
-            src="/images/f27ddb6a-9fbe-4410-946b-766230e10a60.png"
-            alt="Profesionálny sťahovací tím pri práci"
+            src={heroImage.src}
+            alt={heroImage.alt}
             fill
             className="object-cover"
             priority
-            data-ai-hint="moving team"
+            data-ai-hint={heroImage.hint}
           />
           <div className="absolute inset-0 bg-brand-dark-teal/70"></div>
           <div className="relative z-10 animate-fade-in">

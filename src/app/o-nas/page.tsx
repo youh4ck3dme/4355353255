@@ -2,6 +2,7 @@ import Image from 'next/image';
 import { Metadata } from 'next';
 import { Users, Target, Sparkles, Phone, Mail, Building, Home, Briefcase, Trash2, MapPin } from 'lucide-react';
 import { ContactForm } from '@/components/ContactForm';
+import placeholderImages from '@/lib/placeholder-images.json';
 
 export const metadata: Metadata = {
   title: 'O nás - Profesionálne sťahovanie a upratovanie v Bratislave | VI&MO',
@@ -79,6 +80,8 @@ export default function AboutPage() {
     ]
   };
 
+  const aboutTeamImage = placeholderImages.aboutTeam;
+
   return (
     <>
       <script
@@ -98,11 +101,12 @@ export default function AboutPage() {
         <section className="mb-16 grid md:grid-cols-2 gap-12 items-center">
             <div className="relative w-full h-80 rounded-lg overflow-hidden shadow-2xl">
                 <Image
-                  src="https://picsum.photos/seed/vimo-team/1200/800"
-                  alt="Tím VI&MO pri práci"
+                  src={aboutTeamImage.src}
+                  alt={aboutTeamImage.alt}
                   fill
                   className="object-cover"
-                  data-ai-hint="team working moving"
+                  data-ai-hint={aboutTeamImage.hint}
+                  sizes="(max-width: 768px) 100vw, 50vw"
                 />
             </div>
             <div>
