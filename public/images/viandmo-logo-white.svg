@@ -6,19 +6,19 @@
         letter-spacing: -0.02em;
     }
 </style>
-<g class="v-char" font-size="28" fill="#1A5255">
+<g class="v-char" font-size="28" fill="white">
     <text x="0" y="29">V</text>
 </g>
-<g class="i-char" font-size="28" fill="#1A5255">
+<g class="i-char" font-size="28" fill="white">
     <text x="20" y="29">I</text>
 </g>
 <g class="amp-char" font-size="28" fill="#5EEAD4">
     <text x="35" y="29">&amp;</text>
 </g>
-<g class="m-char" font-size="28" fill="#1A5255">
+<g class="m-char" font-size="28" fill="white">
     <text x="60" y="29">M</text>
 </g>
-<g class="o-char" font-size="28" fill="#1A5255">
+<g class="o-char" font-size="28" fill="white">
     <text x="85" y="29">O</text>
 </g>
 </svg>
