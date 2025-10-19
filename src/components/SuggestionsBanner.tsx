@@ -69,6 +69,7 @@ const categories = Object.keys(allSuggestions) as Category[];
 
 export const SuggestionsBanner = () => {
   const [currentCategory, setCurrentCategory] = useState<Category>('Funkcionalita');
+  const [hoveredCategory, setHoveredCategory] = useState<Category | null>(null);
   const [currentSuggestion, setCurrentSuggestion] = useState('');
   const [isClient, setIsClient] = useState(false);
 
@@ -86,8 +87,8 @@ export const SuggestionsBanner = () => {
         setCurrentSuggestion(suggestionsForCategory[randomIndex]);
     };
     
-    getNewSuggestion(); // Initial suggestion
-    const intervalId = setInterval(getNewSuggestion, 7000); // Rotate suggestions
+    getNewSuggestion();
+    const intervalId = setInterval(getNewSuggestion, 7000);
 
     return () => clearInterval(intervalId);
   }, [isClient, suggestionsForCategory]);
@@ -96,9 +97,11 @@ export const SuggestionsBanner = () => {
     setCurrentCategory('Funkcionalita');
   }
 
-  if (!isClient || !currentSuggestion) {
-    return null; // Don't render anything on the server or before the first suggestion is ready
+  if (!isClient) {
+    return null;
   }
+
+  const activeCategoryLabel = hoveredCategory || currentCategory;
 
   return (
     <div className="fixed bottom-4 left-4 z-50 max-w-sm">
@@ -108,7 +111,7 @@ export const SuggestionsBanner = () => {
                     <Lightbulb className="h-5 w-5 text-brand-bright-green" />
                 </div>
                 <div>
-                    <h3 className="text-sm font-bold text-brand-bright-green">Návrh na vylepšenie ({currentCategory}):</h3>
+                    <h3 className="text-sm font-bold text-brand-bright-green">Návrh na vylepšenie:</h3>
                     <p className="text-sm text-brand-bg">{currentSuggestion}</p>
                     <button
                         onClick={() => navigator.clipboard.writeText(currentSuggestion)}
@@ -120,13 +123,22 @@ export const SuggestionsBanner = () => {
                 </div>
             </div>
             <div className="border-t border-brand-bright-green/20 pt-3">
-                <div className="flex items-center space-x-2">
+                 <div className="h-6 mb-1 text-center">
+                    <span className="text-xs font-bold uppercase tracking-wider text-brand-bright-green">
+                      {activeCategoryLabel}
+                    </span>
+                 </div>
+                <div 
+                    className="flex items-center space-x-2"
+                    onMouseLeave={() => setHoveredCategory(null)}
+                >
                     {categories.map(category => {
                         const Icon = categoryIcons[category];
                         return (
                             <button 
                                 key={category}
                                 onClick={() => setCurrentCategory(category)}
+                                onMouseEnter={() => setHoveredCategory(category)}
                                 title={category}
                                 className={`p-2 rounded-full transition-colors ${currentCategory === category ? 'bg-brand-bright-green text-brand-dark-teal' : 'bg-white/10 hover:bg-white/20'}`}
                             >
