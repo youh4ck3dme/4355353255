@@ -1,7 +1,7 @@
 'use client';
 
-import { Lightbulb, RotateCcw, Shield, Brush, Rocket, Search, UserCheck, Wrench, FunctionSquare } from 'lucide-react';
-import { useEffect, useState, useMemo } from 'react';
+import { Lightbulb, RotateCcw, Shield, Brush, Rocket, Search, UserCheck, Wrench, FunctionSquare, ImagePlus } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 const allSuggestions = {
   Funkcionalita: [
@@ -21,7 +21,6 @@ const allSuggestions = {
     "Pridaj do aplikácie systém notifikácií v reálnom čase."
   ],
   Dizajn: [
-    "Pridaj tmavý a svetlý režim s možnosťou prepínania.",
     "Vytvor animované prechody medzi stránkami pre lepší používateľský zážitok.",
     "Redizajnuj hlavičku, aby bola menšia pri skrolovaní nadol.",
     "Pridaj jemné 'hover' efekty na všetky interaktívne prvky.",
@@ -41,8 +40,7 @@ const allSuggestions = {
   Bezpečnosť: [
     "Pridaj Content Security Policy (CSP) hlavičky na ochranu pred XSS útokmi.",
     "Aktualizuj všetky závislosti na najnovšie verzie kvôli bezpečnostným opravám.",
-    "Zabezpeč formuláre proti CSRF útokom.",
-    "Použi 'HttpOnly' a 'Secure' atribúty pre cookies, ak nejaké používaš."
+    "Zabezpeč formuláre proti CSRF útokom."
   ],
   UX: [
     "Pridaj breadcrumbs (omrvinkovú navigáciu) na stránke detailu článku.",
@@ -73,10 +71,12 @@ export const SuggestionsBanner = () => {
   const [hoveredCategory, setHoveredCategory] = useState<Category | null>(null);
   const [currentSuggestion, setCurrentSuggestion] = useState('');
 
-  const suggestionsForCategory = useMemo(() => allSuggestions[currentCategory], [currentCategory]);
-
   useEffect(() => {
     setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isClient) return;
 
     const getNewSuggestion = (category: Category) => {
         const suggestions = allSuggestions[category];
@@ -86,10 +86,14 @@ export const SuggestionsBanner = () => {
     
     getNewSuggestion(currentCategory);
 
-    const intervalId = setInterval(() => getNewSuggestion(currentCategory), 7000);
+    const intervalId = setInterval(() => {
+        const newSuggestions = allSuggestions[currentCategory];
+        const newRandomIndex = Math.floor(Math.random() * newSuggestions.length);
+        setCurrentSuggestion(newSuggestions[newRandomIndex]);
+    }, 7000);
 
     return () => clearInterval(intervalId);
-  }, [currentCategory]);
+  }, [currentCategory, isClient]);
 
 
   if (!isClient) {
@@ -142,11 +146,17 @@ export const SuggestionsBanner = () => {
                         )
                     })}
                      <button 
-                        onClick={() => setCurrentCategory('Funkcionalita')}
-                        title="Resetovať kategóriu"
+                        onClick={() => setCurrentCategory(categories[Math.floor(Math.random() * categories.length)])}
+                        title="Náhodná kategória"
                         className="p-2 rounded-full transition-colors bg-white/10 hover:bg-white/20"
                     >
                         <RotateCcw className="h-4 w-4" />
+                    </button>
+                    <button 
+                        title="Nahrať obrázok (v príprave)"
+                        className="p-2 rounded-full transition-colors bg-red-900/50 hover:bg-red-900/80 cursor-not-allowed"
+                    >
+                        <ImagePlus className="h-4 w-4" />
                     </button>
                 </div>
             </div>
