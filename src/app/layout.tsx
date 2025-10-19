@@ -42,7 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <html lang="sk" className={`${inter.variable}`} suppressHydrationWarning>
-      <body className="dark">
+      <body className="bg-brand-bg text-brand-text dark:bg-brand-dark-teal dark:text-brand-bg">
         {/* PWA behaviors */}
         <PWAProvider />
         <InstallPrompt />
