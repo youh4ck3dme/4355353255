@@ -9,7 +9,7 @@ const inter = Inter({ subsets: ["latin"], display: 'swap' });
 
 export const metadata: Metadata = {
   title: "VI&MO Blog | Sťahovanie a Upratovanie Bratislava",
-  description: "Oficiálny blog firmy VI&MO: Tipy a rady pre sťahovanie, upratovanie a vypratávanie v Bratislave.",
+  description: "Nájdete tu najlepšie tipy a rady pre sťahovanie, upratovanie a vypratávanie v Bratislave a okolí. Prečítajte si náš blog!",
 };
 
 export default function RootLayout({

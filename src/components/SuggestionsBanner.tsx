@@ -12,8 +12,6 @@ const allSuggestions = {
     "Vytvor kontaktný formulár s validáciou na samostatnej stránke 'Kontakt'.",
     "Implementuj full-textové vyhľadávanie s našeptávačom.",
     "Pridaj sekciu komentárov pod každý článok pomocou služby ako Disqus.",
-    "Vytvor stránku 'O nás' s predstavením firmy VI&MO.",
-    "Pridaj kalkulačku odhadovanej ceny sťahovania.",
     "Implementuj systém hodnotenia článkov (1-5 hviezdičiek)."
   ],
   'Generovanie Funkcií': [
@@ -32,17 +30,12 @@ const allSuggestions = {
     "Použi iný, modernejší font pre nadpisy."
   ],
   Výkon: [
-    "Optimalizuj obrázky pre rýchlejšie načítanie na mobilných zariadeniach.",
     "Analyzuj a optimalizuj metriky Core Web Vitals.",
     "Implementuj 'lazy loading' pre obrázky a videá mimo viditeľnej časti stránky.",
     "Zváž použitie statického generovania stránok (SSG) pre blogové príspevky.",
     "Minifikuj CSS a JavaScript súbory pre produkciu."
   ],
   SEO: [
-    "Automaticky generuj štruktúrované dáta (Schema.org) pre blogové príspevky.",
-    "Vytvor dynamickú sitemap.xml pre všetky stránky a články.",
-    "Pridaj 'alt' texty ku všetkým obrázkom pre lepšiu prístupnosť a SEO.",
-    "Optimalizuj meta popisy pre lepšiu mieru prekliku (CTR) z Google.",
     "Implementuj kanonické URL, aby sa predišlo duplicitnému obsahu."
   ],
   Bezpečnosť: [
@@ -75,34 +68,29 @@ const categoryIcons: Record<Category, React.ElementType> = {
 const categories = Object.keys(allSuggestions) as Category[];
 
 export const SuggestionsBanner = () => {
+  const [isClient, setIsClient] = useState(false);
   const [currentCategory, setCurrentCategory] = useState<Category>('Funkcionalita');
   const [hoveredCategory, setHoveredCategory] = useState<Category | null>(null);
   const [currentSuggestion, setCurrentSuggestion] = useState('');
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
 
   const suggestionsForCategory = useMemo(() => allSuggestions[currentCategory], [currentCategory]);
 
   useEffect(() => {
-    if (!isClient) return;
+    setIsClient(true);
 
-    const getNewSuggestion = () => {
-        const randomIndex = Math.floor(Math.random() * suggestionsForCategory.length);
-        setCurrentSuggestion(suggestionsForCategory[randomIndex]);
+    const getNewSuggestion = (category: Category) => {
+        const suggestions = allSuggestions[category];
+        const randomIndex = Math.floor(Math.random() * suggestions.length);
+        setCurrentSuggestion(suggestions[randomIndex]);
     };
     
-    getNewSuggestion();
-    const intervalId = setInterval(getNewSuggestion, 7000);
+    getNewSuggestion(currentCategory);
+
+    const intervalId = setInterval(() => getNewSuggestion(currentCategory), 7000);
 
     return () => clearInterval(intervalId);
-  }, [isClient, suggestionsForCategory]);
+  }, [currentCategory]);
 
-  const resetCategory = () => {
-    setCurrentCategory('Funkcionalita');
-  }
 
   if (!isClient) {
     return null;
@@ -154,7 +142,7 @@ export const SuggestionsBanner = () => {
                         )
                     })}
                      <button 
-                        onClick={resetCategory}
+                        onClick={() => setCurrentCategory('Funkcionalita')}
                         title="Resetovať kategóriu"
                         className="p-2 rounded-full transition-colors bg-white/10 hover:bg-white/20"
                     >

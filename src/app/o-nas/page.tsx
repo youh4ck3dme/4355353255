@@ -4,7 +4,7 @@ import { Users, Target, Sparkles } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'O nás | VI&MO Blog',
-  description: 'Zistite viac o firme VI&MO, našom príbehu, hodnotách a tíme, ktorý stojí za kvalitnými sťahovacími a upratovacími službami v Bratislave.',
+  description: 'Zistite viac o firme VI&MO. Náš príbeh, hodnoty a tím, ktorý poskytuje kvalitné sťahovacie a upratovacie služby v Bratislave.',
 };
 
 export default function AboutPage() {

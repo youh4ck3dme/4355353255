@@ -29,10 +29,11 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
 
   const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
   const postUrl = `${siteUrl}/blog/${post.slug}`;
+  const description = `Prečítajte si viac o téme "${post.title}" a získajte cenné tipy od expertov z VI&MO. Váš spoľahlivý partner pre sťahovanie a upratovanie v Bratislave.`;
 
   return {
     title: `${post.title} | VI&MO Blog`,
-    description: post.content?.substring(0, 160) || 'Blog VI&MO',
+    description: description,
     alternates: {
         canonical: postUrl,
     }
@@ -59,7 +60,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         '@context': 'https://schema.org',
         '@type': 'BlogPosting',
         headline: post.title,
-        description: post.content?.substring(0, 160) || 'Blog VI&MO',
+        description: `Prečítajte si viac o téme "${post.title}" a získajte cenné tipy od expertov z VI&MO.`,
         image: post.imageUrl || `${siteUrl}/placeholder-logo.png`,
         author: {
             '@type': 'Organization',
