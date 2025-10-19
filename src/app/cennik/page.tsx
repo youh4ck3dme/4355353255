@@ -62,7 +62,7 @@ export default function PricingPage() {
           <h2 className="text-3xl font-bold mb-8 text-center text-brand-dark-teal dark:text-brand-bg text-shadow-3d">Základný cenník sťahovania</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {priceItems.map((item) => (
-              <div key={item.name} className="bg-brand-light-gray dark:bg-brand-dark-teal/80 p-6 rounded-lg shadow-lg flex flex-col items-center text-center">
+              <div key={item.id} className="bg-brand-light-gray dark:bg-brand-dark-teal/80 p-6 rounded-lg shadow-lg flex flex-col items-center text-center">
                 <div className="bg-brand-bright-green p-3 rounded-full mb-4">
                     <Home className="h-6 w-6 text-brand-dark-teal" />
                 </div>
@@ -116,5 +116,3 @@ export default function PricingPage() {
     </>
   );
 }
-
-    

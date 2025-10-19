@@ -6,49 +6,45 @@ import { Metadata } from 'next';
 import { BlogCard } from '@/components/BlogCard';
 import Link from 'next/link';
 
-// Helper functions to parse content
+// Helper function to extract meta description from post content using regex
 const getMetaDescription = (content: string): string | null => {
-    if (typeof document === 'undefined') {
-      const match = content.match(/<div data-seo-meta="description".*?>(.*?)<\/div>/);
-      return match ? match[1] : null;
-    }
-    return null;
+    const match = content.match(/<div data-seo-meta="description".*?>(.*?)<\/div>/);
+    return match ? match[1] : null;
 };
 
+// Helper function to extract FAQ schema data from post content using regex
 const getFaqSchema = (content: string): object | null => {
-    if (typeof document === 'undefined') {
-        const faqRegex = /<h2>FAQ<\/h2>([\s\S]*)/;
-        const faqSectionMatch = content.match(faqRegex);
-        if (!faqSectionMatch) return null;
+    const faqRegex = /<h2>FAQ<\/h2>([\s\S]*)/;
+    const faqSectionMatch = content.match(faqRegex);
+    if (!faqSectionMatch) return null;
 
-        const questionRegex = /<h3>(.*?)<\/h3>\s*<p>(.*?)<\/p>/g;
-        let match;
-        const mainEntity = [];
-        while ((match = questionRegex.exec(faqSectionMatch[1])) !== null) {
-            mainEntity.push({
-                "@type": "Question",
-                name: match[1],
-                acceptedAnswer: {
-                    "@type": "Answer",
-                    text: match[2].replace(/<[^>]*>?/gm, '') // Strip HTML from answer
-                }
-            });
-        }
-
-        if (mainEntity.length === 0) return null;
-
-        return {
-            "@context": "https://schema.org",
-            "@type": "FAQPage",
-            mainEntity
-        };
+    const questionRegex = /<h3>(.*?)<\/h3>\s*<p>(.*?)<\/p>/g;
+    let match;
+    const mainEntity = [];
+    while ((match = questionRegex.exec(faqSectionMatch[1])) !== null) {
+        mainEntity.push({
+            "@type": "Question",
+            name: match[1],
+            acceptedAnswer: {
+                "@type": "Answer",
+                text: match[2].replace(/<[^>]*>?/gm, '') // Strip HTML from answer
+            }
+        });
     }
-    return null;
+
+    if (mainEntity.length === 0) return null;
+
+    return {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity
+    };
 };
 
+// Helper function to remove special SEO blocks from the content to be rendered
 const cleanContent = (content: string): string => {
     return content
-        .replace(/<div data-seo-meta="description".*?>.*?<\/div>/, '')
+        .replace(/<div data-seo-meta="description".*?>.*?<\/div>/s, '') // s flag for dotall
         .replace(/<h2>FAQ<\/h2>[\s\S]*/, '');
 };
 
@@ -86,7 +82,6 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
     }
   }
   
-
   return {
     title: `${post.title} | Bratislava sťahovanie | VI&MO`,
     description: description,
@@ -98,11 +93,12 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
     const post = await getPostBySlug(params.slug);
-    const allPosts = await getPublishedPosts();
-
+    
     if (!post) {
         notFound();
     }
+    
+    const allPosts = await getPublishedPosts();
 
     const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
     const postUrl = `${siteUrl}/blog/${post.slug}`;
@@ -115,7 +111,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         '@context': 'https://schema.org',
         '@type': 'BlogPosting',
         headline: post.title,
-        description: `Prečítajte si viac o téme "${post.title}" a získajte cenné tipy od expertov z VI&MO.`,
+        description: getMetaDescription(post.content || '') || `Prečítajte si viac o téme "${post.title}" a získajte cenné tipy od expertov z VI&MO.`,
         image: post.imageUrl || `${siteUrl}/placeholder-logo.png`,
         author: {
             '@type': 'Organization',

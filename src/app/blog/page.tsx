@@ -44,8 +44,8 @@ const FeaturedPostCard = ({ post }: { post: Post }) => (
 
 export default async function BlogIndexPage({ searchParams }: { searchParams?: { [key: string]: string | string[] | undefined }}) {
   const posts = await getPublishedPosts();
-  const featuredPost = posts.length > 0 ? posts[0] : null;
-  const otherPosts = posts.length > 1 ? posts.slice(1) : [];
+  const featuredPost = posts[0] ?? null;
+  const otherPosts = posts.slice(1);
 
   const initialCategory = typeof searchParams?.category === 'string' ? searchParams.category : undefined;
 
@@ -69,7 +69,7 @@ export default async function BlogIndexPage({ searchParams }: { searchParams?: {
         </>
       )}
 
-      {posts.length === 1 && !otherPosts.length && (
+      {posts.length === 1 && (
         <p className="text-center text-brand-secondary-grey py-16">
           Zatiaľ tu máme len jeden článok. Ďalšie čoskoro pribudnú!
         </p>
