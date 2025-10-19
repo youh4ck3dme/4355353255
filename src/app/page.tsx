@@ -152,7 +152,7 @@ export default function HomePage() {
       />
       <div className="bg-brand-bg text-brand-text dark:bg-brand-dark-teal dark:text-brand-bg">
         {/* Hero Section */}
-        <section className="relative h-[60vh] min-h-[400px] flex items-center justify-center text-center text-white px-4">
+        <section className="relative h-screen flex items-center justify-center text-center text-white px-4">
           <Image 
             src={heroImage.src}
             alt={heroImage.alt}
@@ -176,7 +176,7 @@ export default function HomePage() {
         </section>
 
         {/* Services Section */}
-        <section id="sluzby" className="py-16">
+        <section id="sluzby" className="min-h-screen flex flex-col justify-center py-16">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold text-brand-dark-teal dark:text-brand-bright-green text-shadow-3d-green">Naše Služby</h2>
@@ -218,7 +218,7 @@ export default function HomePage() {
         </section>
 
         {/* FAQ Section */}
-        <section id="faq" className="py-16">
+        <section id="faq" className="min-h-screen flex flex-col justify-center py-16">
             <div className="container mx-auto px-4 max-w-3xl">
                 <div className="text-center mb-12">
                     <h2 className="text-3xl md:text-4xl font-bold text-brand-dark-teal dark:text-brand-bright-green text-shadow-3d-green">
@@ -244,7 +244,7 @@ export default function HomePage() {
         </section>
         
         {/* CTA Section */}
-        <section className="bg-brand-bright-green text-brand-dark-teal py-16 px-4">
+        <section className="bg-brand-bright-green text-brand-dark-teal min-h-screen flex flex-col justify-center py-16 px-4">
           <div className="container mx-auto text-center">
             <h2 className="text-3xl font-extrabold mb-4 text-shadow-3d">Nezáväzná cenová ponuka už dnes</h2>
             <p className="max-w-2xl mx-auto mb-8">
