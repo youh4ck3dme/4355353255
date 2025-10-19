@@ -2,6 +2,8 @@ import { CheckCircle, Truck, Building, Sparkles, Trash2, ArrowDown } from 'lucid
 import Link from 'next/link';
 import Image from 'next/image';
 import placeholderImages from '@/lib/placeholder-images.json';
+import { ContactForm } from '@/components/ContactForm';
+
 
 const services = [
   {
