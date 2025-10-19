@@ -185,9 +185,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 />
             )}
             <div className="container mx-auto px-4 py-8 max-w-5xl">
-                <article className="bg-brand-light-gray dark:bg-brand-dark-teal/80 shadow-xl rounded-lg p-6 lg:p-10 text-center md:text-left">
-                    <h1 className="text-3xl md:text-5xl font-extrabold mb-4 text-brand-dark-teal dark:text-brand-bg">{post.title}</h1>
-                    <div className="text-brand-secondary-grey dark:text-slate-300 text-sm mb-4 flex flex-col md:flex-row justify-center md:justify-between items-center">
+                <article className="bg-brand-light-gray dark:bg-brand-dark-teal/80 shadow-xl rounded-lg p-6 lg:p-10">
+                    <h1 className="text-3xl md:text-5xl font-extrabold mb-2 text-brand-dark-teal dark:text-brand-bg text-center md:text-left">{post.title}</h1>
+                    <div className="text-brand-secondary-grey dark:text-slate-300 text-sm mb-4 flex flex-col md:flex-row justify-center md:justify-between items-center text-center md:text-left">
                         <span>Autor: <span className="font-medium">{post.author || 'VI&MO Team'}</span> | Publikované: {format(new Date(post.createdAt), 'd. M. yyyy')}</span>
                     </div>
 
@@ -216,7 +216,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
                     {finalContent && (
                         <div 
-                            className="prose prose-lg dark:prose-invert max-w-none"
+                            className="prose prose-lg dark:prose-invert max-w-none text-left"
                             dangerouslySetInnerHTML={{ __html: finalContent }}
                         />
                     )}

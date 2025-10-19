@@ -1,3 +1,4 @@
+
 import { CheckCircle, Truck, Building, Sparkles, Trash2, ArrowDown, HelpCircle } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -168,7 +169,7 @@ export default function HomePage() {
           <div className="absolute inset-0 bg-brand-dark-teal/70"></div>
           <div className="relative z-10 animate-fade-in text-center">
             <h1 className="text-5xl md:text-7xl font-extrabold mb-4 text-brand-bright-green text-shadow-3d-green">
-              Bratislava sťahovanie
+              Sťahovanie bez starostí
             </h1>
             <p className="text-2xl md:text-3xl font-light text-slate-200">
               Pevné ruky & poctivý prístup
@@ -224,6 +225,7 @@ export default function HomePage() {
         <section id="faq" className="min-h-screen flex flex-col justify-center py-16 bg-gradient-to-b from-green-900 via-brand-dark-teal to-slate-800 text-white text-center md:text-left">
             <div className="container mx-auto px-4 max-w-3xl">
                 <div className="text-center mb-12">
+                     <HelpCircle className="h-12 w-12 mx-auto mb-4 text-brand-bright-green"/>
                     <h2 className="text-3xl md:text-4xl font-bold text-brand-bright-green text-shadow-3d-green">
                         Často Kladené Otázky
                     </h2>
@@ -235,7 +237,7 @@ export default function HomePage() {
                     {faqItems.map((item, index) => (
                         <AccordionItem key={index} value={`item-${index + 1}`} className="border-b border-green-400/20">
                             <AccordionTrigger className="text-lg text-center md:text-left font-semibold hover:no-underline text-brand-bg">
-                                {item.question}
+                                <span className="flex items-center"><HelpCircle className="w-5 h-5 mr-3 text-brand-bright-green/70" /> {item.question}</span>
                             </AccordionTrigger>
                             <AccordionContent className="text-slate-300 text-center md:text-left">
                                 {item.answer}

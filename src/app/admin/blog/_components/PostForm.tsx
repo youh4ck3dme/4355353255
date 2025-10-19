@@ -72,9 +72,10 @@ export const PostForm = ({ post }: PostFormProps) => {
           title: `Článok ${post ? 'uložený' : 'vytvorený'}!`,
           description: `Článok "${result.title}" bol úspešne ${post ? 'aktualizovaný' : 'vytvorený'}.`,
         });
+        
         // Wait for revalidation then navigate
-        setTimeout(() => router.push('/admin/blog'), 1000); 
-        router.refresh();
+        router.push('/admin/blog');
+        router.refresh(); // Tell Next.js to fetch new data for the page
       } else {
         throw new Error('Nepodarilo sa uložiť článok.');
       }

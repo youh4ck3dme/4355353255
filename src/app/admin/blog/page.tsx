@@ -7,7 +7,7 @@ import { getAllPosts, deletePost } from '@/lib/api';
 import { Post } from '@/lib/types';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
-import { PlusCircle, Edit, Trash2, Loader2, RefreshCw } from 'lucide-react';
+import { PlusCircle, Edit, Trash2, Loader2, RefreshCw, Newspaper } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
 
 
@@ -84,12 +84,20 @@ export default function AdminBlogPage() {
 
     return (
         <div className="container mx-auto px-4 py-12 max-w-6xl">
-            <header className="flex flex-col md:flex-row justify-between items-center mb-10">
-                <h1 className="text-4xl md:text-5xl font-extrabold text-brand-dark-teal dark:text-brand-bright-green text-shadow-3d-green text-center md:text-left">
-                    Správa článkov
-                </h1>
+            <header className="flex flex-col md:flex-row justify-between items-start mb-10">
+                <div>
+                     <div className="flex items-center gap-4 mb-2">
+                        <Newspaper className="h-10 w-10 text-brand-bright-green"/>
+                        <h1 className="text-4xl md:text-5xl font-extrabold text-brand-dark-teal dark:text-brand-bright-green text-shadow-3d-green">
+                            Správa článkov
+                        </h1>
+                    </div>
+                    <p className="text-lg text-brand-secondary-grey dark:text-slate-300 mt-2">
+                        Vytvárajte, upravujte a spravujte obsah vášho blogu.
+                    </p>
+                </div>
                 <div className="flex items-center gap-4 mt-4 md:mt-0">
-                    <button onClick={fetchPosts} disabled={isLoading} className="p-3 bg-slate-200 dark:bg-slate-700 rounded-lg hover:bg-opacity-80 transition-colors duration-300 shadow-md disabled:opacity-50 disabled:cursor-wait">
+                    <button onClick={fetchPosts} disabled={isLoading} className="p-3 bg-slate-200 dark:bg-slate-700 rounded-lg hover:bg-opacity-80 transition-colors duration-300 shadow-md disabled:opacity-50 disabled:cursor-wait" aria-label="Obnoviť zoznam">
                         <RefreshCw size={20} className={cn(isLoading && "animate-spin")} />
                     </button>
                     <Link

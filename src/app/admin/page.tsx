@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
+import { LayoutDashboard } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Admin Panel | VI&MO',
@@ -12,9 +13,12 @@ export const metadata: Metadata = {
 export default function AdminPage() {
   return (
     <div className="container mx-auto px-4 py-12 max-w-4xl text-center">
-      <h1 className="text-4xl md:text-5xl font-extrabold mb-8 text-brand-dark-teal dark:text-brand-bright-green text-shadow-3d-green">
-        Admin Panel
-      </h1>
+      <div className="flex items-center justify-center gap-4 mb-8">
+          <LayoutDashboard className="h-10 w-10 text-brand-bright-green" />
+          <h1 className="text-4xl md:text-5xl font-extrabold text-brand-dark-teal dark:text-brand-bright-green text-shadow-3d-green">
+            Admin Panel
+          </h1>
+      </div>
       <div className="bg-brand-light-gray dark:bg-brand-dark-teal/80 p-8 rounded-lg shadow-lg">
         <h2 className="text-2xl font-bold mb-4 text-brand-dark-teal dark:text-brand-bg">Vitajte v administrácii</h2>
         <p className="text-brand-secondary-grey dark:text-slate-300 mb-6">

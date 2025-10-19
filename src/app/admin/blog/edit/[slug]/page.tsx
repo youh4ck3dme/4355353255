@@ -3,6 +3,7 @@ import { Metadata } from 'next';
 import { getPostBySlug } from '@/lib/api';
 import { notFound } from 'next/navigation';
 import { PostForm } from '../../_components/PostForm';
+import { FilePen } from 'lucide-react';
 
 type EditPostPageProps = {
     params: {
@@ -32,9 +33,12 @@ export default async function EditPostPage({ params }: EditPostPageProps) {
     return (
         <div className="container mx-auto px-4 py-12 max-w-4xl">
             <header className="mb-10">
-                <h1 className="text-4xl md:text-5xl font-extrabold text-brand-dark-teal dark:text-brand-bright-green text-shadow-3d-green">
-                    Upraviť článok
-                </h1>
+                 <div className="flex items-center gap-4 mb-4">
+                    <FilePen className="h-10 w-10 text-brand-bright-green"/>
+                    <h1 className="text-4xl md:text-5xl font-extrabold text-brand-dark-teal dark:text-brand-bright-green text-shadow-3d-green">
+                        Upraviť článok
+                    </h1>
+                </div>
                 <p className="text-lg text-brand-secondary-grey dark:text-slate-300 mt-2">
                     Aktualizujte obsah a nastavenia existujúceho článku.
                 </p>

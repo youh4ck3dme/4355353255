@@ -54,7 +54,7 @@ export const Header = () => {
                 key={link.href}
                 href={link.href} 
                 className={cn(
-                  "relative text-lg hover:text-brand-bright-green transition-colors pb-1",
+                  "relative text-lg text-brand-text hover:text-brand-bright-green transition-colors pb-1",
                   { "text-brand-bright-green font-bold": pathname === link.href }
                 )}
               >
@@ -64,7 +64,7 @@ export const Header = () => {
                 )}
               </Link>
             ))}
-             <Link href="/admin" aria-label="Admin Login" className={cn("relative hover:text-brand-bright-green transition-colors pb-1 pl-4", { "text-brand-bright-green": pathname.startsWith('/admin') })}>
+             <Link href="/admin" aria-label="Admin Login" className={cn("relative text-brand-text hover:text-brand-bright-green transition-colors pb-1 pl-4", { "text-brand-bright-green": pathname.startsWith('/admin') })}>
                 <KeyRound size={22} />
                 {pathname.startsWith('/admin') && (
                   <span className="absolute bottom-0 left-4 w-[22px] h-0.5 bg-brand-bright-green animate-fade-in"></span>
@@ -96,11 +96,10 @@ export const Header = () => {
           <div className="h-16 flex items-center justify-between">
              <Link href="/" className="flex items-center">
               <Image 
-                src="/images/viandmo-logo.svg" 
+                src="/images/viandmo-logo-white.svg" 
                 alt="VI&MO Logo" 
                 width={120} 
                 height={40}
-                className="brightness-0 invert" 
                 priority
               />
             </Link>
