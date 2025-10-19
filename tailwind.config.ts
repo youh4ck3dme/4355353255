@@ -1,5 +1,6 @@
 import type { Config } from "tailwindcss";
 import { fontFamily } from "tailwindcss/defaultTheme";
+import plugin from 'tailwindcss/plugin';
 
 const config: Config = {
   content: [
@@ -22,9 +23,14 @@ const config: Config = {
         'brand-secondary-grey': '#64748b',
       },
       boxShadow: {
-        'subtle': '0 2px 4px rgba(0,0,0,0.02), 0 4px 8px rgba(0,0,0,0.03)',
-        'medium': '0 5px 15px rgba(0,0,0,0.05), 0 10px 20px rgba(0,0,0,0.05)',
-        'large': '0 15px 30px rgba(0,0,0,0.08), 0 25px 50px rgba(0,0,0,0.1)',
+        'subtle': '0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03)',
+        'medium': '0 10px 15px -3px rgba(0,0,0,0.07), 0 4px 6px -2px rgba(0,0,0,0.05)',
+        'large': '0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04)',
+        'inner-lg': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
+      },
+       textShadow: {
+        '3d': '1px 1px 0px rgba(0,0,0,0.1), 2px 2px 0px rgba(0,0,0,0.09), 3px 3px 0px rgba(0,0,0,0.08), 4px 4px 0px rgba(0,0,0,0.07), 5px 5px 0px rgba(0,0,0,0.06)',
+        '3d-green': '1px 1px 0px #1A5255, 2px 2px 0px #1a5255e0, 3px 3px 0px #1a5255c2, 4px 4px 0px #1a5255a3',
       },
       typography: ({ theme }) => ({
         DEFAULT: {
@@ -56,12 +62,26 @@ const config: Config = {
       },
       keyframes: {
         'fade-in': {
-          'from': { opacity: '0', transform: 'translateY(5px)' },
+          'from': { opacity: '0', transform: 'translateY(10px)' },
           'to': { opacity: '1', transform: 'translateY(0)' },
         }
       }
     },
   },
-  plugins: [require("@tailwindcss/typography"), require("tailwindcss-animate")],
+  plugins: [
+    require("@tailwindcss/typography"), 
+    require("tailwindcss-animate"),
+    plugin(function({ theme, addUtilities }) {
+      const newUtilities = {
+        '.text-shadow-3d': {
+          textShadow: theme('textShadow.3d'),
+        },
+        '.text-shadow-3d-green': {
+          textShadow: theme('textShadow.3d-green'),
+        },
+      }
+      addUtilities(newUtilities)
+    })
+  ],
 };
 export default config;

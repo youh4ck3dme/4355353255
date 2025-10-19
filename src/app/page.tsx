@@ -69,7 +69,7 @@ export default function HomePage() {
         />
         <div className="absolute inset-0 bg-brand-dark-teal/70"></div>
         <div className="relative z-10 animate-fade-in">
-          <h1 className="text-5xl md:text-7xl font-extrabold mb-4 text-brand-bright-green">
+          <h1 className="text-5xl md:text-7xl font-extrabold mb-4 text-brand-bright-green text-shadow-3d-green">
             VI&MO
           </h1>
           <p className="text-2xl md:text-3xl font-light text-slate-200">
@@ -85,7 +85,7 @@ export default function HomePage() {
       <section id="sluzby" className="py-16">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-brand-dark-teal dark:text-brand-bright-green">Naše Služby</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-brand-dark-teal dark:text-brand-bright-green text-shadow-3d-green">Naše Služby</h2>
           </div>
           <div className="space-y-16">
             {services.map((service, index) => {
@@ -126,7 +126,7 @@ export default function HomePage() {
       {/* CTA Section */}
       <section className="bg-brand-bright-green text-brand-dark-teal py-16 px-4">
         <div className="container mx-auto text-center">
-          <h2 className="text-3xl font-extrabold mb-4">Nezáväzná cenová ponuka už dnes</h2>
+          <h2 className="text-3xl font-extrabold mb-4 text-shadow-3d">Nezáväzná cenová ponuka už dnes</h2>
           <p className="max-w-2xl mx-auto mb-8">
             Plánujete sťahovanie v Bratislave alebo okolí? Vyplňte krátky formulár a my Vám bezplatne pripravíme cenovú ponuku šitú presne na Vaše potreby.
           </p>

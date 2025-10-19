@@ -35,7 +35,7 @@ export default function AboutPage() {
   return (
     <div className="container mx-auto px-4 py-12 max-w-6xl">
       <header className="text-center mb-16">
-        <h1 className="text-4xl md:text-5xl font-extrabold mb-4 text-brand-dark-teal dark:text-brand-bright-green">
+        <h1 className="text-4xl md:text-5xl font-extrabold mb-4 text-brand-dark-teal dark:text-brand-bright-green text-shadow-3d-green">
           Profesionálne sťahovanie a upratovanie v Bratislave
         </h1>
         <p className="text-lg text-brand-secondary-grey dark:text-brand-light-gray max-w-3xl mx-auto">
@@ -54,7 +54,7 @@ export default function AboutPage() {
               />
           </div>
           <div>
-            <h2 className="text-3xl font-bold mb-4 text-brand-dark-teal dark:text-brand-bg">Sme silná partia v oblasti „moving & logistic“ služieb</h2>
+            <h2 className="text-3xl font-bold mb-4 text-brand-dark-teal dark:text-brand-bg text-shadow-3d">Sme silná partia v oblasti „moving & logistic“ služieb</h2>
             <p className="text-brand-secondary-grey dark:text-slate-300 mb-4">
               Disponujeme viac než 7-ročnými skúsenosťami v oblasti profesionálneho sťahovania, odvozu ekologického odpadu a nadštandardných upratovacích služieb. Sťahujeme byty, domy, kancelárie aj celé firmy, odvezieme nepotrebné veci a postaráme sa o dokonalý poriadok.
             </p>
@@ -65,7 +65,7 @@ export default function AboutPage() {
       </section>
 
       <section className="mb-16">
-        <h2 className="text-3xl font-bold mb-8 text-center text-brand-dark-teal dark:text-brand-bg">Naše kľúčové služby</h2>
+        <h2 className="text-3xl font-bold mb-8 text-center text-brand-dark-teal dark:text-brand-bg text-shadow-3d">Naše kľúčové služby</h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {services.map(service => {
                 const Icon = service.icon;
@@ -84,14 +84,14 @@ export default function AboutPage() {
 
       <section className="bg-brand-dark-teal/90 rounded-lg p-8 md:p-12 mb-16 text-center text-white">
         <MapPin className="h-12 w-12 mx-auto mb-4 text-brand-bright-green"/>
-        <h2 className="text-3xl font-bold mb-4 text-brand-bg">Pôsobíme v Bratislave a širokom okolí</h2>
+        <h2 className="text-3xl font-bold mb-4 text-brand-bg text-shadow-3d">Pôsobíme v Bratislave a širokom okolí</h2>
         <p className="max-w-4xl mx-auto text-slate-300">
             Naše služby poskytujeme najmä v lokalitách Bratislava (Ružinov, Petržalka, Nové Mesto, Rača, Karlova Ves, Dúbravka) a v okolí miest ako Senec, Pezinok, Šamorín a Malacky.
         </p>
       </section>
 
       <section id="kontakt" className="mb-16">
-        <h2 className="text-3xl font-bold mb-8 text-center text-brand-dark-teal dark:text-brand-bg">Kontaktujte nás</h2>
+        <h2 className="text-3xl font-bold mb-8 text-center text-brand-dark-teal dark:text-brand-bg text-shadow-3d">Kontaktujte nás</h2>
         <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             <div className="bg-brand-light-gray dark:bg-brand-dark-teal/80 p-6 rounded-lg shadow-lg">
                 <h3 className="text-2xl font-bold text-brand-dark-teal dark:text-brand-bg mb-4">Kontaktné údaje</h3>
@@ -121,7 +121,7 @@ export default function AboutPage() {
       </section>
 
       <section>
-        <h2 className="text-3xl font-bold mb-8 text-center text-brand-dark-teal dark:text-brand-bg">Sťahujete sa? Napíšte nám.</h2>
+        <h2 className="text-3xl font-bold mb-8 text-center text-brand-dark-teal dark:text-brand-bg text-shadow-3d">Sťahujete sa? Napíšte nám.</h2>
         <div className="max-w-2xl mx-auto bg-brand-light-gray dark:bg-brand-dark-teal/80 p-8 rounded-lg shadow-2xl">
           <ContactForm />
         </div>

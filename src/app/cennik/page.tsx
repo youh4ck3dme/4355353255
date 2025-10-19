@@ -20,7 +20,7 @@ export default function PricingPage() {
   return (
     <div className="container mx-auto px-4 py-12 max-w-5xl">
       <header className="text-center mb-12">
-        <h1 className="text-4xl md:text-5xl font-extrabold mb-4 text-brand-dark-teal dark:text-brand-bright-green">
+        <h1 className="text-4xl md:text-5xl font-extrabold mb-4 text-brand-dark-teal dark:text-brand-bright-green text-shadow-3d-green">
           Cenník našich služieb
         </h1>
         <p className="text-lg text-brand-secondary-grey dark:text-brand-light-gray max-w-3xl mx-auto">
@@ -29,7 +29,7 @@ export default function PricingPage() {
       </header>
 
       <section className="mb-16">
-        <h2 className="text-3xl font-bold mb-8 text-center text-brand-dark-teal dark:text-brand-bg">Základný cenník sťahovania</h2>
+        <h2 className="text-3xl font-bold mb-8 text-center text-brand-dark-teal dark:text-brand-bg text-shadow-3d">Základný cenník sťahovania</h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {priceItems.map((item) => (
             <div key={item.name} className="bg-brand-light-gray dark:bg-brand-dark-teal/80 p-6 rounded-lg shadow-lg flex flex-col items-center text-center">
@@ -45,7 +45,7 @@ export default function PricingPage() {
       </section>
 
       <section className="mb-16">
-        <h2 className="text-3xl font-bold mb-8 text-center text-brand-dark-teal dark:text-brand-bg">Ceny za pracovníkov a dopravu</h2>
+        <h2 className="text-3xl font-bold mb-8 text-center text-brand-dark-teal dark:text-brand-bg text-shadow-3d">Ceny za pracovníkov a dopravu</h2>
         <div className="grid md:grid-cols-2 gap-8">
             <div className="bg-brand-light-gray dark:bg-brand-dark-teal/80 p-6 rounded-lg shadow-lg">
                 <div className="flex items-center mb-4">
@@ -77,7 +77,7 @@ export default function PricingPage() {
       </section>
 
       <section>
-        <h2 className="text-3xl font-bold mb-8 text-center text-brand-dark-teal dark:text-brand-bg">Online Kalkulačka Ceny</h2>
+        <h2 className="text-3xl font-bold mb-8 text-center text-brand-dark-teal dark:text-brand-bg text-shadow-3d">Online Kalkulačka Ceny</h2>
         <div className="bg-brand-dark-teal/90 p-8 rounded-2xl shadow-2xl max-w-2xl mx-auto">
             <PriceCalculator />
         </div>
