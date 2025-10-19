@@ -1,91 +1,127 @@
 import Image from 'next/image';
 import { Metadata } from 'next';
-import { Users, Target, Sparkles } from 'lucide-react';
+import { Users, Target, Sparkles, Phone, Mail, Building, Home, Briefcase, Trash2, MapPin } from 'lucide-react';
 import { ImageWrapper } from '@/components/ImageWrapper';
 
 export const metadata: Metadata = {
-  title: 'O nás | VI&MO Blog',
-  description: 'Zistite viac o firme VI&MO. Náš príbeh, hodnoty a tím, ktorý poskytuje kvalitné sťahovacie a upratovacie služby v Bratislave.',
+  title: 'O nás - Profesionálne sťahovanie a upratovanie v Bratislave | VI&MO',
+  description: 'Zistite viac o firme VI&MO. Sme experti na sťahovanie bytov, domov a firiem, vypratávanie a upratovacie služby v Bratislave a okolí už 7 rokov. Rýchlo, spoľahlivo a výhodne.',
 };
+
+const services = [
+    {
+        icon: Home,
+        title: "Sťahovanie bytov a rodinných domov",
+        description: "Presťahujeme vás bez stresu. Zabezpečíme demontáž, montáž nábytku, balenie krehkých vecí a bezpečný prevoz."
+    },
+    {
+        icon: Briefcase,
+        title: "Sťahovanie firiem, skladov a prevádzok",
+        description: "Minimalizujeme výpadky vo vašej prevádzke vďaka efektívnemu plánovaniu, spoľahlivej logistike a skúsenému tímu."
+    },
+    {
+        icon: Trash2,
+        title: "Vypratávanie, likvidácia a odvoz odpadu",
+        description: "Postaráme sa o vypratanie bytov, pivníc či garáží vrátane ekologickej likvidácie nepotrebného nábytku a odpadu."
+    },
+    {
+        icon: Sparkles,
+        title: "Profesionálne upratovacie práce",
+        description: "Jednorazové aj pravidelné upratovanie bytov, domov a kancelárií. Zabezpečíme čistotu, na ktorú sa môžete spoľahnúť."
+    }
+]
 
 export default function AboutPage() {
   return (
-    <div className="container mx-auto px-4 py-12 max-w-5xl">
-      <header className="text-center mb-12">
+    <div className="container mx-auto px-4 py-12 max-w-6xl">
+      <header className="text-center mb-16">
         <h1 className="text-4xl md:text-5xl font-extrabold mb-4 text-brand-dark-teal dark:text-brand-bright-green">
-          O spoločnosti VI&MO
+          Profesionálne sťahovanie a upratovanie v Bratislave
         </h1>
         <p className="text-lg text-brand-secondary-grey dark:text-brand-light-gray max-w-3xl mx-auto">
-          Vaši spoľahliví partneri pre sťahovanie a upratovanie v Bratislave a okolí.
+          Sme VI&MO - váš spoľahlivý partner pre sťahovanie bytov, domov, firiem, odvoz odpadu a upratovanie. Rýchlo, spoľahlivo a výhodne už 7 rokov.
         </p>
       </header>
-
-      <section className="mb-16">
-        <div className="relative w-full h-80 rounded-lg overflow-hidden shadow-2xl">
-          <ImageWrapper>
-            <Image
-              src="https://picsum.photos/seed/vimo-team/1200/800"
-              alt="Tím VI&MO pri práci"
-              fill
-              className="object-cover"
-              data-ai-hint="team working"
-            />
-          </ImageWrapper>
-          <div className="absolute inset-0 bg-brand-dark-teal/50" />
-        </div>
-      </section>
-
-      <section className="mb-16">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
-          <div>
-            <h2 className="text-3xl font-bold mb-4 text-brand-dark-teal dark:text-brand-bg">Náš príbeh</h2>
-            <p className="text-brand-secondary-grey dark:text-slate-300 mb-4">
-              Spoločnosť VI&MO vznikla z jednoduchej myšlienky: poskytovať sťahovacie a upratovacie služby, na ktoré sa môžete naozaj spoľahnúť. Po rokoch skúseností v odbore sme sa rozhodli založiť vlastnú firmu, ktorá stavia na hodnotách profesionality, dôvery a stopercentnej orientácie na zákazníka.
-            </p>
-            <p className="text-brand-secondary-grey dark:text-slate-300">
-              Od nášho založenia sme pomohli stovkám rodín a firiem s bezproblémovým presunom a zabezpečili dokonale čisté priestory. Naša cesta je dláždená spokojnosťou našich klientov a neustálou snahou zlepšovať sa.
-            </p>
-          </div>
-          <div className="relative w-full h-64 rounded-lg overflow-hidden shadow-xl">
+      
+      <section className="mb-16 grid md:grid-cols-2 gap-12 items-center">
+          <div className="relative w-full h-80 rounded-lg overflow-hidden shadow-2xl">
             <ImageWrapper>
               <Image
-                  src="https://picsum.photos/seed/vimo-van/800/600"
-                  alt="Sťahovacie vozidlo VI&MO"
-                  fill
-                  className="object-cover"
-                  data-ai-hint="moving van"
+                src="https://picsum.photos/seed/vimo-team/1200/800"
+                alt="Tím VI&MO pri práci"
+                fill
+                className="object-cover"
+                data-ai-hint="team working moving"
               />
             </ImageWrapper>
           </div>
+          <div>
+            <h2 className="text-3xl font-bold mb-4 text-brand-dark-teal dark:text-brand-bg">Sme silná partia v oblasti „moving & logistic“ služieb</h2>
+            <p className="text-brand-secondary-grey dark:text-slate-300 mb-4">
+              Disponujeme viac než 7-ročnými skúsenosťami v oblasti profesionálneho sťahovania, odvozu ekologického odpadu a nadštandardných upratovacích služieb. Sťahujeme byty, domy, kancelárie aj celé firmy, odvezieme nepotrebné veci a postaráme sa o dokonalý poriadok.
+            </p>
+            <p className="text-brand-secondary-grey dark:text-slate-300">
+               Pracujeme rýchlo, efektívne a s ľudským prístupom. Zakladáme si na férovom prístupe, spoľahlivosti a poctivej práci. Naše služby zahŕňajú aj balenie, sťahovanie klavíra či trezoru, a to aj počas víkendov a nocí.
+            </p>
+          </div>
+      </section>
+
+      <section className="mb-16">
+        <h2 className="text-3xl font-bold mb-8 text-center text-brand-dark-teal dark:text-brand-bg">Naše kľúčové služby</h2>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {services.map(service => {
+                const Icon = service.icon;
+                return (
+                    <div key={service.title} className="bg-brand-light-gray dark:bg-brand-dark-teal/80 p-6 rounded-lg shadow-lg flex flex-col text-center items-center">
+                        <div className="bg-brand-bright-green p-4 rounded-full mb-4">
+                            <Icon className="h-8 w-8 text-brand-dark-teal" />
+                        </div>
+                        <h3 className="text-xl font-bold mb-2 text-brand-dark-teal dark:text-brand-bg h-14 flex items-center">{service.title}</h3>
+                        <p className="text-brand-secondary-grey dark:text-slate-300 text-sm">{service.description}</p>
+                    </div>
+                );
+            })}
         </div>
       </section>
 
-      <section className="bg-brand-light-gray dark:bg-brand-dark-teal/80 rounded-lg p-8 md:p-12 mb-16">
-        <h2 className="text-3xl font-bold mb-8 text-center text-brand-dark-teal dark:text-brand-bg">Naša misia a hodnoty</h2>
-        <div className="grid md:grid-cols-3 gap-8 text-center">
-          <div className="flex flex-col items-center">
-            <div className="bg-brand-bright-green p-4 rounded-full mb-4">
-              <Users className="h-8 w-8 text-brand-dark-teal" />
+      <section className="bg-brand-dark-teal/90 rounded-lg p-8 md:p-12 mb-16 text-center text-white">
+        <MapPin className="h-12 w-12 mx-auto mb-4 text-brand-bright-green"/>
+        <h2 className="text-3xl font-bold mb-4 text-brand-bg">Pôsobíme v Bratislave a širokom okolí</h2>
+        <p className="max-w-4xl mx-auto text-slate-300">
+            Naše služby poskytujeme najmä v lokalitách Bratislava (Ružinov, Petržalka, Nové Mesto, Rača, Karlova Ves, Dúbravka) a v okolí miest ako Senec, Pezinok, Šamorín a Malacky.
+        </p>
+      </section>
+
+      <section>
+        <h2 className="text-3xl font-bold mb-8 text-center text-brand-dark-teal dark:text-brand-bg">Kontaktujte nás</h2>
+        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <div className="bg-brand-light-gray dark:bg-brand-dark-teal/80 p-6 rounded-lg shadow-lg">
+                <h3 className="text-2xl font-bold text-brand-dark-teal dark:text-brand-bg mb-4">Kontaktné údaje</h3>
+                <div className="space-y-4">
+                    <div>
+                        <h4 className="font-bold text-brand-secondary-grey dark:text-slate-400">Sťahovanie</h4>
+                        <p className="flex items-center text-brand-dark-teal dark:text-brand-bg font-semibold"><Phone className="w-4 h-4 mr-2 text-brand-bright-green" /> +421 911 275 755</p>
+                         <p className="flex items-center text-brand-dark-teal dark:text-brand-bg font-semibold"><Mail className="w-4 h-4 mr-2 text-brand-bright-green" /> info@viandmo.com</p>
+                        <p className="text-sm text-brand-secondary-grey dark:text-slate-400 mt-1">Miroslav Danihel</p>
+                    </div>
+                     <div>
+                        <h4 className="font-bold text-brand-secondary-grey dark:text-slate-400">Upratovanie</h4>
+                        <p className="flex items-center text-brand-dark-teal dark:text-brand-bg font-semibold"><Phone className="w-4 h-4 mr-2 text-brand-bright-green" /> +421 918 895 730</p>
+                    </div>
+                </div>
             </div>
-            <h3 className="text-xl font-bold mb-2 text-brand-dark-teal dark:text-brand-bg">Zákazník na prvom mieste</h3>
-            <p className="text-brand-secondary-grey dark:text-slate-300 text-sm">Každý projekt je pre nás jedinečný. Počúvame vaše potreby a prispôsobujeme naše služby tak, aby sme prekonali vaše očakávania.</p>
-          </div>
-          <div className="flex flex-col items-center">
-            <div className="bg-brand-bright-green p-4 rounded-full mb-4">
-              <Target className="h-8 w-8 text-brand-dark-teal" />
+            <div className="bg-brand-light-gray dark:bg-brand-dark-teal/80 p-6 rounded-lg shadow-lg">
+                <h3 className="text-2xl font-bold text-brand-dark-teal dark:text-brand-bg mb-4">Obchodné údaje</h3>
+                <div className="space-y-2 text-brand-secondary-grey dark:text-slate-300">
+                    <p className="flex items-center"><Building className="w-4 h-4 mr-2 text-brand-bright-green" /> <strong>VI and MO s. r. o.</strong></p>
+                    <p>Karpatské námestie 7770/10A</p>
+                    <p>831 06 Bratislava - Rača, Slovensko</p>
+                    <p><strong>IČO:</strong> 56 811 322 | <strong>DIČ:</strong> 2122461176</p>
+                </div>
             </div>
-            <h3 className="text-xl font-bold mb-2 text-brand-dark-teal dark:text-brand-bg">Spoľahlivosť a efektivita</h3>
-            <p className="text-brand-secondary-grey dark:text-slate-300 text-sm">Dodržiavame termíny a pracujeme systematicky. Váš čas je pre nás cenný, a preto garantujeme hladký a rýchly priebeh služieb.</p>
-          </div>
-          <div className="flex flex-col items-center">
-            <div className="bg-brand-bright-green p-4 rounded-full mb-4">
-              <Sparkles className="h-8 w-8 text-brand-dark-teal" />
-            </div>
-            <h3 className="text-xl font-bold mb-2 text-brand-dark-teal dark:text-brand-bg">Dôraz na detail</h3>
-            <p className="text-brand-secondary-grey dark:text-slate-300 text-sm">Či už ide o balenie krehkého porcelánu alebo čistenie ťažko dostupných miest, naša práca je precízna a dôkladná.</p>
-          </div>
         </div>
       </section>
+
     </div>
   );
 }

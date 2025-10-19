@@ -165,7 +165,9 @@ export const SuggestionsBanner = () => {
         setIsClient(true);
     }, []);
 
-    // By returning null on the server and only rendering the real component on the client,
-    // we prevent any hydration mismatch errors related to context or random values.
-    return isClient ? <SuggestionsBannerClient /> : null;
+    if (!isClient) {
+        return null;
+    }
+    
+    return <SuggestionsBannerClient />;
 };
