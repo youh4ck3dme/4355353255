@@ -1,7 +1,6 @@
 import Image from 'next/image';
 import { Metadata } from 'next';
 import { Users, Target, Sparkles, Phone, Mail, Building, Home, Briefcase, Trash2, MapPin } from 'lucide-react';
-import { ImageWrapper } from '@/components/ImageWrapper';
 import { ContactForm } from '@/components/ContactForm';
 
 export const metadata: Metadata = {
@@ -46,7 +45,6 @@ export default function AboutPage() {
       
       <section className="mb-16 grid md:grid-cols-2 gap-12 items-center">
           <div className="relative w-full h-80 rounded-lg overflow-hidden shadow-2xl">
-            <ImageWrapper>
               <Image
                 src="https://picsum.photos/seed/vimo-team/1200/800"
                 alt="Tím VI&MO pri práci"
@@ -54,7 +52,6 @@ export default function AboutPage() {
                 className="object-cover"
                 data-ai-hint="team working moving"
               />
-            </ImageWrapper>
           </div>
           <div>
             <h2 className="text-3xl font-bold mb-4 text-brand-dark-teal dark:text-brand-bg">Sme silná partia v oblasti „moving & logistic“ služieb</h2>
@@ -93,7 +90,7 @@ export default function AboutPage() {
         </p>
       </section>
 
-      <section className="mb-16">
+      <section id="kontakt" className="mb-16">
         <h2 className="text-3xl font-bold mb-8 text-center text-brand-dark-teal dark:text-brand-bg">Kontaktujte nás</h2>
         <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             <div className="bg-brand-light-gray dark:bg-brand-dark-teal/80 p-6 rounded-lg shadow-lg">

@@ -3,8 +3,6 @@ import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { SuggestionsBanner } from "@/components/SuggestionsBanner";
-import { ImageReplacementProvider } from "@/context/ImageReplacementContext";
 
 const inter = Inter({ subsets: ["latin"], display: 'swap', variable: '--font-inter' });
 const poppins = Poppins({ 
@@ -28,14 +26,11 @@ export default function RootLayout({
   return (
     <html lang="sk" className={`dark ${inter.variable} ${poppins.variable}`}>
       <body className={inter.className}>
-        <ImageReplacementProvider>
-          <Header />
-          <main id="main-content" className="pt-16 min-h-screen">
-            {children}
-          </main>
-          <Footer />
-          <SuggestionsBanner />
-        </ImageReplacementProvider>
+        <Header />
+        <main id="main-content" className="pt-16 min-h-screen">
+          {children}
+        </main>
+        <Footer />
       </body>
     </html>
   );
