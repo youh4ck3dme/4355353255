@@ -1,9 +1,9 @@
-
-// This corresponds to the Post type from the backend and MDX frontmatter
+// Represents the structure of the frontmatter in each MDX blog post file.
 export type Post = {
-    // from MDX
+    slug: string;
     title: string;
     date: string;
+    status: 'published' | 'draft';
     author?: string;
     imageUrl?: string;
     tags?: string[];
@@ -11,12 +11,10 @@ export type Post = {
     metaTitle?: string;
     metaDescription?: string;
     
-    // from both
-    slug: string;
-    content?: string;
-    status: 'published' | 'draft';
+    // The content of the MDX file
+    content: string;
 
-    // from API - can be optional now
+    // Optional fields that are not part of frontmatter but can be added
     id?: string;
     createdAt?: string;
     updatedAt?: string;
