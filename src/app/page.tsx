@@ -10,8 +10,10 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { PriceCalculator } from '@/components/PriceCalculator';
 
 const DynamicContactForm = dynamic(() => import('@/components/ContactForm').then(mod => mod.ContactForm), { ssr: false });
+const DynamicPriceCalculator = dynamic(() => import('@/components/PriceCalculator').then(mod => mod.PriceCalculator), { ssr: false });
 
 const services = [
   {
@@ -176,10 +178,10 @@ export default function HomePage() {
         </section>
 
         {/* Services Section */}
-        <section id="sluzby" className="min-h-screen flex flex-col justify-center py-16">
+        <section id="sluzby" className="min-h-screen flex flex-col justify-center py-16 bg-white text-black">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-brand-dark-teal dark:text-brand-bright-green text-shadow-3d-green">Naše Služby</h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-brand-dark-teal text-shadow-3d-green">Naše Služby</h2>
             </div>
             <div className="space-y-16">
               {services.map((service, index) => {
@@ -187,16 +189,16 @@ export default function HomePage() {
                 return (
                   <div key={index} className={`grid md:grid-cols-2 gap-8 lg:gap-16 items-center`}>
                     <div className={`order-2 text-center md:text-left ${index % 2 === 0 ? 'md:order-2' : 'md:order-1'}`}>
-                      <div className="bg-brand-light-gray dark:bg-brand-dark-teal/80 p-6 lg:p-8 rounded-lg shadow-subtle hover:shadow-medium transition-shadow duration-300">
+                      <div className="bg-brand-light-gray p-6 lg:p-8 rounded-lg shadow-subtle hover:shadow-medium transition-shadow duration-300">
                         <div className="flex items-center justify-center md:justify-start mb-4">
                           <Icon className="h-8 w-8 mr-4 text-brand-bright-green" />
-                          <h3 className="text-2xl font-bold text-brand-dark-teal dark:text-brand-bg">{service.title}</h3>
+                          <h3 className="text-2xl font-bold text-brand-dark-teal">{service.title}</h3>
                         </div>
-                        <p className="font-semibold text-brand-secondary-grey dark:text-slate-300 italic mb-4">{service.shortDescription}</p>
-                        <p className="text-brand-secondary-grey dark:text-slate-300 mb-6">{service.description}</p>
+                        <p className="font-semibold text-brand-secondary-grey italic mb-4">{service.shortDescription}</p>
+                        <p className="text-brand-secondary-grey mb-6">{service.description}</p>
                         <ul className="space-y-2">
                           {service.included.map((item, i) => (
-                            <li key={i} className="flex items-center text-center md:text-left justify-center md:justify-start text-brand-secondary-grey dark:text-slate-300">
+                            <li key={i} className="flex items-center text-center md:text-left justify-center md:justify-start text-brand-secondary-grey">
                               <CheckCircle className="h-5 w-5 mr-2 text-brand-bright-green flex-shrink-0" />
                               <span>{item}</span>
                             </li>
@@ -218,23 +220,23 @@ export default function HomePage() {
         </section>
 
         {/* FAQ Section */}
-        <section id="faq" className="min-h-screen flex flex-col justify-center py-16">
+        <section id="faq" className="min-h-screen flex flex-col justify-center py-16 bg-white text-black">
             <div className="container mx-auto px-4 max-w-3xl">
                 <div className="text-center mb-12">
-                    <h2 className="text-3xl md:text-4xl font-bold text-brand-dark-teal dark:text-brand-bright-green text-shadow-3d-green">
+                    <h2 className="text-3xl md:text-4xl font-bold text-brand-dark-teal text-shadow-3d-green">
                         Často Kladené Otázky
                     </h2>
-                    <p className="mt-4 text-lg text-brand-secondary-grey dark:text-brand-light-gray">
+                    <p className="mt-4 text-lg text-brand-secondary-grey">
                         Rýchle odpovede na najčastejšie otázky. Ak tu nenájdete, čo hľadáte, neváhajte nás kontaktovať.
                     </p>
                 </div>
                 <Accordion type="single" collapsible className="w-full">
                     {faqItems.map((item, index) => (
-                        <AccordionItem key={index} value={`item-${index + 1}`}>
-                            <AccordionTrigger className="text-lg text-center md:text-left font-semibold hover:no-underline text-brand-dark-teal dark:text-brand-bg">
+                        <AccordionItem key={index} value={`item-${index + 1}`} className="border-b border-gray-200">
+                            <AccordionTrigger className="text-lg text-center md:text-left font-semibold hover:no-underline text-brand-dark-teal">
                                 {item.question}
                             </AccordionTrigger>
-                            <AccordionContent className="text-brand-secondary-grey dark:text-slate-300 text-center md:text-left">
+                            <AccordionContent className="text-brand-secondary-grey text-center md:text-left">
                                 {item.answer}
                             </AccordionContent>
                         </AccordionItem>
@@ -243,16 +245,16 @@ export default function HomePage() {
             </div>
         </section>
         
-        {/* CTA Section */}
-        <section className="bg-brand-bright-green text-brand-dark-teal min-h-screen flex flex-col justify-center py-16 px-4">
+        {/* CTA Section with Calculator */}
+        <section className="bg-brand-dark-teal/90 min-h-screen flex flex-col justify-center py-16 px-4">
           <div className="container mx-auto text-center">
-            <h2 className="text-3xl font-extrabold mb-4 text-shadow-3d">Nezáväzná cenová ponuka už dnes</h2>
-            <p className="max-w-2xl mx-auto mb-8">
-              Plánujete sťahovanie v Bratislave alebo okolí? Vyplňte krátky formulár a my Vám bezplatne pripravíme cenovú ponuku šitú presne na Vaše potreby.
+            <h2 className="text-3xl font-extrabold mb-4 text-brand-bright-green text-shadow-3d-green">Nezáväzná cenová ponuka už dnes</h2>
+            <p className="max-w-2xl mx-auto mb-8 text-slate-300">
+              Plánujete sťahovanie v Bratislave alebo okolí? Vyskúšajte našu interaktívnu kalkulačku a získajte okamžitý odhad ceny.
             </p>
-            <Link href="/o-nas#kontakt" className="liquid-glass-button inline-block px-8 py-4 bg-brand-dark-teal text-white font-bold rounded-lg hover:bg-opacity-90 transition-colors duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1">
-              Získať cenovú ponuku
-            </Link>
+            <div className="max-w-2xl mx-auto bg-brand-dark-teal/90 p-8 rounded-2xl shadow-2xl">
+              <DynamicPriceCalculator />
+            </div>
           </div>
         </section>
       </div>
