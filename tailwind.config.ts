@@ -41,7 +41,7 @@ const config: Config = {
       },
        textShadow: {
         '3d': '1px 1px 0px rgba(0,0,0,0.1), 2px 2px 0px rgba(0,0,0,0.09), 3px 3px 0px rgba(0,0,0,0.08), 4px 4px 0px rgba(0,0,0,0.07), 5px 5px 0px rgba(0,0,0,0.06)',
-        '3d-green': '1px 1px 0px #1A5255, 2px 2px 0px #1a5255c2, 3px 3px 0px #1a5255a3',
+        '3d-green': '1px 1px 0px #1A5255, 2px 2px 0px #1a5255d1, 3px 3px 0px #1a5255b3, 4px 4px 0px #1a52558f',
       },
       typography: ({ theme }: { theme: any }) => ({
         DEFAULT: {

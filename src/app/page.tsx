@@ -21,6 +21,7 @@ const services = [
     title: "Sťahovanie bytov a rodinných domov",
     shortDescription: "Bezstarostné sťahovanie bytov a domov v Bratislave a okolí.",
     description: "Náš tím zabezpečí všetko od demontáže nábytku až po jeho bezpečný prevoz a opätovné zloženie. Vy sa len nasťahujete do nového. Pracujeme rýchlo, precízne a s dôrazom na ochranu vášho majetku.",
+    secondaryDescription: "Rýchlo, bezpečne a so zodpovednosťou",
     included: [
       "Balenie a zabezpečenie vecí",
       "Prenos a prevoz nábytku a spotrebičov",
@@ -33,6 +34,7 @@ const services = [
     title: "Sťahovanie firiem, skladov a prevádzok",
     shortDescription: "Efektívne sťahovanie firiem a kancelárií bez zdržania.",
     description: "Či ste malá firma alebo väčší podnik, vaše pracovné priestory presťahujeme tak, aby bol výpadok v prevádzke minimálny. Naplánujeme všetko dopredu a pripravíme logistiku.",
+    secondaryDescription: "Efektívne plánovanie a spoľahlivá logistika",
     included: [
       "Sťahovanie techniky, nábytku, archívov",
       "Časovo presný plán a logistika",
@@ -45,6 +47,7 @@ const services = [
     title: "Vypratávanie, odvoz a likvidácia odpadu",
     shortDescription: "Vypratávanie a ekologický odvoz odpadu – bez starostí.",
     description: "Vypratáme starý byt, pivnicu, dom, sklad alebo garáž a všetko nepotrebné odvezieme a ekologicky zlikvidujeme. Starý nábytok, stavebný odpad či elektrospotrebiče – nemusíte sa o nič starať.",
+    secondaryDescription: "Rýchlo, bezpečne a so zodpovednosťou",
     included: [
       "Vypratávanie interiérov a exteriérov",
       "Odvoz do zberného dvora alebo spaľovne",
@@ -57,6 +60,7 @@ const services = [
     title: "Profesionálne čistiace a upratovacie práce",
     shortDescription: "Čisté bývanie a pracovisko – pravidelne alebo jednorazovo.",
     description: "Ponúkame upratovanie domácností, firiem, spoločných priestorov, po maľovaní či rekonštrukcii. Používame profesionálne čistiace prostriedky a pracujeme s dôrazom na detail.",
+    secondaryDescription: "Efektívne plánovanie a spoľahlivá logistika",
     included: [
       "Generálne upratovanie",
       "Pravidelné čistenie (denne/týždenne)",
@@ -95,9 +99,9 @@ export default function HomePage() {
   const organizationJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: 'Bratislava sťahovanie | VI&MO',
+    name: 'VI&MO - Sťahovanie Bratislava',
     url: siteUrl,
-    logo: `${siteUrl}/logo.png`, // Uistite sa, že tento súbor existuje v /public
+    logo: `${siteUrl}/images/viandmo-logo.svg`,
     contactPoint: {
       '@type': 'ContactPoint',
       telephone: '+421-911-275-755',
@@ -106,15 +110,13 @@ export default function HomePage() {
       availableLanguage: ['Slovak']
     },
     sameAs: [
-      // Tu pridajte linky na sociálne siete, ak existujú
-      // "https://www.facebook.com/vimo.stahovanie",
     ]
   };
 
   const websiteJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: 'Bratislava sťahovanie | VI&MO',
+    name: 'VI&MO - Sťahovanie Bratislava',
     url: siteUrl,
     potentialAction: {
       '@type': 'SearchAction',
@@ -195,7 +197,6 @@ export default function HomePage() {
                           <h3 className="text-2xl font-bold text-brand-dark-teal">{service.title}</h3>
                         </div>
                         <p className="font-semibold text-brand-secondary-grey italic mb-4">{service.shortDescription}</p>
-                        <p className="text-brand-secondary-grey mb-6">{service.description}</p>
                         <ul className="space-y-2">
                           {service.included.map((item, i) => (
                             <li key={i} className="flex items-center justify-center md:justify-start text-brand-secondary-grey">
@@ -208,7 +209,7 @@ export default function HomePage() {
                     </div>
                     <div className={`order-1 ${index % 2 === 0 ? 'md:order-1' : 'md:order-2'} text-center md:text-left`}>
                        <div className="p-8 bg-gradient-to-br from-green-700 to-green-900 rounded-lg text-white/90 shadow-subtle">
-                          <h4 className="text-xl font-bold text-brand-bright-green mb-2">{index % 2 === 0 ? "Rýchlo, bezpečne a so zodpovednosťou" : "Efektívne plánovanie a spoľahlivá logistika"}</h4>
+                          <h4 className="text-xl font-bold text-brand-bright-green mb-2">{service.secondaryDescription}</h4>
                           <p className="text-slate-200">{service.description}</p>
                       </div>
                     </div>
