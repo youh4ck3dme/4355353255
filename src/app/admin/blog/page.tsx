@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -66,6 +65,7 @@ const PostRow = ({ post, onDelete }: { post: Post, onDelete: (slug: string) => v
 export default function AdminBlogPage() {
     const [posts, setPosts] = useState<Post[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const { toast } = useToast();
 
     const fetchPosts = async () => {
         setIsLoading(true);
@@ -77,6 +77,11 @@ export default function AdminBlogPage() {
     useEffect(() => {
         fetchPosts();
     }, []);
+
+    const handleRefresh = () => {
+        fetchPosts();
+        toast({ title: 'Zoznam obnovený', description: 'Zoznam článkov bol úspešne znovu načítaný.' });
+    };
 
     const handlePostDeleted = (deletedSlug: string) => {
         setPosts(prevPosts => prevPosts.filter(p => p.slug !== deletedSlug));
@@ -97,7 +102,7 @@ export default function AdminBlogPage() {
                     </p>
                 </div>
                 <div className="flex items-center gap-4 mt-4 md:mt-0">
-                    <button onClick={fetchPosts} disabled={isLoading} className="p-3 bg-slate-200 dark:bg-slate-700 rounded-lg hover:bg-opacity-80 transition-colors duration-300 shadow-md disabled:opacity-50 disabled:cursor-wait" aria-label="Obnoviť zoznam">
+                    <button onClick={handleRefresh} disabled={isLoading} className="p-3 bg-slate-200 dark:bg-slate-700 rounded-lg hover:bg-opacity-80 transition-colors duration-300 shadow-md disabled:opacity-50 disabled:cursor-wait" aria-label="Obnoviť zoznam">
                         <RefreshCw size={20} className={cn(isLoading && "animate-spin")} />
                     </button>
                     <Link
