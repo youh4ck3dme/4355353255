@@ -198,7 +198,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
                 {relatedPosts.length > 0 && (
                     <section className="mt-12">
-                        <h2 className="text-2xl font-bold mb-6 text-center text-brand-dark-teal dark:text-brand-bg">Mohlo by vás zaujímať</h2>
+                        <h2 className="text-2xl font-bold mb-6 text-center text-brand-dark-teal dark:text-brand-bg text-shadow-3d-green">Mohlo by vás zaujímať</h2>
                         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
                             {relatedPosts.map(relPost => (
                                 <BlogCard key={relPost.id} post={relPost} />

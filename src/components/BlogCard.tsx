@@ -33,9 +33,9 @@ export const BlogCard = ({ post }: BlogCardProps) => {
                 ))}
               </div>
             )}
-          <h2 className="text-xl font-bold mb-3 text-brand-dark-teal dark:text-brand-bg line-clamp-2 group-hover:text-brand-bright-green">
+          <h3 className="text-xl font-bold mb-3 text-brand-dark-teal dark:text-brand-bg line-clamp-2 group-hover:text-brand-bright-green">
             {post.title}
-          </h2>
+          </h3>
           <div className="flex justify-between items-center text-xs text-brand-secondary-grey dark:text-slate-400 pt-4 border-t border-slate-200 dark:border-slate-700 mt-auto">
             <span>{post.author || 'VI&MO Team'}</span>
             <span>{format(new Date(post.createdAt), 'd. M. yyyy')}</span>

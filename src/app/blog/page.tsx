@@ -62,7 +62,7 @@ export default async function BlogIndexPage({ searchParams }: { searchParams?: {
 
       {otherPosts.length > 0 && (
         <>
-          <h2 className="text-2xl font-bold mt-12 mb-6 text-center text-brand-dark-teal dark:text-brand-bg">
+          <h2 className="text-2xl font-bold mt-12 mb-6 text-center text-brand-dark-teal dark:text-brand-bg text-shadow-3d-green">
             Ďalšie články
           </h2>
           <BlogList initialPosts={otherPosts} initialCategory={initialCategory} />

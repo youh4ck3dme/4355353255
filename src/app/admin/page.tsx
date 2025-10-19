@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default function AdminPage() {
   return (
     <div className="container mx-auto px-4 py-12 max-w-4xl text-center">
-      <h1 className="text-4xl md:text-5xl font-extrabold mb-8 text-brand-dark-teal dark:text-brand-bright-green">
+      <h1 className="text-4xl md:text-5xl font-extrabold mb-8 text-brand-dark-teal dark:text-brand-bright-green text-shadow-3d-green">
         Admin Panel
       </h1>
       <div className="bg-brand-light-gray dark:bg-brand-dark-teal/80 p-8 rounded-lg shadow-lg">

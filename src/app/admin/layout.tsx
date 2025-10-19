@@ -76,7 +76,7 @@ export default function AdminLayout({
         <div className="w-full max-w-sm mx-auto bg-brand-bg dark:bg-brand-dark-teal/80 rounded-2xl shadow-2xl p-8 backdrop-blur-sm border border-white/10">
           <div className="text-center mb-8">
             <ShieldCheck className="mx-auto h-16 w-16 text-brand-bright-green mb-4" />
-            <h1 className="text-3xl font-bold text-brand-dark-teal dark:text-brand-bg text-shadow-3d">
+            <h1 className="text-3xl font-bold text-brand-dark-teal dark:text-brand-bg text-shadow-3d-green">
               Zabezpečená oblasť
             </h1>
             <p className="text-brand-secondary-grey dark:text-slate-300 mt-2">
