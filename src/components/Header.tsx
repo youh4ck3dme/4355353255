@@ -10,6 +10,7 @@ export const Header = () => {
   const navLinks = [
     { href: '/', label: 'Domov' },
     { href: '/blog', label: 'Články' },
+    { href: '/o-nas', label: 'O nás' },
   ];
 
   return (
