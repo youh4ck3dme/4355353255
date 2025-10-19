@@ -1,11 +1,10 @@
-
 'use client';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, KeyRound } from 'lucide-react';
 
 export const Header = () => {
   const pathname = usePathname();
@@ -58,6 +57,12 @@ export const Header = () => {
                 )}
               </Link>
             ))}
+             <Link href="/admin" aria-label="Admin Login" className={cn("relative hover:text-brand-bright-green transition-colors pb-1 pl-4", { "text-brand-bright-green": pathname === '/admin' })}>
+                <KeyRound size={22} />
+                {pathname === '/admin' && (
+                  <span className="absolute bottom-0 left-4 w-[22px] h-0.5 bg-brand-bright-green animate-fade-in"></span>
+                )}
+            </Link>
           </nav>
 
           {/* Mobile Menu Button */}
@@ -109,6 +114,18 @@ export const Header = () => {
                 {link.label}
               </Link>
             ))}
+             <Link 
+                href="/admin"
+                aria-label="Admin Login"
+                className={cn(
+                  "flex items-center gap-2 text-3xl font-bold transition-all duration-300 mt-4",
+                  pathname === '/admin' ? "text-brand-bright-green" : "text-brand-bg hover:text-brand-bright-green",
+                  isMenuOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4",
+                )}
+                style={{ transitionDelay: `${navLinks.length * 100}ms` }}
+              >
+                <KeyRound size={28} /> Admin
+              </Link>
           </nav>
         </div>
       </div>
