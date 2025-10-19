@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { format } from 'date-fns';
 import { Metadata } from 'next';
 import { BlogCard } from '@/components/BlogCard';
+import Link from 'next/link';
 
 type BlogPostPageProps = {
     params: {
@@ -51,9 +52,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
     const postUrl = `${siteUrl}/blog/${post.slug}`;
     
-    // Filter for related posts, excluding the current one
     const relatedPosts = allPosts
-        .filter(p => p.id !== post.id) // You might want a better logic, e.g. by tags
+        .filter(p => p.id !== post.id && (post.tags || []).some(tag => (p.tags || []).includes(tag)))
         .slice(0, 3);
 
     const jsonLd = {
@@ -72,7 +72,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             name: 'VI&MO S.R.O.',
             logo: {
                 '@type': 'ImageObject',
-                url: `${siteUrl}/logo.png`, // Uistite sa, že tento súbor existuje v /public
+                url: `${siteUrl}/logo.png`,
             },
         },
         datePublished: post.createdAt,
@@ -81,6 +81,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             '@type': 'WebPage',
             '@id': postUrl,
         },
+        keywords: post.tags?.join(', ')
     };
 
     return (
@@ -90,11 +91,21 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
             <div className="container mx-auto px-4 py-8 max-w-5xl">
-                <article className="bg-brand-bg dark:bg-brand-dark-teal/80 shadow-xl rounded-lg p-6 lg:p-10">
-                    <h1 className="text-3xl md:text-5xl font-extrabold mb-4 text-brand-text dark:text-brand-bg">{post.title}</h1>
-                    <div className="text-brand-secondary-grey dark:text-slate-300 text-sm mb-6 flex justify-between">
+                <article className="bg-brand-light-gray dark:bg-brand-dark-teal/80 shadow-xl rounded-lg p-6 lg:p-10">
+                    <h1 className="text-3xl md:text-5xl font-extrabold mb-4 text-brand-dark-teal dark:text-brand-bg">{post.title}</h1>
+                    <div className="text-brand-secondary-grey dark:text-slate-300 text-sm mb-4 flex justify-between items-center">
                         <span>Autor: <span className="font-medium">{post.author || 'VI&MO Team'}</span> | Publikované: {format(new Date(post.createdAt), 'd. M. yyyy')}</span>
                     </div>
+
+                    {post.tags && post.tags.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mb-6">
+                            {post.tags.map(tag => (
+                                <Link key={tag} href={`/blog?category=${encodeURIComponent(tag)}`} className="bg-brand-bright-green/20 text-brand-dark-teal dark:bg-brand-bright-green dark:text-brand-dark-teal text-xs font-bold px-3 py-1 rounded-full hover:bg-brand-bright-green/40 transition-colors">
+                                    {tag}
+                                </Link>
+                            ))}
+                        </div>
+                    )}
                     
                     {post.imageUrl && (
                         <div className="relative w-full h-64 md:h-96 mb-8 rounded-lg overflow-hidden">

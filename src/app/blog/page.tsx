@@ -42,11 +42,12 @@ const FeaturedPostCard = ({ post }: { post: Post }) => (
   </section>
 );
 
-
-export default async function BlogIndexPage() {
+export default async function BlogIndexPage({ searchParams }: { searchParams?: { [key: string]: string | string[] | undefined }}) {
   const posts = await getPublishedPosts();
   const featuredPost = posts.length > 0 ? posts[0] : null;
   const otherPosts = posts.length > 1 ? posts.slice(1) : [];
+
+  const initialCategory = typeof searchParams?.category === 'string' ? searchParams.category : undefined;
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
@@ -64,7 +65,7 @@ export default async function BlogIndexPage() {
           <h2 className="text-2xl font-bold mt-12 mb-6 text-center text-brand-dark-teal dark:text-brand-bg">
             Ďalšie články
           </h2>
-          <BlogList initialPosts={otherPosts} />
+          <BlogList initialPosts={otherPosts} initialCategory={initialCategory} />
         </>
       )}
 
