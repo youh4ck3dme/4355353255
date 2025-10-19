@@ -21,16 +21,16 @@ const config: Config = {
         'brand-bg': '#FFFFFF',
         'brand-light-gray': '#F8F8F8',
         'brand-secondary-grey': '#64748b',
-        // for toasts
-        background: 'hsl(0 0% 100%)',
-        foreground: 'hsl(222.2 84% 4.9%)',
+        // for shadcn/ui components
+        background: 'hsl(var(--background))',
+        foreground: 'hsl(var(--foreground))',
         destructive: {
-          DEFAULT: 'hsl(0 84.2% 60.2%)',
-          foreground: 'hsl(0 0% 98%)',
+          DEFAULT: 'hsl(var(--destructive))',
+          foreground: 'hsl(var(--destructive-foreground))',
         },
         muted: {
-          DEFAULT: 'hsl(210 40% 96.1%)',
-          foreground: 'hsl(215.4 16.3% 46.9%)',
+          DEFAULT: 'hsl(var(--muted))',
+          foreground: 'hsl(var(--muted-foreground))',
         },
       },
       boxShadow: {
@@ -93,7 +93,7 @@ const config: Config = {
           to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: { height: "0" },
+          from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "var(--radix-accordion-content-height)" },
         },
       }

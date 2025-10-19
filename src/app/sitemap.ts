@@ -1,21 +1,15 @@
 import type { MetadataRoute } from 'next';
 
-const base = 'https://app.viandmo.com';
+const base = process.env.NEXT_PUBLIC_BASE_URL || 'https://app.viandmo.com';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
+  // Only include pages that actually exist
   const urls = [
     '/',
-    '/sluzby',
-    '/sluzby/stahovanie-bytov-domov',
-    '/sluzby/stahovanie-firiem',
-    '/sluzby/stahovanie-tazkych-bremien-klavirov',
-    '/sluzby/vypratavanie-likvidacia',
-    '/sluzby/autodoprava-s-vodicom',
-    '/lokality',
+    '/o-nas',
     '/cennik',
     '/blog',
-    '/kontakt',
     '/kalkulacka',
     '/faq',
     '/referencie'

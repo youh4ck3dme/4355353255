@@ -10,6 +10,7 @@ import { createPost, updatePost } from '@/lib/api';
 import { useToast } from '@/components/ui/use-toast';
 import { Loader2, Save, Send } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { format } from 'date-fns';
 
 const postSchema = z.object({
   title: z.string().min(3, 'Titulok musí mať aspoň 3 znaky.'),
