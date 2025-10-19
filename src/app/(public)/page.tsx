@@ -1,73 +1,9 @@
 
-import { CheckCircle, Truck, Building, Sparkles, Trash2, ArrowDown, HelpCircle } from 'lucide-react';
+import { ArrowDown } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import placeholderImages from '@/lib/placeholder-images.json';
-import dynamic from 'next/dynamic';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-
-const DynamicContactForm = dynamic(() => import('@/components/ContactForm').then(mod => mod.ContactForm), { ssr: false });
-const DynamicPriceCalculator = dynamic(() => import('@/components/PriceCalculator').then(mod => mod.PriceCalculator), { ssr: false });
-
-const services = [
-  {
-    icon: Truck,
-    title: "Sťahovanie bytov a rodinných domov",
-    shortDescription: "Bezstarostné sťahovanie bytov a domov v Bratislave a okolí.",
-    description: "Náš tím zabezpečí všetko od demontáže nábytku až po jeho bezpečný prevoz a opätovné zloženie. Vy sa len nasťahujete do nového. Pracujeme rýchlo, precízne a s dôrazom na ochranu vášho majetku.",
-    secondaryDescription: "Rýchlo, bezpečne a so zodpovednosťou",
-    included: [
-      "Balenie a zabezpečenie vecí",
-      "Prenos a prevoz nábytku a spotrebičov",
-      "Znesenie a vynesenie aj bez výťahu",
-      "Poistenie zodpovednosti",
-    ]
-  },
-  {
-    icon: Building,
-    title: "Sťahovanie firiem, skladov a prevádzok",
-    shortDescription: "Efektívne sťahovanie firiem a kancelárií bez zdržania.",
-    description: "Či ste malá firma alebo väčší podnik, vaše pracovné priestory presťahujeme tak, aby bol výpadok v prevádzke minimálny. Naplánujeme všetko dopredu a pripravíme logistiku.",
-    secondaryDescription: "Efektívne plánovanie a spoľahlivá logistika",
-    included: [
-      "Sťahovanie techniky, nábytku, archívov",
-      "Časovo presný plán a logistika",
-      "Možnosť víkendového alebo nočného sťahovania",
-      "Skúsený tím s dlhoročnými skúsenosťami",
-    ]
-  },
-  {
-    icon: Trash2,
-    title: "Vypratávanie, odvoz a likvidácia odpadu",
-    shortDescription: "Vypratávanie a ekologický odvoz odpadu – bez starostí.",
-    description: "Vypratáme starý byt, pivnicu, dom, sklad alebo garáž a všetko nepotrebné odvezieme a ekologicky zlikvidujeme. Starý nábytok, stavebný odpad či elektrospotrebiče – nemusíte sa o nič starať.",
-    secondaryDescription: "Rýchlo, bezpečne a so zodpovednosťou",
-    included: [
-      "Vypratávanie interiérov a exteriérov",
-      "Odvoz do zberného dvora alebo spaľovne",
-      "Likvidácia a triedenie ekologického odpadu",
-      "Zabezpečenie likvidácie podľa legislatívy",
-    ]
-  },
-  {
-    icon: Sparkles,
-    title: "Profesionálne čistiace a upratovacie práce",
-    shortDescription: "Čisté bývanie a pracovisko – pravidelne alebo jednorazovo.",
-    description: "Ponúkame upratovanie domácností, firiem, spoločných priestorov, po maľovaní či rekonštrukcii. Používame profesionálne čistiace prostriedky a pracujeme s dôrazom na detail.",
-    secondaryDescription: "Efektívne plánovanie a spoľahlivá logistika",
-    included: [
-      "Generálne upratovanie",
-      "Pravidelné čistenie (denne/týždenne)",
-      "Upratovanie po stavebných prácach",
-      "Upratovanie pred/po sťahovaní",
-    ]
-  }
-];
+import { services } from '@/lib/services';
 
 const faqItems = [
     {
@@ -172,7 +108,7 @@ export default function HomePage() {
             <p className="text-2xl md:text-3xl font-light text-slate-200">
               Pevné ruky & poctivý prístup
             </p>
-            <Link href="#sluzby" className="liquid-glass-button mt-8 inline-flex items-center px-8 py-4 bg-brand-bright-green text-brand-dark-teal font-bold rounded-lg hover:bg-opacity-90 transition-colors duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1">
+            <Link href="/sluzby" className="liquid-glass-button mt-8 inline-flex items-center px-8 py-4 bg-brand-bright-green text-brand-dark-teal font-bold rounded-lg hover:bg-opacity-90 transition-colors duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1">
                 Naše Služby <ArrowDown className="w-5 h-5 ml-2 transition-transform group-hover:translate-y-1" />
             </Link>
           </div>

@@ -5,6 +5,8 @@ import { Users, Target, Sparkles, Phone, Mail, Building, Home, Briefcase, Trash2
 import { ContactForm } from '@/components/ContactForm';
 import placeholderImages from '@/lib/placeholder-images.json';
 import dynamic from 'next/dynamic';
+import { services } from '@/lib/services';
+import Link from 'next/link';
 
 const DynamicContactForm = dynamic(() => import('@/components/ContactForm').then(mod => mod.ContactForm), { ssr: false });
 
@@ -12,29 +14,6 @@ export const metadata: Metadata = {
   title: 'O nás - Profesionálne sťahovanie a upratovanie v Bratislave | VI&MO',
   description: 'Zistite viac o firme VI&MO. Sme experti na sťahovanie bytov, domov a firiem, vypratávanie a upratovacie služby v Bratislave a okolí už 7 rokov. Rýchlo, spoľahlivo a výhodne.',
 };
-
-const services = [
-    {
-        icon: Home,
-        title: "Sťahovanie bytov a rodinných domov",
-        description: "Presťahujeme vás bez stresu. Zabezpečíme demontáž, montáž nábytku, balenie krehkých vecí a bezpečný prevoz."
-    },
-    {
-        icon: Briefcase,
-        title: "Sťahovanie firiem, skladov a prevádzok",
-        description: "Minimalizujeme výpadky vo vašej prevádzke vďaka efektívnemu plánovaniu, spoľahlivej logistike a skúsenému tímu."
-    },
-    {
-        icon: Trash2,
-        title: "Vypratávanie, likvidácia a odvoz odpadu",
-        description: "Postaráme sa o vypratanie bytov, pivníc či garáží vrátane ekologickej likvidácie nepotrebného nábytku a odpadu."
-    },
-    {
-        icon: Sparkles,
-        title: "Profesionálne upratovacie práce",
-        description: "Jednorazové aj pravidelné upratovanie bytov, domov a kancelárií. Zabezpečíme čistotu, na ktorú sa môžete spoľahnúť."
-    }
-]
 
 export default function AboutPage() {
   const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
@@ -76,12 +55,7 @@ export default function AboutPage() {
           closes: '23:59'
         }
     ],
-    serviceType: [
-      "Sťahovanie bytov a rodinných domov",
-      "Sťahovanie firiem, skladov a prevádzok",
-      "Vypratávanie, likvidácia a odvoz odpadu",
-      "Profesionálne upratovacie práce"
-    ]
+    serviceType: services.map(s => s.name)
   };
 
   const aboutTeamImage = placeholderImages.aboutTeam;
@@ -127,16 +101,21 @@ export default function AboutPage() {
         <section className="mb-16">
           <h2 className="text-3xl font-bold mb-8 text-center text-brand-dark-teal dark:text-brand-bg text-shadow-3d">Naše kľúčové služby</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              {services.map(service => {
+              {services.slice(0, 4).map(service => {
                   const Icon = service.icon;
                   return (
-                      <div key={service.title} className="bg-brand-light-gray dark:bg-brand-dark-teal/80 p-6 rounded-lg shadow-lg flex flex-col text-center items-center">
-                          <div className="bg-brand-bright-green p-4 rounded-full mb-4">
-                              <Icon className="h-8 w-8 text-brand-dark-teal" />
-                          </div>
-                          <h3 className="text-xl font-bold mb-2 text-brand-dark-teal dark:text-brand-bg h-14 flex items-center justify-center">{service.title}</h3>
-                          <p className="text-brand-secondary-grey dark:text-slate-300 text-sm">{service.description}</p>
-                      </div>
+                      <Link href={`/sluzby/${service.id}`} key={service.id} className="block group">
+                        <div className="bg-brand-light-gray dark:bg-brand-dark-teal/80 p-6 rounded-lg shadow-lg flex flex-col text-center items-center h-full transition-transform transform group-hover:-translate-y-2">
+                            <div className="bg-brand-bright-green p-4 rounded-full mb-4">
+                                <Icon className="h-8 w-8 text-brand-dark-teal" />
+                            </div>
+                            <h3 className="text-xl font-bold mb-2 text-brand-dark-teal dark:text-brand-bg h-14 flex items-center justify-center">{service.name}</h3>
+                            <p className="text-brand-secondary-grey dark:text-slate-300 text-sm flex-grow">{service.shortDescription}</p>
+                            <span className="mt-4 text-sm font-bold text-brand-bright-green group-hover:underline underline-offset-4">
+                              Zistiť viac &rarr;
+                            </span>
+                        </div>
+                      </Link>
                   );
               })}
           </div>
