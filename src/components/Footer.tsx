@@ -16,69 +16,48 @@ export const Footer = () => {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-12 mb-12 text-center md:text-left">
           
-          {/* Column 1: Brand & Social */}
-          <div className="space-y-4 flex flex-col items-center md:items-start">
-            <h3 className="text-2xl font-black tracking-wider text-brand-bright-green">
-              Bratislava sťahovanie | VI&MO
-            </h3>
-            <p className="text-slate-300 text-sm">
-              Pevné ruky & poctivý prístup. Váš spoľahlivý partner pre sťahovanie a upratovanie v Bratislave a okolí.
-            </p>
-            <div className="flex space-x-4 pt-2">
-              <a href="#" aria-label="Facebook" className="text-slate-400 hover:text-brand-bright-green transition-colors">
-                <Facebook size={24} />
-              </a>
-              <a href="#" aria-label="Instagram" className="text-slate-400 hover:text-brand-bright-green transition-colors">
-                <Instagram size={24} />
-              </a>
-            </div>
-          </div>
-
-          {/* Column 2: Contacts & Navigation */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Rýchly kontakt */}
+          {/* Column 1: Rýchly kontakt */}
+          <div className="space-y-4">
+            <h4 className="text-lg font-bold text-white uppercase tracking-wider">Rýchly kontakt</h4>
             <div className="space-y-4">
-              <h4 className="text-lg font-bold text-white uppercase tracking-wider">Rýchly kontakt</h4>
-              <div className="space-y-4">
-                <div>
-                  <p className="font-semibold text-slate-300">Sťahovanie</p>
-                  <p className="text-sm text-slate-400">Miroslav Danihel</p>
-                  <a href="tel:+421911275755" className="flex items-center justify-center md:justify-start space-x-2 text-slate-300 hover:text-brand-bright-green transition-colors group">
-                    <Phone size={16} className="text-brand-bright-green/80 group-hover:text-brand-bright-green" />
-                    <span>+421 911 275 755</span>
-                  </a>
-                </div>
-                <div>
-                  <p className="font-semibold text-slate-300">Upratovanie</p>
-                  <p className="text-sm text-slate-400">Barbora Danihelová Huňková</p>
-                   <a href="tel:+421918895730" className="flex items-center justify-center md:justify-start space-x-2 text-slate-300 hover:text-brand-bright-green transition-colors group">
-                    <Phone size={16} className="text-brand-bright-green/80 group-hover:text-brand-bright-green" />
-                    <span>+421 918 895 730</span>
-                  </a>
-                </div>
-                <div>
-                   <a href="mailto:info@viandmo.com" className="flex items-center justify-center md:justify-start space-x-2 text-slate-300 hover:text-brand-bright-green transition-colors group">
-                    <Mail size={16} className="text-brand-bright-green/80 group-hover:text-brand-bright-green" />
-                    <span>info@viandmo.com</span>
-                  </a>
-                </div>
+              <div>
+                <p className="font-semibold text-slate-300">Sťahovanie</p>
+                <p className="text-sm text-slate-400">Miroslav Danihel</p>
+                <a href="tel:+421911275755" className="flex items-center justify-center md:justify-start space-x-2 text-slate-300 hover:text-brand-bright-green transition-colors group">
+                  <Phone size={16} className="text-brand-bright-green/80 group-hover:text-brand-bright-green" />
+                  <span>+421 911 275 755</span>
+                </a>
+              </div>
+              <div>
+                <p className="font-semibold text-slate-300">Upratovanie</p>
+                <p className="text-sm text-slate-400">Barbora Danihelová Huňková</p>
+                 <a href="tel:+421918895730" className="flex items-center justify-center md:justify-start space-x-2 text-slate-300 hover:text-brand-bright-green transition-colors group">
+                  <Phone size={16} className="text-brand-bright-green/80 group-hover:text-brand-bright-green" />
+                  <span>+421 918 895 730</span>
+                </a>
+              </div>
+              <div>
+                 <a href="mailto:info@viandmo.com" className="flex items-center justify-center md:justify-start space-x-2 text-slate-300 hover:text-brand-bright-green transition-colors group">
+                  <Mail size={16} className="text-brand-bright-green/80 group-hover:text-brand-bright-green" />
+                  <span>info@viandmo.com</span>
+                </a>
               </div>
             </div>
-            {/* Navigácia */}
-            <div className="space-y-4">
-              <h4 className="text-lg font-bold text-white uppercase tracking-wider">Navigácia</h4>
-              <ul className="space-y-2">
-                {navLinks.map(link => (
-                  <li key={link.label}>
-                    <Link href={link.href} className="text-slate-300 hover:text-brand-bright-green hover:underline underline-offset-4 transition-colors">
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
           </div>
-
+          
+          {/* Column 2: Navigácia */}
+          <div className="space-y-4">
+            <h4 className="text-lg font-bold text-white uppercase tracking-wider">Navigácia</h4>
+            <ul className="space-y-2">
+              {navLinks.map(link => (
+                <li key={link.label}>
+                  <Link href={link.href} className="text-slate-300 hover:text-brand-bright-green hover:underline underline-offset-4 transition-colors">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
 
           {/* Column 3: Business Info */}
           <div className="space-y-4 flex flex-col items-center md:items-start">

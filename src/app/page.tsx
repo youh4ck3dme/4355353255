@@ -164,7 +164,7 @@ export default function HomePage() {
             data-ai-hint={heroImage.hint}
           />
           <div className="absolute inset-0 bg-brand-dark-teal/70"></div>
-          <div className="relative z-10 animate-fade-in">
+          <div className="relative z-10 animate-fade-in text-center">
             <h1 className="text-5xl md:text-7xl font-extrabold mb-4 text-brand-bright-green text-shadow-3d-green">
               VI&MO
             </h1>
@@ -178,7 +178,7 @@ export default function HomePage() {
         </section>
 
         {/* Services Section */}
-        <section id="sluzby" className="min-h-screen flex flex-col justify-center py-16 bg-white text-black">
+        <section id="sluzby" className="min-h-screen flex flex-col justify-center py-16 bg-white text-black text-center md:text-left">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold text-brand-dark-teal text-shadow-3d-green">Naše Služby</h2>
@@ -198,7 +198,7 @@ export default function HomePage() {
                         <p className="text-brand-secondary-grey mb-6">{service.description}</p>
                         <ul className="space-y-2">
                           {service.included.map((item, i) => (
-                            <li key={i} className="flex items-center text-center md:text-left justify-center md:justify-start text-brand-secondary-grey">
+                            <li key={i} className="flex items-center justify-center md:justify-start text-brand-secondary-grey">
                               <CheckCircle className="h-5 w-5 mr-2 text-brand-bright-green flex-shrink-0" />
                               <span>{item}</span>
                             </li>
@@ -220,7 +220,7 @@ export default function HomePage() {
         </section>
 
         {/* FAQ Section */}
-        <section id="faq" className="min-h-screen flex flex-col justify-center py-16 bg-white text-black">
+        <section id="faq" className="min-h-screen flex flex-col justify-center py-16 bg-white text-black text-center md:text-left">
             <div className="container mx-auto px-4 max-w-3xl">
                 <div className="text-center mb-12">
                     <h2 className="text-3xl md:text-4xl font-bold text-brand-dark-teal text-shadow-3d-green">
@@ -246,7 +246,7 @@ export default function HomePage() {
         </section>
         
         {/* CTA Section with Calculator */}
-        <section className="bg-brand-dark-teal/90 min-h-screen flex flex-col justify-center py-16 px-4">
+        <section className="bg-brand-dark-teal/90 min-h-screen flex flex-col justify-center py-16 px-4 text-center md:text-left">
           <div className="container mx-auto text-center">
             <h2 className="text-3xl font-extrabold mb-4 text-brand-bright-green text-shadow-3d-green">Nezáväzná cenová ponuka už dnes</h2>
             <p className="max-w-2xl mx-auto mb-8 text-slate-300">
