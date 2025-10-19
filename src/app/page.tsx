@@ -196,7 +196,7 @@ export default function HomePage() {
                         <p className="text-brand-secondary-grey dark:text-slate-300 mb-6">{service.description}</p>
                         <ul className="space-y-2">
                           {service.included.map((item, i) => (
-                            <li key={i} className="flex items-center justify-center md:justify-start text-brand-secondary-grey dark:text-slate-300">
+                            <li key={i} className="flex items-center text-center md:text-left justify-center md:justify-start text-brand-secondary-grey dark:text-slate-300">
                               <CheckCircle className="h-5 w-5 mr-2 text-brand-bright-green flex-shrink-0" />
                               <span>{item}</span>
                             </li>
@@ -204,8 +204,8 @@ export default function HomePage() {
                         </ul>
                       </div>
                     </div>
-                    <div className={`order-1 ${index % 2 === 0 ? 'md:order-1' : 'md:order-2'}`}>
-                       <div className="p-8 bg-brand-dark-teal/90 rounded-lg text-white text-center shadow-subtle">
+                    <div className={`order-1 ${index % 2 === 0 ? 'md:order-1' : 'md:order-2'} text-center md:text-left`}>
+                       <div className="p-8 bg-brand-dark-teal/90 rounded-lg text-white shadow-subtle">
                           <h4 className="text-xl font-bold text-brand-bright-green mb-2">{index % 2 === 0 ? "Rýchlo, bezpečne a so zodpovednosťou" : "Efektívne plánovanie a spoľahlivá logistika"}</h4>
                           <p className="text-slate-300">{service.description}</p>
                       </div>

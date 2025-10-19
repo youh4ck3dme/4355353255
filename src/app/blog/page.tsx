@@ -21,7 +21,7 @@ const FeaturedPostCard = ({ post }: { post: Post }) => (
             />
           </div>
         )}
-        <div className="flex flex-col">
+        <div className="flex flex-col text-center md:text-left">
           <p className="text-sm font-semibold text-brand-bright-green mb-2">Najnovší článok</p>
           <h2 className="text-2xl md:text-4xl font-extrabold text-brand-bg mb-4 line-clamp-3 group-hover:text-brand-bright-green transition-colors">
             {post.title}
@@ -31,7 +31,7 @@ const FeaturedPostCard = ({ post }: { post: Post }) => (
               {post.content.replace(/<[^>]*>?/gm, '').substring(0, 150)}...
             </p>
           )}
-          <div className="flex items-center text-xs text-slate-400 mt-auto pt-4 border-t border-slate-700">
+          <div className="flex items-center text-xs text-slate-400 mt-auto pt-4 border-t border-slate-700 justify-center md:justify-start">
             <span>{post.author || 'VI&MO Team'}</span>
             <span className="mx-2">|</span>
             <span>{format(new Date(post.createdAt), 'd. M. yyyy')}</span>
@@ -69,7 +69,7 @@ export default async function BlogIndexPage({ searchParams }: { searchParams?: {
         </>
       )}
 
-      {posts.length === 1 && (
+      {posts.length === 1 && !otherPosts.length && (
         <p className="text-center text-brand-secondary-grey py-16">
           Zatiaľ tu máme len jeden článok. Ďalšie čoskoro pribudnú!
         </p>

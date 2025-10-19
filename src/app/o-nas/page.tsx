@@ -133,7 +133,7 @@ export default function AboutPage() {
                           <div className="bg-brand-bright-green p-4 rounded-full mb-4">
                               <Icon className="h-8 w-8 text-brand-dark-teal" />
                           </div>
-                          <h3 className="text-xl font-bold mb-2 text-brand-dark-teal dark:text-brand-bg h-14 flex items-center">{service.title}</h3>
+                          <h3 className="text-xl font-bold mb-2 text-brand-dark-teal dark:text-brand-bg h-14 flex items-center justify-center">{service.title}</h3>
                           <p className="text-brand-secondary-grey dark:text-slate-300 text-sm">{service.description}</p>
                       </div>
                   );
