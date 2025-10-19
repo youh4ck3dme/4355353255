@@ -9,9 +9,6 @@ const config: Config = {
   darkMode: 'class',
   theme: {
     extend: {
-      fontFamily: {
-        'poppins': ['var(--font-poppins)', 'sans-serif'],
-      },
       colors: {
         'brand-dark-teal': '#1A5255',
         'brand-bright-green': '#33CC66',
