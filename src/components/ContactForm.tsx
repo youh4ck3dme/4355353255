@@ -52,6 +52,16 @@ export const ContactForm = () => {
             return;
         }
 
+        if (!firestore) {
+            toast({
+                variant: "destructive",
+                title: "Chyba pri inicializácii",
+                description: "Databáza nie je dostupná. Skúste to prosím neskôr.",
+            });
+            setStatus('idle');
+            return;
+        }
+
         try {
             const submissionsCollection = collection(firestore, 'contact_submissions');
             
@@ -172,3 +182,5 @@ export const ContactForm = () => {
         </form>
     );
 };
+
+    
