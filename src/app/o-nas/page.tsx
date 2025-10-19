@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { Metadata } from 'next';
 import { Users, Target, Sparkles } from 'lucide-react';
+import { ImageWrapper } from '@/components/ImageWrapper';
 
 export const metadata: Metadata = {
   title: 'O nás | VI&MO Blog',
@@ -21,13 +22,15 @@ export default function AboutPage() {
 
       <section className="mb-16">
         <div className="relative w-full h-80 rounded-lg overflow-hidden shadow-2xl">
-          <Image
-            src="https://picsum.photos/seed/vimo-team/1200/800"
-            alt="Tím VI&MO pri práci"
-            fill
-            className="object-cover"
-            data-ai-hint="team working"
-          />
+          <ImageWrapper>
+            <Image
+              src="https://picsum.photos/seed/vimo-team/1200/800"
+              alt="Tím VI&MO pri práci"
+              fill
+              className="object-cover"
+              data-ai-hint="team working"
+            />
+          </ImageWrapper>
           <div className="absolute inset-0 bg-brand-dark-teal/50" />
         </div>
       </section>
@@ -44,13 +47,15 @@ export default function AboutPage() {
             </p>
           </div>
           <div className="relative w-full h-64 rounded-lg overflow-hidden shadow-xl">
-             <Image
-                src="https://picsum.photos/seed/vimo-van/800/600"
-                alt="Sťahovacie vozidlo VI&MO"
-                fill
-                className="object-cover"
-                data-ai-hint="moving van"
-            />
+            <ImageWrapper>
+              <Image
+                  src="https://picsum.photos/seed/vimo-van/800/600"
+                  alt="Sťahovacie vozidlo VI&MO"
+                  fill
+                  className="object-cover"
+                  data-ai-hint="moving van"
+              />
+            </ImageWrapper>
           </div>
         </div>
       </section>

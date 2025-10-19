@@ -2,6 +2,7 @@
 
 import { Lightbulb, RotateCcw, Shield, Brush, Rocket, Search, UserCheck, Wrench, FunctionSquare, ImagePlus } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useImageReplacement } from '@/context/ImageReplacementContext';
 
 const allSuggestions = {
   Funkcionalita: [
@@ -70,6 +71,8 @@ export const SuggestionsBanner = () => {
   const [currentCategory, setCurrentCategory] = useState<Category>('Funkcionalita');
   const [hoveredCategory, setHoveredCategory] = useState<Category | null>(null);
   const [currentSuggestion, setCurrentSuggestion] = useState('');
+  const { isImageReplacementMode, setIsImageReplacementMode } = useImageReplacement();
+
 
   useEffect(() => {
     setIsClient(true);
@@ -99,7 +102,7 @@ export const SuggestionsBanner = () => {
   if (!isClient) {
     return null;
   }
-
+  
   const activeCategoryLabel = hoveredCategory || currentCategory;
 
   return (
@@ -153,8 +156,9 @@ export const SuggestionsBanner = () => {
                         <RotateCcw className="h-4 w-4" />
                     </button>
                     <button 
-                        title="Nahrať obrázok (v príprave)"
-                        className="p-2 rounded-full transition-colors bg-red-900/50 hover:bg-red-900/80 cursor-not-allowed"
+                        onClick={() => setIsImageReplacementMode(!isImageReplacementMode)}
+                        title="Režim výmeny obrázkov"
+                        className={`p-2 rounded-full transition-colors ${isImageReplacementMode ? 'bg-red-600 text-white' : 'bg-white/10 hover:bg-white/20'}`}
                     >
                         <ImagePlus className="h-4 w-4" />
                     </button>

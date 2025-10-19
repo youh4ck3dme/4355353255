@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Post } from '@/lib/types';
 import { format } from 'date-fns';
+import { ImageWrapper } from './ImageWrapper';
 
 interface BlogCardProps {
   post: Post;
@@ -13,6 +14,7 @@ export const BlogCard = ({ post }: BlogCardProps) => {
       <div className="bg-brand-light-gray dark:bg-brand-dark-teal/90 rounded-xl overflow-hidden shadow-lg h-full flex flex-col">
         {post.imageUrl && (
             <div className="relative w-full h-48">
+                <ImageWrapper>
                  <Image 
                     src={post.imageUrl} 
                     alt={post.title} 
@@ -21,6 +23,7 @@ export const BlogCard = ({ post }: BlogCardProps) => {
                     className="object-cover"
                     priority
                 />
+                </ImageWrapper>
             </div>
         )}
         <div className="p-6 flex-grow flex flex-col">

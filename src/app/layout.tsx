@@ -4,6 +4,7 @@ import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { SuggestionsBanner } from "@/components/SuggestionsBanner";
+import { ImageReplacementProvider } from "@/context/ImageReplacementContext";
 
 const inter = Inter({ subsets: ["latin"], display: 'swap' });
 
@@ -20,12 +21,14 @@ export default function RootLayout({
   return (
     <html lang="sk" className="dark">
       <body className={inter.className}>
-        <Header />
-        <main id="main-content" className="pt-16 min-h-screen">
-          {children}
-        </main>
-        <Footer />
-        <SuggestionsBanner />
+        <ImageReplacementProvider>
+          <Header />
+          <main id="main-content" className="pt-16 min-h-screen">
+            {children}
+          </main>
+          <Footer />
+          <SuggestionsBanner />
+        </ImageReplacementProvider>
       </body>
     </html>
   );
