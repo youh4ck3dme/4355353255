@@ -2,6 +2,7 @@ import Image from 'next/image';
 import { Metadata } from 'next';
 import { Users, Target, Sparkles, Phone, Mail, Building, Home, Briefcase, Trash2, MapPin } from 'lucide-react';
 import { ImageWrapper } from '@/components/ImageWrapper';
+import { ContactForm } from '@/components/ContactForm';
 
 export const metadata: Metadata = {
   title: 'O nás - Profesionálne sťahovanie a upratovanie v Bratislave | VI&MO',
@@ -92,7 +93,7 @@ export default function AboutPage() {
         </p>
       </section>
 
-      <section>
+      <section className="mb-16">
         <h2 className="text-3xl font-bold mb-8 text-center text-brand-dark-teal dark:text-brand-bg">Kontaktujte nás</h2>
         <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             <div className="bg-brand-light-gray dark:bg-brand-dark-teal/80 p-6 rounded-lg shadow-lg">
@@ -119,6 +120,13 @@ export default function AboutPage() {
                     <p><strong>IČO:</strong> 56 811 322 | <strong>DIČ:</strong> 2122461176</p>
                 </div>
             </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 className="text-3xl font-bold mb-8 text-center text-brand-dark-teal dark:text-brand-bg">Sťahujete sa? Napíšte nám.</h2>
+        <div className="max-w-2xl mx-auto bg-brand-light-gray dark:bg-brand-dark-teal/80 p-8 rounded-lg shadow-2xl">
+          <ContactForm />
         </div>
       </section>
 
