@@ -17,8 +17,8 @@ export const Header = () => {
   return (
     <header className="sticky top-0 z-50 bg-brand-dark-teal/95 backdrop-blur-sm shadow-medium text-brand-bg">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <Link href="/" className="text-2xl font-black tracking-wider text-brand-bright-green hover:opacity-90 transition-opacity" aria-label="Domov - VI&MO Blog">
-          VI&MO Blog
+        <Link href="/" className="text-xl font-black tracking-wider text-brand-bright-green hover:opacity-90 transition-opacity" aria-label="Domov - Bratislava sťahovanie | VI&MO">
+          Bratislava sťahovanie | VI&MO
         </Link>
         <nav className="hidden sm:flex items-center space-x-6">
           {navLinks.map(link => (

@@ -3,7 +3,7 @@ import { Euro, Users, Truck, Home } from 'lucide-react';
 import { PriceCalculator } from '@/components/PriceCalculator';
 
 export const metadata: Metadata = {
-  title: 'Cenník Služieb | VI&MO Blog',
+  title: 'Cenník Služieb | Bratislava sťahovanie | VI&MO',
   description: 'Prehľadný cenník sťahovacích a upratovacích služieb v Bratislave. Vypočítajte si odhadovanú cenu pomocou našej online kalkulačky.',
 };
 

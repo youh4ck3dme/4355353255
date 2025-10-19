@@ -10,7 +10,7 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: "VI&MO Blog | Sťahovanie a Upratovanie Bratislava",
+  title: "Bratislava sťahovanie | VI&MO | Tipy a Rady",
   description: "Nájdete tu najlepšie tipy a rady pre sťahovanie, upratovanie a vypratávanie v Bratislave a okolí. Prečítajte si náš blog!",
 };
 

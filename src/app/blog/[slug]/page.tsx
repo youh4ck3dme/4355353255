@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
   const description = `Prečítajte si viac o téme "${post.title}" a získajte cenné tipy od expertov z VI&MO. Váš spoľahlivý partner pre sťahovanie a upratovanie v Bratislave.`;
 
   return {
-    title: `${post.title} | VI&MO Blog`,
+    title: `${post.title} | Bratislava sťahovanie | VI&MO`,
     description: description,
     alternates: {
         canonical: postUrl,
