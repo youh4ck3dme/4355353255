@@ -3,7 +3,6 @@ import { CheckCircle, Truck, Building, Sparkles, Trash2, ArrowDown, HelpCircle }
 import Link from 'next/link';
 import Image from 'next/image';
 import placeholderImages from '@/lib/placeholder-images.json';
-import { ContactForm } from '@/components/ContactForm';
 import dynamic from 'next/dynamic';
 import {
   Accordion,
@@ -11,7 +10,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { PriceCalculator } from '@/components/PriceCalculator';
 
 const DynamicContactForm = dynamic(() => import('@/components/ContactForm').then(mod => mod.ContactForm), { ssr: false });
 const DynamicPriceCalculator = dynamic(() => import('@/components/PriceCalculator').then(mod => mod.PriceCalculator), { ssr: false });
@@ -249,7 +247,7 @@ export default function HomePage() {
         </section>
         
         {/* CTA Section with Calculator and Form */}
-        <section className="bg-brand-dark-teal/90 min-h-screen flex flex-col justify-center py-16 px-4">
+        <section id="cta" className="bg-brand-dark-teal/90 min-h-screen flex flex-col justify-center py-16 px-4">
           <div className="container mx-auto text-center">
             <h2 className="text-3xl font-extrabold mb-4 text-brand-bright-green text-shadow-3d-green">Nezáväzná cenová ponuka už dnes</h2>
             <p className="max-w-3xl mx-auto mb-8 text-slate-300">
