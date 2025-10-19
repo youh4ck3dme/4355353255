@@ -2,6 +2,9 @@
 import { Metadata } from 'next';
 import { Euro, Users, Truck, Home } from 'lucide-react';
 import { PriceCalculator } from '@/components/PriceCalculator';
+import dynamic from 'next/dynamic';
+
+const DynamicPriceCalculator = dynamic(() => import('@/components/PriceCalculator').then(mod => mod.PriceCalculator), { ssr: false });
 
 export const metadata: Metadata = {
   title: 'Cenník Služieb | Bratislava sťahovanie | VI&MO',
@@ -106,10 +109,12 @@ export default function PricingPage() {
         <section>
           <h2 className="text-3xl font-bold mb-8 text-center text-brand-dark-teal dark:text-brand-bg text-shadow-3d">Online Kalkulačka Ceny</h2>
           <div className="bg-brand-dark-teal/90 p-8 rounded-2xl shadow-2xl max-w-2xl mx-auto">
-              <PriceCalculator />
+              <DynamicPriceCalculator />
           </div>
         </section>
       </div>
     </>
   );
 }
+
+    

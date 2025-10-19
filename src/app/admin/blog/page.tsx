@@ -1,3 +1,4 @@
+
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { getAllPosts } from '@/lib/api';
@@ -31,9 +32,9 @@ const PostRow = ({ post }: { post: Post }) => (
             </span>
         </div>
         <div className="flex items-center justify-start md:justify-end gap-2">
-            <button className="p-2 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors" aria-label="Upraviť článok">
+            <Link href={`/admin/blog/edit/${post.slug}`} className="p-2 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors" aria-label="Upraviť článok">
                 <Edit size={18} />
-            </button>
+            </Link>
              <button className="p-2 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 transition-colors" aria-label="Zmazať článok">
                 <Trash2 size={18} />
             </button>
@@ -77,3 +78,5 @@ export default async function AdminBlogPage() {
         </div>
     );
 }
+
+    

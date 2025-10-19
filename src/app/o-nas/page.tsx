@@ -57,7 +57,7 @@ export default function AboutPage() {
     },
     geo: {
       '@type': 'GeoCoordinates',
-      latitude: 48.2045, // Približné súradnice, odporúča sa upresniť
+      latitude: 48.2045, 
       longitude: 17.1537
     },
     openingHoursSpecification: [
@@ -191,3 +191,5 @@ export default function AboutPage() {
     </>
   );
 }
+
+    
