@@ -2,7 +2,7 @@ import { Post } from './types';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:9002/api';
 
-async function fetcher<T>(url: string, options: RequestInit = {}): Promise<T> {
+async function fetcher<T>(url: string, options: RequestInit = {}): Promise<T | null> {
     try {
         const res = await fetch(url, {
             ...options,
@@ -10,19 +10,19 @@ async function fetcher<T>(url: string, options: RequestInit = {}): Promise<T> {
         });
 
         if (!res.ok) {
-            console.error(`API Error: ${res.status} ${res.statusText}`);
-            throw new Error('Failed to fetch data from the API.');
+            console.error(`API Error: ${res.status} ${res.statusText} for URL: ${url}`);
+            return null;
         }
         return res.json();
     } catch (error) {
-        console.error("Network or fetch error: ", error);
-        // In a real app, you might want to throw a more specific error
-        throw new Error('Network error, please try again later.');
+        console.error(`Network or fetch error for URL: ${url}`, error);
+        return null;
     }
 }
 
 export async function getPublishedPosts(): Promise<Post[]> {
-    return fetcher<Post[]>(`${API_URL}/posts?status=published`);
+    const posts = await fetcher<Post[]>(`${API_URL}/posts?status=published`);
+    return posts || [];
 }
 
 export async function getPostBySlug(slug: string): Promise<Post | null> {
