@@ -1,7 +1,8 @@
-import Link from 'next/link';
-import { Phone, Mail, MapPin, Facebook, Instagram } from 'lucide-react';
 
-const navLinks = [
+import Link from 'next/link';
+import { Phone, Mail } from 'lucide-react';
+
+const footerLinks = [
   { href: '/', label: 'Domov' },
   { href: '/sluzby', label: 'Služby' },
   { href: '/cennik', label: 'Cenník' },
@@ -48,7 +49,7 @@ export const Footer = () => {
           <div className="space-y-4">
             <h4 className="text-lg font-bold text-white uppercase tracking-wider">Navigácia</h4>
             <ul className="space-y-2">
-              {navLinks.map(link => (
+              {footerLinks.map(link => (
                 <li key={link.label}>
                   <Link href={link.href} className="liquid-glass-button text-slate-300 hover:text-brand-bright-green hover:underline underline-offset-4 transition-colors">
                     {link.label}

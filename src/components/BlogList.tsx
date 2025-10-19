@@ -97,7 +97,7 @@ export const BlogList = ({ initialPosts, initialCategory }: { initialPosts: Post
                 </div>
             ) : (
                 <p className="text-xl text-center text-brand-secondary-grey py-16">
-                    Žiadne výsledky pre '{searchQuery || selectedCategory}'. Skúste iný filter alebo kľúčové slovo.
+                    Žiadne výsledky pre &apos;{searchQuery || selectedCategory}&apos;. Skúste iný filter alebo kľúčové slovo.
                 </p>
             )}
         </div>

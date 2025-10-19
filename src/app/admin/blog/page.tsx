@@ -1,7 +1,6 @@
-
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { getAllPosts, deletePost } from '@/lib/api';
 import { Post } from '@/lib/types';
@@ -49,10 +48,10 @@ const PostRow = ({ post, onDelete }: { post: Post, onDelete: (slug: string) => v
                 <Link href={`/admin/blog/edit/${post.slug}`} className="p-2 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors" aria-label="Upraviť článok">
                     <Edit size={18} />
                 </Link>
-                <button 
+                <button
                     onClick={handleDelete}
                     disabled={isDeleting}
-                    className="p-2 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" 
+                    className="p-2 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     aria-label="Zmazať článok"
                 >
                     {isDeleting ? <Loader2 size={18} className="animate-spin" /> : <Trash2 size={18} />}
@@ -68,7 +67,7 @@ export default function AdminBlogPage() {
     const [isLoading, setIsLoading] = useState(true);
     const { toast } = useToast();
 
-    const fetchPosts = async () => {
+    const fetchPosts = useCallback(async () => {
         setIsLoading(true);
         try {
             const fetchedPosts = await getAllPosts();
@@ -83,11 +82,11 @@ export default function AdminBlogPage() {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [toast]);
 
     useEffect(() => {
         fetchPosts();
-    }, []);
+    }, [fetchPosts]);
 
     const handleRefresh = () => {
         fetchPosts();
