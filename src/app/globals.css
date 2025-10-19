@@ -4,35 +4,31 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 0 0% 100%; /* White */
+    --foreground: 183 50% 15%; /* Dark Teal */
+
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
     
-    /* Subtle Refactor: Brighter green, slightly softer teal, lighter grey */
-    --brand-dark-teal: 183 50% 25%; /* #206062 */
-    --brand-bright-green: 145 70% 45%; /* #24C25C */
-    --brand-text: 222.2 84% 4.9%; /* Same as foreground */
-    --brand-bg: 0 0% 100%; /* White */
-    --brand-light-gray: 210 40% 98%; /* #FAFBFC */
-    --brand-secondary-grey: 215 20% 65%; /* #94a3b8 */
+    --brand-dark-teal: 183 50% 25%;
+    --brand-bright-green: 145 70% 48%; 
+    --brand-light-gray: 210 40% 98%;
+    --brand-secondary-grey: 215 20% 65%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 183 50% 15%; /* Dark Teal */
+    --foreground: 0 0% 100%; /* White */
+    
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
-    
-    /* Dark mode variants */
-    --brand-dark-teal: 183 50% 15%; /* #143C3E - Darker for bg */
-    --brand-bright-green: 145 70% 48%; /* #29D665 - More vibrant on dark */
-    --brand-text: 210 40% 98%; /* White */
-    --brand-bg: 222.2 84% 4.9%; /* Dark */
+
+    --brand-dark-teal: 183 50% 15%;
+    --brand-bright-green: 145 70% 48%;
     --brand-light-gray: 217.2 32.6% 17.5%;
     --brand-secondary-grey: 215 20.2% 65.1%;
   }
@@ -40,7 +36,7 @@
 
 @layer base {
   body {
-    @apply bg-brand-bg text-brand-text dark:bg-brand-dark-teal dark:text-brand-bg tracking-wide;
+    @apply bg-background text-foreground tracking-wide;
      -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
