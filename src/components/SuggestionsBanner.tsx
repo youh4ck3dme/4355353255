@@ -1,6 +1,6 @@
 'use client';
 
-import { Lightbulb, RotateCcw, Shield, Brush, Rocket, Search, UserCheck, FunctionSquare } from 'lucide-react';
+import { Lightbulb, RotateCcw, Shield, Brush, Rocket, Search, UserCheck, Wrench, FunctionSquare } from 'lucide-react';
 import { useEffect, useState, useMemo } from 'react';
 
 const allSuggestions = {
@@ -15,6 +15,12 @@ const allSuggestions = {
     "Vytvor stránku 'O nás' s predstavením firmy VI&MO.",
     "Pridaj kalkulačku odhadovanej ceny sťahovania.",
     "Implementuj systém hodnotenia článkov (1-5 hviezdičiek)."
+  ],
+  'Generovanie Funkcií': [
+    "Vygeneruj kompletnú sekciu 'Login/Register' s využitím Firebase Authentication.",
+    "Implementuj 'Cloud Storage' pre nahrávanie a správu súborov cez Firebase.",
+    "Vytvor dashboard pre správu používateľov s prepojením na Firestore.",
+    "Pridaj do aplikácie systém notifikácií v reálnom čase."
   ],
   Dizajn: [
     "Pridaj tmavý a svetlý režim s možnosťou prepínania.",
@@ -57,7 +63,8 @@ const allSuggestions = {
 type Category = keyof typeof allSuggestions;
 
 const categoryIcons: Record<Category, React.ElementType> = {
-  Funkcionalita: FunctionSquare,
+  Funkcionalita: Wrench,
+  'Generovanie Funkcií': FunctionSquare,
   Dizajn: Brush,
   Výkon: Rocket,
   SEO: Search,
@@ -129,7 +136,7 @@ export const SuggestionsBanner = () => {
                     </span>
                  </div>
                 <div 
-                    className="flex items-center space-x-2"
+                    className="flex items-center space-x-2 flex-wrap"
                     onMouseLeave={() => setHoveredCategory(null)}
                 >
                     {categories.map(category => {
