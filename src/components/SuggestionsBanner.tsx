@@ -66,105 +66,105 @@ const categoryIcons: Record<Category, React.ElementType> = {
 
 const categories = Object.keys(allSuggestions) as Category[];
 
-export const SuggestionsBanner = () => {
-  const [isClient, setIsClient] = useState(false);
-  const [currentCategory, setCurrentCategory] = useState<Category>('Funkcionalita');
-  const [hoveredCategory, setHoveredCategory] = useState<Category | null>(null);
-  const [currentSuggestion, setCurrentSuggestion] = useState('');
-  const { isImageReplacementMode, setIsImageReplacementMode } = useImageReplacement();
+// This is a client-only component.
+// It uses hooks that rely on client-side state (useContext, useState with random values).
+// To prevent hydration errors, we must ensure it only renders on the client.
+const SuggestionsBannerClient = () => {
+    const [currentCategory, setCurrentCategory] = useState<Category>('Funkcionalita');
+    const [hoveredCategory, setHoveredCategory] = useState<Category | null>(null);
+    const [currentSuggestion, setCurrentSuggestion] = useState('');
+    const { isImageReplacementMode, setIsImageReplacementMode } = useImageReplacement();
 
+    useEffect(() => {
+        const getNewSuggestion = (category: Category) => {
+            const suggestions = allSuggestions[category];
+            const randomIndex = Math.floor(Math.random() * suggestions.length);
+            setCurrentSuggestion(suggestions[randomIndex]);
+        };
+        
+        getNewSuggestion(currentCategory);
 
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+        const intervalId = setInterval(() => {
+            getNewSuggestion(currentCategory);
+        }, 7000);
 
-  useEffect(() => {
-    if (!isClient) return;
-
-    const getNewSuggestion = (category: Category) => {
-        const suggestions = allSuggestions[category];
-        const randomIndex = Math.floor(Math.random() * suggestions.length);
-        setCurrentSuggestion(suggestions[randomIndex]);
-    };
-    
-    getNewSuggestion(currentCategory);
-
-    const intervalId = setInterval(() => {
-        const newSuggestions = allSuggestions[currentCategory];
-        const newRandomIndex = Math.floor(Math.random() * newSuggestions.length);
-        setCurrentSuggestion(newSuggestions[newRandomIndex]);
-    }, 7000);
-
-    return () => clearInterval(intervalId);
-  }, [currentCategory, isClient]);
-
-
-  if (!isClient) {
-    return null;
-  }
+        return () => clearInterval(intervalId);
+    }, [currentCategory]);
   
-  const activeCategoryLabel = hoveredCategory || currentCategory;
+    const activeCategoryLabel = hoveredCategory || currentCategory;
 
-  return (
-    <div className="fixed bottom-4 left-4 z-50 max-w-sm">
-        <div className="bg-brand-dark-teal/90 backdrop-blur-sm border border-brand-bright-green/30 text-white rounded-lg shadow-2xl p-4 flex flex-col space-y-3 animate-fade-in-up">
-            <div className='flex items-start space-x-3'>
-                <div className="flex-shrink-0 pt-1">
-                    <Lightbulb className="h-5 w-5 text-brand-bright-green" />
+    return (
+        <div className="fixed bottom-4 left-4 z-50 max-w-sm">
+            <div className="bg-brand-dark-teal/90 backdrop-blur-sm border border-brand-bright-green/30 text-white rounded-lg shadow-2xl p-4 flex flex-col space-y-3 animate-fade-in-up">
+                <div className='flex items-start space-x-3'>
+                    <div className="flex-shrink-0 pt-1">
+                        <Lightbulb className="h-5 w-5 text-brand-bright-green" />
+                    </div>
+                    <div>
+                        <h3 className="text-sm font-bold text-brand-bright-green">Návrh na vylepšenie:</h3>
+                        <p className="text-sm text-brand-bg">{currentSuggestion}</p>
+                        <button
+                            onClick={() => navigator.clipboard.writeText(currentSuggestion)}
+                            className="mt-2 text-xs text-left text-slate-400 hover:text-brand-bright-green transition-colors duration-200"
+                            title="Kopírovať prompt"
+                        >
+                            Kopírovať prompt
+                        </button>
+                    </div>
                 </div>
-                <div>
-                    <h3 className="text-sm font-bold text-brand-bright-green">Návrh na vylepšenie:</h3>
-                    <p className="text-sm text-brand-bg">{currentSuggestion}</p>
-                    <button
-                        onClick={() => navigator.clipboard.writeText(currentSuggestion)}
-                        className="mt-2 text-xs text-left text-slate-400 hover:text-brand-bright-green transition-colors duration-200"
-                        title="Kopírovať prompt"
+                <div className="border-t border-brand-bright-green/20 pt-3">
+                    <div className="h-6 mb-1 text-center">
+                        <span className="text-xs font-bold uppercase tracking-wider text-brand-bright-green">
+                        {activeCategoryLabel}
+                        </span>
+                    </div>
+                    <div 
+                        className="flex items-center space-x-2 flex-wrap"
+                        onMouseLeave={() => setHoveredCategory(null)}
                     >
-                        Kopírovať prompt
-                    </button>
-                </div>
-            </div>
-            <div className="border-t border-brand-bright-green/20 pt-3">
-                 <div className="h-6 mb-1 text-center">
-                    <span className="text-xs font-bold uppercase tracking-wider text-brand-bright-green">
-                      {activeCategoryLabel}
-                    </span>
-                 </div>
-                <div 
-                    className="flex items-center space-x-2 flex-wrap"
-                    onMouseLeave={() => setHoveredCategory(null)}
-                >
-                    {categories.map(category => {
-                        const Icon = categoryIcons[category];
-                        return (
-                            <button 
-                                key={category}
-                                onClick={() => setCurrentCategory(category)}
-                                onMouseEnter={() => setHoveredCategory(category)}
-                                title={category}
-                                className={`p-2 rounded-full transition-colors ${currentCategory === category ? 'bg-brand-bright-green text-brand-dark-teal' : 'bg-white/10 hover:bg-white/20'}`}
-                            >
-                                <Icon className="h-4 w-4" />
-                            </button>
-                        )
-                    })}
-                     <button 
-                        onClick={() => setCurrentCategory(categories[Math.floor(Math.random() * categories.length)])}
-                        title="Náhodná kategória"
-                        className="p-2 rounded-full transition-colors bg-white/10 hover:bg-white/20"
-                    >
-                        <RotateCcw className="h-4 w-4" />
-                    </button>
-                    <button 
-                        onClick={() => setIsImageReplacementMode(!isImageReplacementMode)}
-                        title="Režim výmeny obrázkov"
-                        className={`p-2 rounded-full transition-colors ${isImageReplacementMode ? 'bg-red-600 text-white' : 'bg-white/10 hover:bg-white/20'}`}
-                    >
-                        <ImagePlus className="h-4 w-4" />
-                    </button>
+                        {categories.map(category => {
+                            const Icon = categoryIcons[category];
+                            return (
+                                <button 
+                                    key={category}
+                                    onClick={() => setCurrentCategory(category)}
+                                    onMouseEnter={() => setHoveredCategory(category)}
+                                    title={category}
+                                    className={`p-2 rounded-full transition-colors ${currentCategory === category ? 'bg-brand-bright-green text-brand-dark-teal' : 'bg-white/10 hover:bg-white/20'}`}
+                                >
+                                    <Icon className="h-4 w-4" />
+                                </button>
+                            )
+                        })}
+                        <button 
+                            onClick={() => setCurrentCategory(categories[Math.floor(Math.random() * categories.length)])}
+                            title="Náhodná kategória"
+                            className="p-2 rounded-full transition-colors bg-white/10 hover:bg-white/20"
+                        >
+                            <RotateCcw className="h-4 w-4" />
+                        </button>
+                        <button 
+                            onClick={() => setIsImageReplacementMode(!isImageReplacementMode)}
+                            title="Režim výmeny obrázkov"
+                            className={`p-2 rounded-full transition-colors ${isImageReplacementMode ? 'bg-red-600 text-white' : 'bg-white/10 hover:bg-white/20'}`}
+                        >
+                            <ImagePlus className="h-4 w-4" />
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-  );
+    );
+}
+
+export const SuggestionsBanner = () => {
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
+
+    // By returning null on the server and only rendering the real component on the client,
+    // we prevent any hydration mismatch errors related to context or random values.
+    return isClient ? <SuggestionsBannerClient /> : null;
 };

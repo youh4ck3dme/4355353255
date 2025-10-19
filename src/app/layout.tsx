@@ -1,12 +1,19 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { SuggestionsBanner } from "@/components/SuggestionsBanner";
 import { ImageReplacementProvider } from "@/context/ImageReplacementContext";
 
-const inter = Inter({ subsets: ["latin"], display: 'swap' });
+const inter = Inter({ subsets: ["latin"], display: 'swap', variable: '--font-inter' });
+const poppins = Poppins({ 
+  subsets: ["latin"], 
+  display: 'swap',
+  weight: ['400', '500', '600', '700', '800', '900'],
+  variable: '--font-poppins' 
+});
+
 
 export const metadata: Metadata = {
   title: "VI&MO Blog | Sťahovanie a Upratovanie Bratislava",
@@ -19,7 +26,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="sk" className="dark">
+    <html lang="sk" className={`dark ${inter.variable} ${poppins.variable}`}>
       <body className={inter.className}>
         <ImageReplacementProvider>
           <Header />
