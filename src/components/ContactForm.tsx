@@ -155,7 +155,7 @@ export const ContactForm = () => {
                 <input
                     type="text"
                     id="address"
-                    value={values.address}
+                    value={values.address || ''}
                     onChange={handleChange}
                     placeholder='Odkiaľ a kam sa sťahujete?'
                     className="w-full p-3 border-2 border-slate-300 dark:border-slate-600 rounded-lg focus:border-brand-bright-green 
@@ -182,5 +182,3 @@ export const ContactForm = () => {
         </form>
     );
 };
-
-    
