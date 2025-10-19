@@ -64,20 +64,21 @@ export const ContactForm = () => {
 
         const submissionsCollection = collection(firestore, 'contact_submissions');
         
-        addDoc(submissionsCollection, {
-            ...validationResult.data,
-            submittedAt: serverTimestamp(),
-        })
-        .then(() => {
+        try {
+            await addDoc(submissionsCollection, {
+                ...validationResult.data,
+                submittedAt: serverTimestamp(),
+            });
+
             toast({
                 variant: 'success',
                 title: 'Požiadavka odoslaná!',
                 description: 'Ďakujeme! Čoskoro sa vám ozveme.',
             });
             setValues({ name: '', phone: '', email: '', address: '' });
-        })
-        .catch((serverError) => {
-            const permissionError = new FirestorePermissionError({
+
+        } catch (serverError) {
+             const permissionError = new FirestorePermissionError({
               path: submissionsCollection.path,
               operation: 'create',
               requestResourceData: validationResult.data,
@@ -89,10 +90,9 @@ export const ContactForm = () => {
               title: "Chyba pri odosielaní",
               description: "Vyskytla sa chyba. Skúste to prosím znova.",
             });
-        })
-        .finally(() => {
+        } finally {
             setStatus('idle');
-        });
+        }
     };
 
     return (

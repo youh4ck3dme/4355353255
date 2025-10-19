@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -69,9 +70,19 @@ export default function AdminBlogPage() {
 
     const fetchPosts = async () => {
         setIsLoading(true);
-        const fetchedPosts = await getAllPosts();
-        setPosts(fetchedPosts);
-        setIsLoading(false);
+        try {
+            const fetchedPosts = await getAllPosts();
+            setPosts(fetchedPosts);
+        } catch (error) {
+            console.error("Failed to fetch posts:", error);
+            toast({
+                variant: "destructive",
+                title: "Chyba pri načítaní",
+                description: "Nepodarilo sa načítať zoznam článkov.",
+            });
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     useEffect(() => {
