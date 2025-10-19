@@ -1,46 +1,30 @@
+import type { MetadataRoute } from 'next';
 
-import { MetadataRoute } from 'next';
-import { getPublishedPosts } from '@/lib/api';
+const base = 'https://app.viandmo.com';
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-
-  // Statické stránky
-  const staticRoutes = [
-    {
-      url: baseUrl,
-      lastModified: new Date(),
-      changeFrequency: 'yearly',
-      priority: 1,
-    },
-    {
-      url: `${baseUrl}/o-nas`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/cennik`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-     {
-      url: `${baseUrl}/blog`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.7,
-    },
+export default function sitemap(): MetadataRoute.Sitemap {
+  const now = new Date();
+  const urls = [
+    '/',
+    '/sluzby',
+    '/sluzby/stahovanie-bytov-domov',
+    '/sluzby/stahovanie-firiem',
+    '/sluzby/stahovanie-tazkych-bremien-klavirov',
+    '/sluzby/vypratavanie-likvidacia',
+    '/sluzby/autodoprava-s-vodicom',
+    '/lokality',
+    '/cennik',
+    '/blog',
+    '/kontakt',
+    '/kalkulacka',
+    '/faq',
+    '/referencie'
   ];
 
-  // Dynamické stránky - blogové príspevky
-  const posts = await getPublishedPosts();
-  const postRoutes = posts.map((post) => ({
-    url: `${baseUrl}/blog/${post.slug}`,
-    lastModified: new Date(post.updatedAt),
-    changeFrequency: 'monthly',
-    priority: 0.6,
+  return urls.map((path) => ({
+    url: `${base}${path}`,
+    lastModified: now,
+    changeFrequency: 'weekly',
+    priority: path === '/' ? 1 : 0.7
   }));
-
-  return [...staticRoutes, ...postRoutes];
 }
