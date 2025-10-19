@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useState, useEffect } from 'react';
@@ -36,8 +37,14 @@ export const Header = () => {
     <>
       <header className="sticky top-0 z-50 bg-brand-dark-teal/95 backdrop-blur-sm shadow-medium text-brand-bg">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <Link href="/" className="text-xl font-black tracking-wider text-brand-bright-green hover:opacity-90 transition-opacity" aria-label="Domov - Bratislava sťahovanie | VI&MO">
-            Bratislava sťahovanie | VI&MO
+          <Link href="/" className="flex items-center hover:opacity-90 transition-opacity" aria-label="Domov - VI&MO">
+            <Image 
+              src="/images/viandmo-logo.svg" 
+              alt="VI&MO Logo" 
+              width={120} 
+              height={40} 
+              priority 
+            />
           </Link>
           
           {/* Desktop Navigation */}
@@ -87,8 +94,14 @@ export const Header = () => {
       >
         <div className="container mx-auto px-4 h-full flex flex-col">
           <div className="h-16 flex items-center justify-between">
-            <Link href="/" className="text-xl font-black tracking-wider text-brand-bright-green">
-              Bratislava sťahovanie | VI&MO
+             <Link href="/" className="flex items-center">
+              <Image 
+                src="/images/viandmo-logo.svg" 
+                alt="VI&MO Logo" 
+                width={120} 
+                height={40} 
+                priority
+              />
             </Link>
             <button
               onClick={() => setIsMenuOpen(false)}
