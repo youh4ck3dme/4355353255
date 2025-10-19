@@ -7,12 +7,6 @@ import { Metadata } from 'next';
 import { BlogCard } from '@/components/BlogCard';
 import Link from 'next/link';
 
-// Helper function to extract meta description from post content using regex
-const getMetaDescription = (content: string): string | null => {
-    // This function can be simplified or removed if frontmatter is used exclusively
-    return null;
-};
-
 // Helper function to extract FAQ schema data from post content using regex
 const getFaqSchema = (content: string): object | null => {
     const faqRegex = /<h2>FAQ<\/h2>([\s\S]*)/;
