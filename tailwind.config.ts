@@ -32,7 +32,7 @@ const config: Config = {
         '3d': '1px 1px 0px rgba(0,0,0,0.1), 2px 2px 0px rgba(0,0,0,0.09), 3px 3px 0px rgba(0,0,0,0.08), 4px 4px 0px rgba(0,0,0,0.07), 5px 5px 0px rgba(0,0,0,0.06)',
         '3d-green': '1px 1px 0px #1A5255, 2px 2px 0px #1a5255e0, 3px 3px 0px #1a5255c2, 4px 4px 0px #1a5255a3',
       },
-      typography: ({ theme }) => ({
+      typography: ({ theme }: { theme: any }) => ({
         DEFAULT: {
           css: {
             '--tw-prose-body': theme('colors.brand-text'),
@@ -71,7 +71,7 @@ const config: Config = {
   plugins: [
     require("@tailwindcss/typography"), 
     require("tailwindcss-animate"),
-    plugin(function({ theme, addUtilities }) {
+    plugin(function({ theme, addUtilities }: { theme: any, addUtilities: any }) {
       const newUtilities = {
         '.text-shadow-3d': {
           textShadow: theme('textShadow.3d'),
