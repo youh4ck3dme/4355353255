@@ -1,24 +1,35 @@
 import type { MetadataRoute } from 'next';
+import { getPublishedPosts } from '@/lib/api';
 
 const base = process.env.NEXT_PUBLIC_BASE_URL || 'https://app.viandmo.com';
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
-  // Only include pages that actually exist
-  const urls = [
+  
+  // Static pages
+  const staticUrls = [
     '/',
     '/o-nas',
     '/cennik',
     '/blog',
-    '/kalkulacka',
     '/faq',
-    '/referencie'
-  ];
-
-  return urls.map((path) => ({
+    '/referencie',
+    '/kalkulacka'
+  ].map((path) => ({
     url: `${base}${path}`,
     lastModified: now,
-    changeFrequency: 'weekly',
-    priority: path === '/' ? 1 : 0.7
+    changeFrequency: 'weekly' as const,
+    priority: path === '/' ? 1 : 0.8,
   }));
+
+  // Dynamic blog posts
+  const posts = await getPublishedPosts();
+  const postUrls = posts.map(post => ({
+    url: `${base}/blog/${post.slug}`,
+    lastModified: new Date(post.updatedAt),
+    changeFrequency: 'monthly' as const,
+    priority: 0.7,
+  }));
+
+  return [...staticUrls, ...postUrls];
 }

@@ -4,6 +4,7 @@ import { Post } from '@/lib/types';
 import Image from 'next/image';
 import Link from 'next/link';
 import { format } from 'date-fns';
+import { Metadata } from 'next';
 
 const FeaturedPostCard = ({ post }: { post: Post }) => (
   <section className="mb-12">
@@ -42,6 +43,15 @@ const FeaturedPostCard = ({ post }: { post: Post }) => (
   </section>
 );
 
+export const metadata: Metadata = {
+  title: 'Blog o sťahovaní a upratovaní v Bratislave | Tipy a triky | VI&MO',
+  description: 'Prehľadajte naše tipy, triky a novinky zo sveta sťahovania a upratovania. Nájdite rady od profesionálov a uľahčite si prácu.',
+  alternates: {
+      canonical: '/blog',
+  }
+};
+
+
 export default async function BlogIndexPage({ searchParams }: { searchParams?: { [key: string]: string | string[] | undefined }}) {
   const posts = await getPublishedPosts();
   const featuredPost = posts[0] ?? null;
@@ -52,9 +62,9 @@ export default async function BlogIndexPage({ searchParams }: { searchParams?: {
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
        <div className="text-center mb-12">
-        <h1 className="text-4xl font-extrabold mb-4 text-brand-dark-teal dark:text-brand-bg">Všetky články</h1>
+        <h1 className="text-4xl font-extrabold mb-4 text-brand-dark-teal dark:text-brand-bg">Tipy, triky a novinky</h1>
         <p className="text-lg text-brand-secondary-grey dark:text-brand-light-gray">
-          Prehľadajte naše tipy, triky a novinky.
+          Články zo sveta sťahovania, upratovania a logistiky.
         </p>
       </div>
 
@@ -69,7 +79,13 @@ export default async function BlogIndexPage({ searchParams }: { searchParams?: {
         </>
       )}
 
-      {posts.length === 1 && (
+      {posts.length === 1 && !featuredPost && (
+         <p className="text-center text-brand-secondary-grey py-16">
+          Momentálne tu nie sú žiadne články.
+        </p>
+      )}
+
+      {posts.length === 1 && featuredPost && (
         <p className="text-center text-brand-secondary-grey py-16">
           Zatiaľ tu máme len jeden článok. Ďalšie čoskoro pribudnú!
         </p>

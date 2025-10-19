@@ -8,8 +8,8 @@ import Link from 'next/link';
 
 // Helper function to extract meta description from post content using regex
 const getMetaDescription = (content: string): string | null => {
-    const match = content.match(/<div data-seo-meta="description".*?>(.*?)<\/div>/);
-    return match ? match[1] : null;
+    const match = content.match(/<div data-seo-meta="description".*?>(.*?)<\/div>/s);
+    return match ? match[1].trim().replace(/<[^>]*>?/gm, '') : null;
 };
 
 // Helper function to extract FAQ schema data from post content using regex
@@ -24,10 +24,10 @@ const getFaqSchema = (content: string): object | null => {
     while ((match = questionRegex.exec(faqSectionMatch[1])) !== null) {
         mainEntity.push({
             "@type": "Question",
-            name: match[1],
+            name: match[1].trim(),
             acceptedAnswer: {
                 "@type": "Answer",
-                text: match[2].replace(/<[^>]*>?/gm, '') // Strip HTML from answer
+                text: match[2].trim().replace(/<[^>]*>?/gm, '') // Strip HTML from answer
             }
         });
     }
@@ -43,8 +43,9 @@ const getFaqSchema = (content: string): object | null => {
 
 // Helper function to remove special SEO blocks from the content to be rendered
 const cleanContent = (content: string): string => {
+    // Use the 's' flag (dotAll) to ensure '.' matches newline characters
     return content
-        .replace(/<div data-seo-meta="description".*?>.*?<\/div>/s, '') // s flag for dotall
+        .replace(/<div data-seo-meta="description"[\s\S]*?<\/div>/, '')
         .replace(/<h2>FAQ<\/h2>[\s\S]*/, '');
 };
 
@@ -94,7 +95,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
     const post = await getPostBySlug(params.slug);
     
-    if (!post) {
+    if (!post || post.status !== 'published') {
         notFound();
     }
     
@@ -135,6 +136,31 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         keywords: post.tags?.join(', ')
     };
 
+    const breadcrumbJsonLd = {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Domov",
+          "item": siteUrl
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Blog",
+          "item": `${siteUrl}/blog`
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": post.title
+        }
+      ]
+    };
+
+
     let finalContent = post.content || '';
     let faqSchema = null;
     if (post.content) {
@@ -147,6 +173,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(blogPostJsonLd) }}
+            />
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
             />
             {faqSchema && (
                  <script
