@@ -1,0 +1,22 @@
+ Štruktúra pre FAQ Schema:codeJSON{
+        *   "@context": "https://schema.org",
+        *   "@type": "FAQPage",
+        *   "mainEntity": [
+        *     {
+        *       "@type": "Question",
+        *       "name": "Otázka 1?",
+        *       "acceptedAnswer": {
+        *         "@type": "Answer",
+        *         "text": "Odpoveď 1."
+        *       }
+        *     },
+        *     {
+        *       "@type": "Question",
+        *       "name": "Otázka 2?",
+        *       "acceptedAnswer": {
+        *         "@type": "Answer",
+        *         "text": "Odpoveď 2."
+        *       }
+        *     }
+        *   ]
+        * }

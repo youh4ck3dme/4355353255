@@ -1,9 +1,17 @@
-import { CheckCircle, Truck, Building, Sparkles, Trash2, ArrowDown } from 'lucide-react';
+import { CheckCircle, Truck, Building, Sparkles, Trash2, ArrowDown, HelpCircle } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import placeholderImages from '@/lib/placeholder-images.json';
 import { ContactForm } from '@/components/ContactForm';
+import dynamic from 'next/dynamic';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
+const DynamicContactForm = dynamic(() => import('@/components/ContactForm').then(mod => mod.ContactForm), { ssr: false });
 
 const services = [
   {
@@ -56,6 +64,29 @@ const services = [
   }
 ];
 
+const faqItems = [
+    {
+      question: "Aká je cena za sťahovanie?",
+      answer: "Cena sťahovania je individuálna. Závisí od rozsahu sťahovaných vecí, vzdialenosti, poschodia a počtu pracovníkov. Pre presnú cenovú ponuku nás neváhajte kontaktovať alebo použite našu online kalkulačku na stránke Cenník."
+    },
+    {
+      question: "Poskytujete aj baliaci materiál?",
+      answer: "Áno, na požiadanie vieme zabezpečiť kvalitný baliaci materiál, ako sú krabice, bublinkové fólie, stretch fólie a lepiace pásky, aby bol váš majetok počas prepravy v úplnom bezpečí."
+    },
+    {
+      question: "Sťahujete aj počas víkendov a sviatkov?",
+      answer: "Áno, sme vám k dispozícii 7 dní v týždni. Po dohode pracujeme aj počas víkendov alebo vo večerných hodinách, aby sme sa maximálne prispôsobili vašim potrebám, a to bez príplatkov."
+    },
+    {
+      question: "Je môj majetok počas sťahovania poistený?",
+      answer: "Samozrejme. Máme uzatvorené poistenie zodpovednosti za škodu do výšky 50 000 €, takže váš majetok je počas celého procesu sťahovania plne krytý."
+    },
+    {
+      question: "Ako dlho dopredu si mám objednať sťahovanie?",
+      answer: "Odporúčame objednať si sťahovacie služby aspoň týždeň vopred, najmä ak plánujete sťahovanie v rušnejších obdobiach (napríklad na konci mesiaca). V prípade urgentnej potreby sa však vždy snažíme nájsť riešenie a dohodnúť sa na skoršom termíne."
+    }
+];
+
 
 export default function HomePage() {
   const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
@@ -90,6 +121,19 @@ export default function HomePage() {
     }
   };
   
+    const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqItems.map(item => ({
+      "@type": "Question",
+      "name": item.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": item.answer
+      }
+    }))
+  };
+
   const heroImage = placeholderImages.hero;
 
   return (
@@ -101,6 +145,10 @@ export default function HomePage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+      />
+       <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
       <div className="bg-brand-bg text-brand-text dark:bg-brand-dark-teal dark:text-brand-bg">
         {/* Hero Section */}
@@ -167,6 +215,32 @@ export default function HomePage() {
               })}
             </div>
           </div>
+        </section>
+
+        {/* FAQ Section */}
+        <section id="faq" className="py-16">
+            <div className="container mx-auto px-4 max-w-3xl">
+                <div className="text-center mb-12">
+                    <h2 className="text-3xl md:text-4xl font-bold text-brand-dark-teal dark:text-brand-bright-green text-shadow-3d-green">
+                        Často Kladené Otázky
+                    </h2>
+                    <p className="mt-4 text-lg text-brand-secondary-grey dark:text-brand-light-gray">
+                        Rýchle odpovede na najčastejšie otázky. Ak tu nenájdete, čo hľadáte, neváhajte nás kontaktovať.
+                    </p>
+                </div>
+                <Accordion type="single" collapsible className="w-full">
+                    {faqItems.map((item, index) => (
+                        <AccordionItem key={index} value={`item-${index + 1}`}>
+                            <AccordionTrigger className="text-lg font-semibold text-left hover:no-underline text-brand-dark-teal dark:text-brand-bg">
+                                {item.question}
+                            </AccordionTrigger>
+                            <AccordionContent className="text-brand-secondary-grey dark:text-slate-300">
+                                {item.answer}
+                            </AccordionContent>
+                        </AccordionItem>
+                    ))}
+                </Accordion>
+            </div>
         </section>
         
         {/* CTA Section */}
