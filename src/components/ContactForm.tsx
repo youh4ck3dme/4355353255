@@ -62,49 +62,37 @@ export const ContactForm = () => {
             return;
         }
 
-        try {
-            const submissionsCollection = collection(firestore, 'contact_submissions');
-            
-            // Non-blocking write
-            addDoc(submissionsCollection, {
-                ...validationResult.data,
-                submittedAt: serverTimestamp(),
-            }).catch((serverError) => {
-                const permissionError = new FirestorePermissionError({
-                  path: submissionsCollection.path,
-                  operation: 'create',
-                  requestResourceData: validationResult.data,
-                });
-                errorEmitter.emit('permission-error', permissionError);
-                
-                // Also show a toast to the user
-                toast({
-                  variant: "destructive",
-                  title: "Chyba pri odosielaní",
-                  description: "Vyskytla sa chyba. Skúste to prosím znova.",
-                });
-            });
-
-
+        const submissionsCollection = collection(firestore, 'contact_submissions');
+        
+        addDoc(submissionsCollection, {
+            ...validationResult.data,
+            submittedAt: serverTimestamp(),
+        })
+        .then(() => {
             toast({
                 variant: 'success',
                 title: 'Požiadavka odoslaná!',
                 description: 'Ďakujeme! Čoskoro sa vám ozveme.',
             });
-            
-            // Reset form optimistically
             setValues({ name: '', phone: '', email: '', address: '' });
-
-        } catch (error) {
-            console.error("Error adding document: ", error);
-             toast({
-                variant: "destructive",
-                title: "Vyskytla sa neočakávaná chyba",
-                description: "Prosím, skúste to znova neskôr alebo nás kontaktujte priamo.",
+        })
+        .catch((serverError) => {
+            const permissionError = new FirestorePermissionError({
+              path: submissionsCollection.path,
+              operation: 'create',
+              requestResourceData: validationResult.data,
             });
-        } finally {
+            errorEmitter.emit('permission-error', permissionError);
+            
+            toast({
+              variant: "destructive",
+              title: "Chyba pri odosielaní",
+              description: "Vyskytla sa chyba. Skúste to prosím znova.",
+            });
+        })
+        .finally(() => {
             setStatus('idle');
-        }
+        });
     };
 
     return (
