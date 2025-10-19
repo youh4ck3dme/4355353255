@@ -54,28 +54,3 @@ export const SuggestionsBanner = () => {
     </div>
   );
 };
-
-// Simple fade-in animation
-const styles = `
-@keyframes fade-in-up {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-.animate-fade-in-up {
-    animation: fade-in-up 0.5s ease-out forwards;
-}
-`;
-
-// Inject styles into the document head
-if (typeof window !== 'undefined') {
-    const styleSheet = document.createElement("style");
-    styleSheet.type = "text/css";
-    styleSheet.innerText = styles;
-    document.head.appendChild(styleSheet);
-}

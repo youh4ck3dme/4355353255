@@ -42,6 +42,15 @@ const config: Config = {
           },
         },
       }),
+      animation: {
+        'fade-in-up': 'fade-in-up 0.5s ease-out forwards',
+      },
+      keyframes: {
+        'fade-in-up': {
+          'from': { opacity: '0', transform: 'translateY(10px)' },
+          'to': { opacity: '1', transform: 'translateY(0)' },
+        }
+      }
     },
   },
   plugins: [require("@tailwindcss/typography"), require("tailwindcss-animate")],
