@@ -1,3 +1,4 @@
+
 // Inspired by react-hot-toast library
 import * as React from 'react';
 
@@ -62,7 +63,7 @@ const addToRemoveQueue = (toastId: string) => {
   }
 
   const timeout = setTimeout(() => {
-    toastTimeoots.delete(toastId);
+    toastTimeouts.delete(toastId);
     dispatch({
       type: 'REMOVE_TOAST',
       toastId: toastId,

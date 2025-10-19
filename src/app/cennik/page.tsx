@@ -1,3 +1,4 @@
+
 import { Metadata } from 'next';
 import { Euro, Users, Truck, Home } from 'lucide-react';
 import { PriceCalculator } from '@/components/PriceCalculator';
