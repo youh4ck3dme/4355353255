@@ -76,50 +76,50 @@ export const ContactForm = () => {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-brand-secondary-grey dark:text-slate-300 mb-1">Meno / Firma *</label>
+                    <label htmlFor="name" className="block text-sm font-medium text-slate-300 mb-1">Meno / Firma *</label>
                     <input
                         id="name"
                         {...register('name')}
-                        className={cn("w-full p-3 border-2 rounded-lg focus:border-brand-bright-green focus:ring focus:ring-brand-bright-green/50 outline-none transition-colors bg-brand-bg dark:bg-brand-dark-teal dark:text-brand-bg placeholder-brand-secondary-grey", errors.name ? "border-red-500" : "border-slate-300 dark:border-slate-600")}
+                        className={cn("w-full p-3 border-2 rounded-lg focus:border-brand-bright-green focus:ring focus:ring-brand-bright-green/50 outline-none transition-colors bg-white/5 backdrop-blur-sm placeholder-slate-400", errors.name ? "border-red-500 text-red-400" : "border-white/20 text-white")}
                     />
-                    {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
+                    {errors.name && <p className="text-red-400 text-sm mt-1">{errors.name.message}</p>}
                 </div>
                 <div>
-                    <label htmlFor="phone" className="block text-sm font-medium text-brand-secondary-grey dark:text-slate-300 mb-1">Mobil *</label>
+                    <label htmlFor="phone" className="block text-sm font-medium text-slate-300 mb-1">Mobil *</label>
                     <input
                         type="tel"
                         id="phone"
                         {...register('phone')}
-                        className={cn("w-full p-3 border-2 rounded-lg focus:border-brand-bright-green focus:ring focus:ring-brand-bright-green/50 outline-none transition-colors bg-brand-bg dark:bg-brand-dark-teal dark:text-brand-bg placeholder-brand-secondary-grey", errors.phone ? "border-red-500" : "border-slate-300 dark:border-slate-600")}
+                        className={cn("w-full p-3 border-2 rounded-lg focus:border-brand-bright-green focus:ring focus:ring-brand-bright-green/50 outline-none transition-colors bg-white/5 backdrop-blur-sm placeholder-slate-400", errors.phone ? "border-red-500 text-red-400" : "border-white/20 text-white")}
                     />
-                     {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>}
+                     {errors.phone && <p className="text-red-400 text-sm mt-1">{errors.phone.message}</p>}
                 </div>
             </div>
             <div>
-                <label htmlFor="email" className="block text-sm font-medium text-brand-secondary-grey dark:text-slate-300 mb-1">Email *</label>
+                <label htmlFor="email" className="block text-sm font-medium text-slate-300 mb-1">Email *</label>
                 <input
                     type="email"
                     id="email"
                     {...register('email')}
-                    className={cn("w-full p-3 border-2 rounded-lg focus:border-brand-bright-green focus:ring focus:ring-brand-bright-green/50 outline-none transition-colors bg-brand-bg dark:bg-brand-dark-teal dark:text-brand-bg placeholder-brand-secondary-grey", errors.email ? "border-red-500" : "border-slate-300 dark:border-slate-600")}
+                    className={cn("w-full p-3 border-2 rounded-lg focus:border-brand-bright-green focus:ring focus:ring-brand-bright-green/50 outline-none transition-colors bg-white/5 backdrop-blur-sm placeholder-slate-400", errors.email ? "border-red-500 text-red-400" : "border-white/20 text-white")}
                 />
-                {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
+                {errors.email && <p className="text-red-400 text-sm mt-1">{errors.email.message}</p>}
             </div>
             <div>
-                <label htmlFor="address" className="block text-sm font-medium text-brand-secondary-grey dark:text-slate-300 mb-1">Adresa sťahovania</label>
+                <label htmlFor="address" className="block text-sm font-medium text-slate-300 mb-1">Adresa sťahovania</label>
                 <input
                     type="text"
                     id="address"
                     {...register('address')}
                     placeholder='Odkiaľ a kam sa sťahujete?'
-                    className="w-full p-3 border-2 border-slate-300 dark:border-slate-600 rounded-lg focus:border-brand-bright-green focus:ring focus:ring-brand-bright-green/50 outline-none transition-colors bg-brand-bg dark:bg-brand-dark-teal dark:text-brand-bg placeholder-brand-secondary-grey"
+                    className="w-full p-3 border-2 border-white/20 rounded-lg focus:border-brand-bright-green focus:ring focus:ring-brand-bright-green/50 outline-none transition-colors bg-white/5 backdrop-blur-sm text-white placeholder-slate-400"
                 />
             </div>
             <div>
                 <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="liquid-glass-button w-full px-8 py-4 bg-brand-bright-green text-brand-dark-teal font-bold rounded-lg hover:bg-opacity-80 transition-colors duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 disabled:bg-opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                    className="w-full px-8 py-4 bg-brand-bright-green text-brand-dark-teal font-bold rounded-lg hover:bg-opacity-80 transition-colors duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 disabled:bg-opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                 >
                     {isSubmitting ? (
                         <>

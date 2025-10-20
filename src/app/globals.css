@@ -4,14 +4,15 @@
 
 @layer base {
   :root {
-    --background-hsl: 220 10% 10%; /* Tmavé pozadie */
-    --foreground-hsl: 220 20% 95%; 
+    --background-hsl: 0 0% 100%;
+    --foreground-hsl: 220 30% 15%;
+    
     --primary-hsl: 170 80% 45%; /* Jasná zelená ako primárna farba */
 
     --brand-dark-teal: 220 30% 15%;
     --brand-bright-green: 170 80% 45%;
-    --brand-light-gray: 220 10% 20%;
-    --brand-secondary-grey: 220 10% 60%;
+    --brand-light-gray: 220 10% 95%;
+    --brand-secondary-grey: 220 10% 45%;
     --brand-bg: 220 10% 98%;
     --brand-text: 220 30% 15%;
 
@@ -61,7 +62,7 @@
   body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    @apply bg-brand-bg text-brand-text dark:bg-brand-bg dark:text-brand-text;
+    @apply bg-brand-bg text-brand-text;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -143,10 +144,32 @@
   }
   
    .liquid-glass-button {
-      @apply bg-black/10 backdrop-blur-sm border border-white/10 rounded-full transition-all duration-300 text-slate-300;
+      @apply bg-black/10 backdrop-blur-sm border border-white/10 rounded-lg transition-all duration-300 text-slate-300;
   }
 
   .liquid-glass-button:hover {
+      @apply bg-white/10 text-white;
+  }
+
+  .text-shadow-3d {
+      text-shadow: 1px 1px 0px hsl(var(--primary-hsl) / 0.1), 2px 2px 0px hsl(var(--primary-hsl) / 0.09), 3px 3px 0px hsl(var(--primary-hsl) / 0.05);
+  }
+  .text-shadow-3d-green {
+      text-shadow: 1px 1px 0px hsl(var(--primary-hsl) / 0.2), 2px 2px 0px hsl(var(--primary-hsl) / 0.15), 3px 3px 0px hsl(var(--primary-hsl) / 0.1);
+  }
+  .text-shadow-md {
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+  .text-shadow-3d-dark {
+    text-shadow: 1px 1px 0px rgba(0,0,0,0.3), 2px 2px 0px rgba(0,0,0,0.2), 3px 3px 0px rgba(0,0,0,0.1);
+  }
+}
+
+@layer utilities {
+  .glass-button-sm {
+      @apply bg-black/10 backdrop-blur-sm border border-white/10;
+  }
+  .glass-button-sm:hover {
       @apply bg-white/10 text-white;
   }
 }
