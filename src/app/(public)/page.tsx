@@ -2,8 +2,6 @@
 
 import { ArrowDown } from 'lucide-react';
 import Link from 'next/link';
-import Image from 'next/image';
-import placeholderImages from '@/lib/placeholder-images.json';
 import FaqAccordion from '@/components/FaqAccordion';
 import GlassCard from '@/components/GlassCard';
 import dynamic from 'next/dynamic';
@@ -85,8 +83,6 @@ export default function HomePage() {
       }
     }))
   };
-
-  const heroImage = placeholderImages.hero;
 
   return (
     <>

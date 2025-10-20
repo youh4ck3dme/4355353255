@@ -1,7 +1,9 @@
 
 import { Metadata } from 'next';
-import { Checklist } from '@/components/Checklist';
+import dynamic from 'next/dynamic';
 import { checklistData } from '@/lib/checklist-data';
+
+const DynamicChecklist = dynamic(() => import('@/components/Checklist').then(mod => mod.Checklist), { ssr: false });
 
 export const metadata: Metadata = {
   title: 'Interaktívny Sťahovací Checklist | VI&MO',
@@ -24,7 +26,7 @@ export default function ChecklistPage() {
           </p>
         </header>
 
-        <Checklist categories={checklistData} />
+        <DynamicChecklist categories={checklistData} />
 
       </div>
     </div>
