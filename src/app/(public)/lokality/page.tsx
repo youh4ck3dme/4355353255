@@ -1,7 +1,13 @@
 
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { InteractiveMap } from '@/components/InteractiveMap';
+import dynamic from 'next/dynamic';
+
+const DynamicInteractiveMap = dynamic(() => import('@/components/InteractiveMap').then(mod => mod.InteractiveMap), { 
+  ssr: false,
+  loading: () => <div className="aspect-[4/5] w-full bg-white/10 animate-pulse rounded-lg flex items-center justify-center"><p className="text-white">Načítavam mapu...</p></div>
+});
+
 
 export const metadata: Metadata = {
   title: 'Pôsobnosť a lokality sťahovania v Bratislave | VI&MO',
@@ -26,7 +32,7 @@ export default function LocationsPage() {
         </header>
 
         <div className="relative">
-          <InteractiveMap />
+          <DynamicInteractiveMap />
         </div>
         
         <div className="mt-16 text-center bg-brand-dark-teal/90 text-white p-8 md:p-12 rounded-lg shadow-2xl">

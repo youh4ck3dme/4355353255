@@ -3,7 +3,10 @@ import { Metadata } from 'next';
 import { Users, Truck, Home } from 'lucide-react';
 import dynamic from 'next/dynamic';
 
-const DynamicPriceCalculator = dynamic(() => import('@/components/PriceCalculator').then(mod => mod.PriceCalculator), { ssr: false });
+const DynamicPriceCalculator = dynamic(() => import('@/components/PriceCalculator').then(mod => mod.PriceCalculator), { 
+  ssr: false,
+  loading: () => <p>Načítavam kalkulačku...</p> 
+});
 
 export const metadata: Metadata = {
   title: 'Cenník Služieb | Bratislava sťahovanie | VI&MO',

@@ -3,7 +3,10 @@
 
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import InstallPrompt from '@/components/InstallPrompt';
+import dynamic from 'next/dynamic';
+
+const DynamicInstallPrompt = dynamic(() => import('@/components/InstallPrompt'), { ssr: false });
+
 
 export function PublicLayout({ children }: { children: React.ReactNode }) {
   const jsonLd = {
@@ -35,7 +38,7 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
           {children}
       </main>
       <Footer />
-      <InstallPrompt />
+      <DynamicInstallPrompt />
     </>
   );
 }

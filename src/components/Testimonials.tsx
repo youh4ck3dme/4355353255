@@ -4,16 +4,16 @@
 import { testimonials } from '@/lib/testimonials';
 import { Star, Quote, ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { cn } from '@/lib/utils';
 import GlassCard from './GlassCard';
 
 export default function Testimonials() {
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const nextTestimonial = () => {
+  const nextTestimonial = useCallback(() => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % testimonials.length);
-  };
+  }, []);
 
   const prevTestimonial = () => {
     setCurrentIndex((prevIndex) => (prevIndex - 1 + testimonials.length) % testimonials.length);
@@ -22,7 +22,7 @@ export default function Testimonials() {
   useEffect(() => {
     const timer = setInterval(nextTestimonial, 7000); // Auto-play every 7 seconds
     return () => clearInterval(timer);
-  }, []);
+  }, [nextTestimonial]);
 
   const currentTestimonial = testimonials[currentIndex];
 
@@ -72,8 +72,8 @@ export default function Testimonials() {
           </div>
 
           {/* Navigation */}
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex items-center gap-4">
-             <button onClick={prevTestimonial} className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors" aria-label="Previous testimonial">
+          <div className="flex items-center justify-center gap-6 mt-8">
+             <button onClick={prevTestimonial} className="p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors" aria-label="Previous testimonial">
                 <ChevronLeft size={24} />
              </button>
               <div className="flex gap-2">
@@ -89,7 +89,7 @@ export default function Testimonials() {
                     />
                 ))}
             </div>
-             <button onClick={nextTestimonial} className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors" aria-label="Next testimonial">
+             <button onClick={nextTestimonial} className="p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors" aria-label="Next testimonial">
                 <ChevronRight size={24} />
              </button>
           </div>
