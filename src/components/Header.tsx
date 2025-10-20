@@ -44,7 +44,7 @@ export const Header = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-50 bg-white/10 backdrop-blur-md shadow-medium text-white border-b border-white/20">
+      <header className="sticky top-0 z-50 bg-black/30 backdrop-blur-lg shadow-medium text-white border-b border-white/10">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center hover:opacity-90 transition-opacity" aria-label="Domov - VI&MO">
              <Image 
@@ -99,7 +99,7 @@ export const Header = () => {
 
       <div
         className={cn(
-          "fixed inset-0 z-50 bg-brand-dark-teal/95 backdrop-blur-lg transition-opacity duration-500 sm:hidden",
+          "fixed inset-0 z-50 bg-black/90 backdrop-blur-lg transition-opacity duration-500 sm:hidden",
           isMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         )}
       >

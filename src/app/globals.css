@@ -4,43 +4,50 @@
 
 @layer base {
   :root {
-    /* Define your 3 main colors here */
-    --background-hsl: 220 40% 5%; /* Example: Deep Blue */
-    --foreground-hsl: 220 20% 95%; /* Example: Light Grey */
-    --primary-hsl: 30 90% 55%;    /* Example: Bright Orange */
+    --background-hsl: 220 10% 10%; /* Tmavé pozadie */
+    --foreground-hsl: 220 20% 95%; 
+    --primary-hsl: 170 80% 45%; /* Jasná zelená ako primárna farba */
 
-    /* Map them to the system */
+    --brand-dark-teal: 220 30% 15%;
+    --brand-bright-green: 170 80% 45%;
+    --brand-light-gray: 220 10% 20%;
+    --brand-secondary-grey: 220 10% 60%;
+    --brand-bg: 220 10% 98%;
+    --brand-text: 220 30% 15%;
+
     --background: hsl(var(--background-hsl));
     --foreground: hsl(var(--foreground-hsl));
     --primary: hsl(var(--primary-hsl));
-    --primary-foreground: hsl(var(--background-hsl)); /* Text on primary buttons */
+    --primary-foreground: hsl(220 10% 10%);
 
-    /* Simplified secondary/muted colors */
     --secondary: hsl(var(--background-hsl) / 0.5);
     --secondary-foreground: hsl(var(--foreground-hsl));
     
     --muted: hsl(var(--background-hsl) / 0.3);
     --muted-foreground: hsl(var(--foreground-hsl) / 0.7);
 
-    /* Accent color can be the same as primary */
     --accent: hsl(var(--primary-hsl));
-    --accent-foreground: hsl(var(--background-hsl));
+    --accent-foreground: hsl(220 10% 10%);
 
-    /* Other required variables */
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-    --border: hsl(var(--background-hsl) / 0.4);
-    --input: hsl(var(--background-hsl) / 0.4);
+    --border: hsl(var(--foreground-hsl) / 0.1);
+    --input: hsl(var(--foreground-hsl) / 0.1);
     --ring: hsl(var(--primary-hsl));
-
-    --radius: 0.5rem;
+    --radius: 0.8rem;
   }
  
   .dark {
-    /* Dark theme can just be the same as the root for a single-theme app */
-    --background-hsl: 220 40% 5%;
+    --background-hsl: 220 10% 10%;
     --foreground-hsl: 220 20% 95%;
-    --primary-hsl: 30 90% 55%;
+    --primary-hsl: 170 80% 45%;
+
+    --brand-dark-teal: hsl(var(--foreground-hsl));
+    --brand-bright-green: hsl(var(--primary-hsl));
+    --brand-light-gray: hsl(220 15% 85%);
+    --brand-secondary-grey: hsl(220 10% 60%);
+    --brand-bg: hsl(var(--background-hsl));
+    --brand-text: hsl(var(--foreground-hsl));
   }
 }
  
@@ -48,13 +55,98 @@
   * {
     @apply border-border;
   }
+  html {
+    @apply scroll-smooth;
+  }
   body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    @apply bg-background text-foreground;
+    @apply bg-brand-bg text-brand-text dark:bg-brand-bg dark:text-brand-text;
   }
 
   h1, h2, h3, h4, h5, h6 {
     @apply tracking-tight;
+  }
+  
+  .liquid-glass-background {
+      @apply bg-black min-h-screen w-full overflow-hidden;
+      position: relative;
+  }
+
+  .bg-orbs {
+      @apply absolute inset-0 z-0;
+      filter: blur(80px);
+  }
+
+  .orb {
+      @apply absolute rounded-full;
+      animation: move 25s infinite alternate;
+  }
+
+  .orb:nth-child(1) {
+      @apply bg-gray-900/50;
+      width: 400px;
+      height: 400px;
+      top: 10%;
+      left: 10%;
+      animation-duration: 25s;
+  }
+
+  .orb:nth-child(2) {
+      @apply bg-gray-800/50;
+      width: 300px;
+      height: 300px;
+      top: 40%;
+      right: 5%;
+      animation-duration: 20s;
+      animation-delay: 5s;
+  }
+
+  .orb:nth-child(3) {
+      @apply bg-gray-700/40;
+      width: 250px;
+      height: 250px;
+      bottom: 15%;
+      left: 20%;
+      animation-duration: 30s;
+      animation-delay: 2s;
+  }
+
+  @keyframes move {
+    0% {
+      transform: translate(0, 0) scale(1);
+    }
+    25% {
+      transform: translate(20px, 40px) scale(1.1);
+    }
+    50% {
+      transform: translate(-30px, -10px) scale(0.9);
+    }
+    75% {
+        transform: translate(40px, -20px) scale(1.2);
+    }
+    100% {
+      transform: translate(0, 0) scale(1);
+    }
+  }
+
+  .glass-card {
+    @apply bg-black/20 backdrop-blur-lg border border-white/10 rounded-2xl transition-all duration-300;
+  }
+  
+  .glass-button {
+    @apply bg-black/20 backdrop-blur-sm border border-white/10 rounded-full transition-all duration-300;
+  }
+
+  .glass-button:hover {
+    @apply bg-white/20 border-white/20;
+  }
+  
+   .liquid-glass-button {
+      @apply bg-black/10 backdrop-blur-sm border border-white/10 rounded-full transition-all duration-300 text-slate-300;
+  }
+
+  .liquid-glass-button:hover {
+      @apply bg-white/10 text-white;
   }
 }
