@@ -41,7 +41,7 @@ const faqItems = [
 
 
 export default function HomePage() {
-  const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+  const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://app.viandmo.com';
   const organizationJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Organization',

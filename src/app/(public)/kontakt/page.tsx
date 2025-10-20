@@ -4,11 +4,17 @@ import dynamic from 'next/dynamic';
 import { Phone, Mail, Building, MapPin } from 'lucide-react';
 import GlassCard from '@/components/GlassCard';
 
-const DynamicContactForm = dynamic(() => import('@/components/ContactForm').then(mod => mod.ContactForm), { ssr: false });
+const DynamicContactForm = dynamic(() => import('@/components/ContactForm').then(mod => mod.ContactForm), { 
+    ssr: false,
+    loading: () => <div className="min-h-[400px]"></div>
+});
 
 export const metadata: Metadata = {
   title: 'Kontakt | Nezáväzná cenová ponuka | VI&MO',
   description: 'Kontaktujte nás pre bezplatnú a nezáväznú cenovú ponuku na sťahovanie alebo upratovanie. Sme tu pre vás - telefonicky, emailom alebo cez kontaktný formulár.',
+  alternates: {
+    canonical: '/kontakt',
+  }
 };
 
 export default function ContactPage() {
