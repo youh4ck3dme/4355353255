@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { getPublishedPosts } from '@/lib/mdx'; 
 import { Post } from '@/lib/types';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
@@ -45,8 +44,11 @@ export default function AdminBlogPage() {
     const fetchPosts = useCallback(async () => {
         setIsLoading(true);
         try {
-            // In a real app, this would be an API call to a secure endpoint
-            const fetchedPosts = await getPublishedPosts();
+            const response = await fetch('/api/posts');
+            if (!response.ok) {
+                throw new Error('Failed to fetch posts');
+            }
+            const fetchedPosts = await response.json();
             setPosts(fetchedPosts);
         } catch (error) {
             console.error("Failed to fetch posts:", error);

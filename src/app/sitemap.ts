@@ -1,6 +1,6 @@
 
 import type { MetadataRoute } from 'next';
-import { getPublishedPosts } from '@/lib/api';
+import { getAllPosts } from '@/lib/api';
 import { services } from '@/lib/services';
 
 const base = process.env.NEXT_PUBLIC_BASE_URL || 'https://app.viandmo.com';
@@ -34,10 +34,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   // Dynamic blog posts
-  const posts = await getPublishedPosts();
+  const posts = await getAllPosts();
   const postUrls = posts.map(post => ({
     url: `${base}/blog/${post.slug}`,
-    lastModified: new Date(post.updatedAt),
+    lastModified: new Date(post.date),
     changeFrequency: 'monthly' as const,
     priority: 0.7,
   }));
