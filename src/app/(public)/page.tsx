@@ -5,6 +5,8 @@ import Image from 'next/image';
 import placeholderImages from '@/lib/placeholder-images.json';
 import { services } from '@/lib/services';
 import FaqAccordion from '@/components/FaqAccordion';
+import Testimonials from '@/components/Testimonials';
+import { testimonials } from '@/lib/testimonials';
 
 const faqItems = [
     {
@@ -79,6 +81,38 @@ export default function HomePage() {
     }))
   };
 
+  const reviewsJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "VI&MO S.R.O.",
+    "image": `${siteUrl}/images/f27ddb6a-9fbe-4410-946b-766230e10a60.png`,
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Karpatské námestie 7770/10A",
+      "addressLocality": "Bratislava",
+      "addressRegion": "BA",
+      "postalCode": "831 06",
+      "addressCountry": "SK"
+    },
+    "url": siteUrl,
+    "telephone": "+421911275755",
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": testimonials.reduce((acc, t) => acc + t.rating, 0) / testimonials.length,
+      "reviewCount": testimonials.length
+    },
+    "review": testimonials.map(t => ({
+      "@type": "Review",
+      "author": {"@type": "Person", "name": t.name},
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": t.rating,
+        "bestRating": "5"
+      },
+      "reviewBody": t.text
+    }))
+  };
+
   const heroImage = placeholderImages.hero;
 
   return (
@@ -94,6 +128,10 @@ export default function HomePage() {
        <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(reviewsJsonLd) }}
       />
       
         {/* Hero Section */}
@@ -119,6 +157,9 @@ export default function HomePage() {
             </Link>
           </div>
         </section>
+
+        {/* Testimonials Section */}
+        <Testimonials />
 
         {/* FAQ Section */}
         <section id="faq" className="py-16 md:py-24 bg-brand-light-gray dark:bg-brand-dark-teal/80">
