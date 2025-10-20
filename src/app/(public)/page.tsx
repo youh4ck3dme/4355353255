@@ -100,7 +100,8 @@ export default function HomePage() {
       />
       
         {/* Hero Section */}
-        <section className="relative min-h-screen flex items-center justify-center text-center text-white px-4 -mt-16">
+        <section className="relative h-[60vh] flex items-center justify-center text-center text-white px-4">
+           <div className="absolute inset-0 bg-brand-dark-teal/50"></div>
           <div className="relative z-10 animate-fade-in text-center">
             <h1 className="text-5xl md:text-7xl font-extrabold mb-4 text-shadow-3d-dark">
               Sťahovanie bez starostí
