@@ -1,9 +1,9 @@
-
 import { Metadata } from 'next';
 import { getPostBySlug } from '@/lib/mdx';
 import { notFound } from 'next/navigation';
 import { PostForm } from '../../_components/PostForm';
 import { FilePen } from 'lucide-react';
+import GlassCard from '@/components/GlassCard';
 
 type EditPostPageProps = {
     params: {
@@ -35,17 +35,19 @@ export default async function EditPostPage({ params }: EditPostPageProps) {
             <header className="mb-10">
                  <div className="flex items-center gap-4 mb-4">
                     <FilePen className="h-10 w-10 text-brand-bright-green"/>
-                    <h1 className="text-4xl md:text-5xl font-extrabold text-brand-dark-teal dark:text-brand-bright-green text-shadow-3d-green">
+                    <h1 className="text-4xl md:text-5xl font-extrabold text-white text-shadow-3d">
                         Upraviť článok
                     </h1>
                 </div>
-                <p className="text-lg text-brand-secondary-grey dark:text-slate-300 mt-2">
+                <p className="text-lg text-slate-300 mt-2">
                     Aktualizujte obsah a nastavenia existujúceho článku.
                 </p>
             </header>
-             <div className="bg-brand-bg dark:bg-brand-dark-teal/50 p-8 rounded-xl shadow-large">
-                <PostForm post={post} />
-            </div>
+             <GlassCard>
+                <div className="p-8">
+                    <PostForm post={post} />
+                </div>
+            </GlassCard>
         </div>
     );
 }

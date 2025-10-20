@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -80,40 +79,40 @@ export const PostForm = ({ post }: PostFormProps) => {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div>
-        <label htmlFor="title" className="block text-sm font-medium text-brand-secondary-grey dark:text-slate-300 mb-1">Titulok *</label>
-        <input {...register('title')} id="title" className={cn("w-full p-3 rounded-lg bg-brand-light-gray dark:bg-brand-dark-teal border-2", errors.title ? "border-red-500" : "border-slate-300 dark:border-slate-600")} />
-        {errors.title && <p className="text-red-500 text-sm mt-1">{errors.title.message}</p>}
+        <label htmlFor="title" className="block text-sm font-medium text-slate-300 mb-1">Titulok *</label>
+        <input {...register('title')} id="title" className={cn("w-full p-3 rounded-lg bg-white/10 backdrop-blur-sm border-2 text-white", errors.title ? "border-red-500" : "border-white/20")} />
+        {errors.title && <p className="text-red-400 text-sm mt-1">{errors.title.message}</p>}
       </div>
 
       <div>
-        <label htmlFor="content" className="block text-sm font-medium text-brand-secondary-grey dark:text-slate-300 mb-1">Obsah (MDX/HTML)</label>
-        <textarea {...register('content')} id="content" rows={15} className="w-full p-3 rounded-lg bg-brand-light-gray dark:bg-brand-dark-teal border-2 border-slate-300 dark:border-slate-600 font-mono text-sm" placeholder='<p>Váš text...</p>' />
+        <label htmlFor="content" className="block text-sm font-medium text-slate-300 mb-1">Obsah (MDX/HTML)</label>
+        <textarea {...register('content')} id="content" rows={15} className="w-full p-3 rounded-lg bg-white/10 backdrop-blur-sm border-2 border-white/20 font-mono text-sm text-white" placeholder='<p>Váš text...</p>' />
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">
          <div>
-          <label htmlFor="author" className="block text-sm font-medium text-brand-secondary-grey dark:text-slate-300 mb-1">Autor</label>
-          <input {...register('author')} id="author" className="w-full p-3 rounded-lg bg-brand-light-gray dark:bg-brand-dark-teal border-2 border-slate-300 dark:border-slate-600" />
+          <label htmlFor="author" className="block text-sm font-medium text-slate-300 mb-1">Autor</label>
+          <input {...register('author')} id="author" className="w-full p-3 rounded-lg bg-white/10 backdrop-blur-sm border-2 border-white/20 text-white" />
         </div>
          <div>
-          <label htmlFor="imageUrl" className="block text-sm font-medium text-brand-secondary-grey dark:text-slate-300 mb-1">URL adresa obrázka</label>
-          <input {...register('imageUrl')} id="imageUrl" placeholder="https://..." className={cn("w-full p-3 rounded-lg bg-brand-light-gray dark:bg-brand-dark-teal border-2", errors.imageUrl ? "border-red-500" : "border-slate-300 dark:border-slate-600")} />
-           {errors.imageUrl && <p className="text-red-500 text-sm mt-1">{errors.imageUrl.message}</p>}
+          <label htmlFor="imageUrl" className="block text-sm font-medium text-slate-300 mb-1">URL adresa obrázka</label>
+          <input {...register('imageUrl')} id="imageUrl" placeholder="https://..." className={cn("w-full p-3 rounded-lg bg-white/10 backdrop-blur-sm border-2 text-white", errors.imageUrl ? "border-red-500" : "border-white/20")} />
+           {errors.imageUrl && <p className="text-red-400 text-sm mt-1">{errors.imageUrl.message}</p>}
         </div>
       </div>
 
        <div>
-          <label htmlFor="tags" className="block text-sm font-medium text-brand-secondary-grey dark:text-slate-300 mb-1">Tagy (oddelené čiarkou)</label>
-          <input {...register('tags')} id="tags" placeholder="Tipy na sťahovanie, Novinky, ..." className="w-full p-3 rounded-lg bg-brand-light-gray dark:bg-brand-dark-teal border-2 border-slate-300 dark:border-slate-600" />
+          <label htmlFor="tags" className="block text-sm font-medium text-slate-300 mb-1">Tagy (oddelené čiarkou)</label>
+          <input {...register('tags')} id="tags" placeholder="Tipy na sťahovanie, Novinky, ..." className="w-full p-3 rounded-lg bg-white/10 backdrop-blur-sm border-2 border-white/20 text-white" />
       </div>
 
-      <div className="flex flex-col sm:flex-row justify-end items-center gap-4 pt-6 border-t border-slate-200 dark:border-slate-700">
-        <p className="text-sm text-brand-secondary-grey dark:text-slate-400 mr-auto">
+      <div className="flex flex-col sm:flex-row justify-end items-center gap-4 pt-6 border-t border-white/20">
+        <p className="text-sm text-slate-400 mr-auto">
           {post ? `Stav: ` : "Nový článok"}
           {post && (
              <span className={cn(
-                    "px-2 py-0.5 text-xs font-bold rounded-full text-white",
-                    post.status === 'published' ? 'bg-green-600' : 'bg-yellow-600'
+                    "px-2 py-0.5 text-xs font-bold rounded-full text-black",
+                    post.status === 'published' ? 'bg-green-400' : 'bg-yellow-400'
                 )}>
                     {post.status === 'published' ? 'Publikovaný' : 'Koncept'}
               </span>
