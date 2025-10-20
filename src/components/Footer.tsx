@@ -1,5 +1,6 @@
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { Phone, Mail } from 'lucide-react';
 
 const footerLinks = [
@@ -15,9 +16,25 @@ export const Footer = () => {
   return (
     <footer className="bg-black text-white/90 pt-16 pb-8">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-12 mb-12 text-center md:text-left">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-12 mb-12 text-center md:text-left">
           
-          {/* Column 1: Rýchly kontakt */}
+          {/* Column 1: Logo and About */}
+          <div className="space-y-4 flex flex-col items-center md:items-start">
+             <Link href="/" aria-label="Domov - VI&MO">
+                <Image 
+                    src="https://viandmo.com/wp-content/uploads/viandmo_logo_regular_land.svg"
+                    alt="VI&MO Logo"
+                    width={160}
+                    height={45}
+                    className="object-contain"
+                />
+            </Link>
+            <p className="text-sm text-slate-400 max-w-xs">
+                Profesionálne sťahovacie a upratovacie služby v Bratislave a okolí. Rýchlo, spoľahlivo a s úsmevom.
+            </p>
+          </div>
+
+          {/* Column 2: Rýchly kontakt */}
           <div className="space-y-4">
             <h4 className="text-lg font-bold text-white uppercase tracking-wider">Rýchly kontakt</h4>
             <div className="space-y-4">
@@ -46,7 +63,7 @@ export const Footer = () => {
             </div>
           </div>
           
-          {/* Column 2: Navigácia */}
+          {/* Column 3: Navigácia */}
           <div className="space-y-4">
             <h4 className="text-lg font-bold text-white uppercase tracking-wider">Navigácia</h4>
             <ul className="space-y-2">
@@ -60,7 +77,7 @@ export const Footer = () => {
             </ul>
           </div>
 
-          {/* Column 3: Business Info */}
+          {/* Column 4: Business Info */}
           <div className="space-y-4 flex flex-col items-center md:items-start">
             <h4 className="text-lg font-bold text-white uppercase tracking-wider">Fakturačné údaje</h4>
             <address className="not-italic text-sm text-slate-300 space-y-1">

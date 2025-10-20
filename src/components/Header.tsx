@@ -6,16 +6,11 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useState, useEffect } from 'react';
-import { Menu, X, KeyRound, Moon, Sun } from 'lucide-react';
-import { useTheme } from 'next-themes';
+import { Menu, X, KeyRound } from 'lucide-react';
 
 export const Header = () => {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => setMounted(true), []);
 
   const navLinks = [
     { href: '/sluzby', label: 'Služby' },
@@ -39,17 +34,13 @@ export const Header = () => {
     setIsMenuOpen(false);
   }, [pathname]);
 
-  const toggleTheme = () => {
-    setTheme(theme === 'light' ? 'dark' : 'light');
-  }
-
   return (
     <>
       <header className="sticky top-0 z-50 bg-brand-dark-teal/80 dark:bg-black/30 backdrop-blur-lg shadow-medium text-white border-b border-white/10">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center hover:opacity-90 transition-opacity" aria-label="Domov - VI&MO">
              <Image 
-              src="/images/f27ddb6a-9fbe-4410-946b-766230e10a60.png" 
+              src="https://viandmo.com/wp-content/uploads/viandmo_logo_regular_land.svg" 
               alt="VI&MO Logo" 
               width={140} 
               height={40} 
@@ -104,7 +95,7 @@ export const Header = () => {
           <div className="h-16 flex items-center justify-between">
              <Link href="/" className="flex items-center">
               <Image 
-                src="/images/f27ddb6a-9fbe-4410-946b-766230e10a60.png" 
+                src="https://viandmo.com/wp-content/uploads/viandmo_logo_regular_land.svg"
                 alt="VI&MO Logo" 
                 width={140}
                 height={40}

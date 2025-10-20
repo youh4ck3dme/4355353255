@@ -23,7 +23,7 @@ export default function ContactPage() {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
     name: 'VI and MO s. r. o.',
-    image: `${siteUrl}/images/f27ddb6a-9fbe-4410-946b-766230e10a60.png`,
+    image: 'https://viandmo.com/wp-content/uploads/viandmo_logo_regular_land.svg',
     '@id': siteUrl,
     url: siteUrl,
     telephone: '+421 911 275 755',

@@ -14,7 +14,7 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
     '@type': 'MovingCompany',
     name: 'VI&MO – Sťahovanie Bratislava',
     url: 'https://app.viandmo.com',
-    logo: 'https://app.viandmo.com/images/f27ddb6a-9fbe-4410-946b-766230e10a60.png',
+    logo: 'https://viandmo.com/wp-content/uploads/viandmo_logo_regular_land.svg',
     telephone: '+421 911 275 755',
     priceRange: '€€',
     address: {
