@@ -49,11 +49,12 @@ export const Header = () => {
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center hover:opacity-90 transition-opacity" aria-label="Domov - VI&MO">
              <Image 
-              src="/images/viandmo-logo-white.svg" 
+              src="/images/f27ddb6a-9fbe-4410-946b-766230e10a60.png" 
               alt="VI&MO Logo" 
-              width={120} 
+              width={140} 
               height={40} 
               priority
+              className="object-contain"
             />
           </Link>
           
@@ -103,11 +104,12 @@ export const Header = () => {
           <div className="h-16 flex items-center justify-between">
              <Link href="/" className="flex items-center">
               <Image 
-                src="/images/viandmo-logo-white.svg" 
+                src="/images/f27ddb6a-9fbe-4410-946b-766230e10a60.png" 
                 alt="VI&MO Logo" 
-                width={120} 
+                width={140}
                 height={40}
                 priority
+                className="object-contain"
               />
             </Link>
             <button
