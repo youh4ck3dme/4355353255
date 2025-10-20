@@ -6,7 +6,6 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Post } from '@/lib/types';
-import { createPost, updatePost } from '@/lib/api';
 import { useToast } from '@/components/ui/use-toast';
 import { Loader2, Save, Send } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -52,43 +51,29 @@ export const PostForm = ({ post }: PostFormProps) => {
   const onSubmit: SubmitHandler<PostFormData> = async (data) => {
     setIsSubmitting(true);
     
-    const postData = {
+    // This is a placeholder for the actual API call
+    // In a real app, you would send this data to a serverless function
+    // that creates/updates the MDX file.
+    console.log('Submitting data to serverless function (placeholder):', {
+      slug: post?.slug, // undefined for new posts
       ...data,
-      tags: data.tags ? data.tags.split(',').map(tag => tag.trim()).filter(Boolean) : [],
       status: submitAction,
-    };
-    
-    try {
-      let result;
-      if (post) {
-        result = await updatePost(post.slug, postData);
-      } else {
-        result = await createPost(postData);
-      }
+    });
 
-      if (result) {
-        toast({
-          variant: 'success',
-          title: `Článok ${post ? 'uložený' : 'vytvorený'}!`,
-          description: `Článok "${result.title}" bol úspešne ${post ? 'aktualizovaný' : 'vytvorený'}.`,
-        });
-        
-        // Wait for revalidation then navigate
-        router.push('/admin/blog');
-        router.refresh(); // Tell Next.js to fetch new data for the page
-      } else {
-        throw new Error('Nepodarilo sa uložiť článok.');
-      }
-    } catch (error) {
-      console.error(error);
-      toast({
-        variant: 'destructive',
-        title: 'Chyba',
-        description: `Vyskytla sa chyba pri ukladaní článku. Skúste to znova.`,
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1500));
+
+    toast({
+      variant: 'success',
+      title: 'Simulácia úspešná!',
+      description: `Článok "${data.title}" by bol ${post ? 'aktualizovaný' : 'vytvorený'}. (Toto je len ukážka)`,
+    });
+    
+    // In a real app, you'd wait for revalidation before navigating
+    router.push('/admin/blog');
+    router.refresh();
+
+    setIsSubmitting(false);
   };
 
   return (
@@ -100,8 +85,8 @@ export const PostForm = ({ post }: PostFormProps) => {
       </div>
 
       <div>
-        <label htmlFor="content" className="block text-sm font-medium text-brand-secondary-grey dark:text-slate-300 mb-1">Obsah (HTML & SEO bloky)</label>
-        <textarea {...register('content')} id="content" rows={15} className="w-full p-3 rounded-lg bg-brand-light-gray dark:bg-brand-dark-teal border-2 border-slate-300 dark:border-slate-600 font-mono text-sm" placeholder='<p>Váš text...</p> \n\n<div data-seo-meta="description">Vlastný SEO popis.</div> \n\n<h2>FAQ</h2> \n<h3>Otázka?</h3><p>Odpoveď.</p>' />
+        <label htmlFor="content" className="block text-sm font-medium text-brand-secondary-grey dark:text-slate-300 mb-1">Obsah (MDX/HTML)</label>
+        <textarea {...register('content')} id="content" rows={15} className="w-full p-3 rounded-lg bg-brand-light-gray dark:bg-brand-dark-teal border-2 border-slate-300 dark:border-slate-600 font-mono text-sm" placeholder='<p>Váš text...</p>' />
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">
@@ -122,7 +107,7 @@ export const PostForm = ({ post }: PostFormProps) => {
       </div>
 
       <div className="flex flex-col sm:flex-row justify-end items-center gap-4 pt-6 border-t border-slate-200 dark:border-slate-700">
-        <p className="text-sm text-brand-secondary-grey dark:text-slate-400">{post ? `Naposledy upravené: ${format(new Date(post.updatedAt), 'd.M.yyyy HH:mm')}` : "Nový článok"}</p>
+        <p className="text-sm text-brand-secondary-grey dark:text-slate-400">{post ? `Naposledy upravené: ${format(new Date(post.date), 'd.M.yyyy HH:mm')}` : "Nový článok"}</p>
         <div className="flex gap-4">
              <button
                 type="submit"

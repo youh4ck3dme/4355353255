@@ -99,7 +99,7 @@ export default function AdminBlogPage() {
                 ) : posts.length > 0 ? (
                     <div>
                         {posts.map(post => (
-                            <PostRow key={post.slug} post={post} onDelete={() => {}} />
+                            <PostRow key={post.slug} post={post} />
                         ))}
                     </div>
                 ) : (

@@ -1,6 +1,6 @@
 
 import { Metadata } from 'next';
-import { getPostBySlug } from '@/lib/api';
+import { getPostBySlug } from '@/lib/mdx';
 import { notFound } from 'next/navigation';
 import { PostForm } from '../../_components/PostForm';
 import { FilePen } from 'lucide-react';
