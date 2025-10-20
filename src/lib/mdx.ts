@@ -5,67 +5,68 @@ import matter from 'gray-matter';
 import { Post } from './types';
 
 // This file contains server-side only code.
-// It should not be imported into any client-side components.
 
 const postsDirectory = path.join(process.cwd(), 'src', 'content', 'blog');
 
-// This function is intended to be used only in server-side environments 
-// (like API routes, getStaticProps, getServerSideProps, or generateStaticParams).
+function readAndParsePost(fileName: string): Post | null {
+    const slug = fileName.replace(/\.mdx$/, '');
+    const fullPath = path.join(postsDirectory, fileName);
+    
+    try {
+        const fileContents = fs.readFileSync(fullPath, 'utf8');
+        const { data, content } = matter(fileContents);
+
+        // Basic validation
+        if (typeof data.title !== 'string' || typeof data.date !== 'string' || typeof data.status !== 'string') {
+          console.warn(`Skipping invalid post file: ${fileName}. Missing required frontmatter.`);
+          return null;
+        }
+
+        return {
+            slug,
+            title: data.title,
+            date: data.date,
+            status: data.status,
+            author: data.author,
+            imageUrl: data.imageUrl,
+            tags: data.tags,
+            excerpt: data.excerpt,
+            metaTitle: data.metaTitle,
+            metaDescription: data.metaDescription,
+            content,
+        };
+    } catch (error) {
+        console.error(`Error reading or parsing file: ${fileName}`, error);
+        return null;
+    }
+}
+
+
 export function getPublishedPosts(): Post[] {
   try {
     const fileNames = fs.readdirSync(postsDirectory);
-    const allPostsData = fileNames
-      .map(fileName => {
-        const slug = fileName.replace(/\.mdx$/, '');
-        const fullPath = path.join(postsDirectory, fileName);
-        
-        try {
-          const fileContents = fs.readFileSync(fullPath, 'utf8');
-          const { data, content } = matter(fileContents);
-
-          return {
-            slug,
-            ...data,
-            content, // Content is included for API route to pass to client
-          } as Post;
-        } catch (readError) {
-          console.error(`Error reading or parsing file: ${fileName}`, readError);
-          return null; // Skip this file if it's unreadable
-        }
-      })
-      .filter((post): post is Post => post !== null); // Filter out any nulls from failed reads
-
-    // Sort posts by date and filter for published posts
-    return allPostsData
-      .filter(post => post.status === 'published')
-      .sort((a, b) => {
-        return new Date(b.date).getTime() - new Date(a.date).getTime();
-      });
-  } catch (dirError) {
-    console.error(`Error reading posts directory: ${postsDirectory}`, dirError);
-    return []; // Return empty array if directory can't be read
+    const allPosts = fileNames
+      .map(readAndParsePost)
+      .filter((post): post is Post => post !== null && post.status === 'published');
+    
+    // Sort posts by date
+    return allPosts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  } catch (error) {
+    console.error(`Error reading posts directory: ${postsDirectory}`, error);
+    return [];
   }
 }
 
 export function getAllPostsForAdmin(): Post[] {
     try {
         const fileNames = fs.readdirSync(postsDirectory);
-        const allPostsData = fileNames.map(fileName => {
-            const slug = fileName.replace(/\.mdx$/, '');
-            const fullPath = path.join(postsDirectory, fileName);
-             try {
-                const fileContents = fs.readFileSync(fullPath, 'utf8');
-                const { data, content } = matter(fileContents);
-                return { slug, ...data, content } as Post;
-            } catch (readError) {
-                console.error(`Error reading or parsing file for admin: ${fileName}`, readError);
-                return null;
-            }
-        }).filter((post): post is Post => post !== null);
-
-        return allPostsData.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-    } catch (dirError) {
-        console.error(`Error reading posts directory for admin: ${postsDirectory}`, dirError);
+        const allPosts = fileNames
+            .map(readAndParsePost)
+            .filter((post): post is Post => post !== null);
+        
+        return allPosts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    } catch (error) {
+        console.error(`Error reading posts directory for admin: ${postsDirectory}`, error);
         return [];
     }
 }
@@ -74,20 +75,27 @@ export function getAllPostsForAdmin(): Post[] {
 export function getPostBySlug(slug: string): Post | null {
     const fullPath = path.join(postsDirectory, `${slug}.mdx`);
     try {
+        if (!fs.existsSync(fullPath)) {
+            return null;
+        }
         const fileContents = fs.readFileSync(fullPath, 'utf8');
         const { data, content } = matter(fileContents);
 
         return {
             slug,
-            ...data,
+            title: data.title,
+            date: data.date,
+            status: data.status,
+            author: data.author,
+            imageUrl: data.imageUrl,
+            tags: data.tags,
+            excerpt: data.excerpt,
+            metaTitle: data.metaTitle,
+            metaDescription: data.metaDescription,
             content,
-        } as Post;
+        };
     } catch (err) {
-        // This is expected if the file doesn't exist (e.g., during build time for a bad link)
-        // We log a more detailed error only if it's not a simple file-not-found case
-        if (typeof err === 'object' && err !== null && 'code' in err && err.code !== 'ENOENT') {
-             console.error(`Error reading post with slug ${slug}:`, err);
-        }
+        console.error(`Error reading post with slug ${slug}:`, err);
         return null;
     }
 }

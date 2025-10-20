@@ -79,19 +79,9 @@ export const Header = () => {
                   <span className="absolute bottom-0 left-4 w-[22px] h-0.5 bg-brand-bright-green animate-fade-in"></span>
                 )}
             </Link>
-             {mounted && (
-                <button onClick={toggleTheme} className="p-2 rounded-full hover:bg-white/10" aria-label="Prepnúť režim">
-                    {theme === 'light' ? <Moon size={22} /> : <Sun size={22} className="text-yellow-400" />}
-                </button>
-            )}
           </nav>
 
           <div className="sm:hidden flex items-center gap-2">
-            {mounted && (
-                <button onClick={toggleTheme} className="p-2 rounded-full hover:bg-white/10" aria-label="Prepnúť režim">
-                    {theme === 'light' ? <Moon size={22} /> : <Sun size={22} className="text-yellow-400" />}
-                </button>
-            )}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="p-2 text-white hover:text-brand-bright-green transition-colors"
