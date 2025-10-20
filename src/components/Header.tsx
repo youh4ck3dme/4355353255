@@ -21,6 +21,7 @@ export const Header = () => {
     { href: '/sluzby', label: 'Služby' },
     { href: '/lokality', label: 'Lokality' },
     { href: '/cennik', label: 'Cenník' },
+    { href: '/checklist', label: 'Checklist' },
     { href: '/blog', label: 'Blog' },
     { href: '/kontakt', label: 'Kontakt' },
   ];
