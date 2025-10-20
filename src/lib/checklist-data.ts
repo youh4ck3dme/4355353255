@@ -29,7 +29,7 @@ export const checklistData: ChecklistCategory[] = [
         items: [
             { id: 'w2-1', label: 'Začnite baliť veci, ktoré denne nepoužívate (knihy, sezónne oblečenie).' },
             { id: 'w2-2', label: 'Oznámte zmenu adresy na pošte (presmerovanie pošty).' },
-            { id 'w2-3', label: 'Zrušte alebo presuňte predplatné (časopisy, TV, internet).' },
+            { id: 'w2-3', label: 'Zrušte alebo presuňte predplatné (časopisy, TV, internet).' },
             { id: 'w2-4', label: 'Spotrebujte potraviny z mrazničky a chladničky.' },
             { id: 'w2-5', label: 'Zmerajte rozmery nábytku a dverí v novom byte/dome.' },
         ]
