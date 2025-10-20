@@ -7,10 +7,10 @@
     --background-hsl: 220 20% 97%; /* #F9F7F2 */
     --foreground-hsl: 198 81% 18%; /* #0B4556 */
     
-    --primary-hsl: 66 97% 58%; /* #E6FF2B */
+    --primary-hsl: 158 100% 41%; /* NEW: rgb(0, 208, 130) */
 
     --brand-dark-teal: 198 81% 18%; /* #0B4556 */
-    --brand-bright-green: 66 97% 58%; /* #E6FF2B */
+    --brand-bright-green: 158 100% 41%; /* NEW: rgb(0, 208, 130) */
     --brand-light-gray: 220 20% 97%; /* #F9F7F2 */
     --brand-secondary-grey: 220 2% 57%; /* #898A8D */
     --brand-bg: 220 20% 97%; /* #F9F7F2 */
@@ -41,7 +41,7 @@
   .dark {
     --background-hsl: 198 81% 10%; /* Darker version of #0B4556 */
     --foreground-hsl: 220 20% 97%; /* #F9F7F2 */
-    --primary-hsl: 66 97% 58%; /* #E6FF2B */
+    --primary-hsl: 158 100% 41%; /* NEW: rgb(0, 208, 130) */
 
     --brand-dark-teal: hsl(var(--foreground-hsl));
     --brand-bright-green: hsl(var(--primary-hsl));
