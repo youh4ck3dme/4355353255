@@ -22,18 +22,9 @@ export default function RootLayout({
     <html lang="sk" suppressHydrationWarning>
       <body className={inter.className}>
         <Providers>
-           <div className="bg-background text-foreground">
-              <div className="liquid-glass-background">
-                  <div className="bg-orbs">
-                      <div className="orb"></div>
-                      <div className="orb"></div>
-                      <div className="orb"></div>
-                  </div>
-              </div>
-              <PublicLayout>
-                {children}
-              </PublicLayout>
-            </div>
+           <PublicLayout>
+              {children}
+            </PublicLayout>
             <Toaster />
         </Providers>
       </body>

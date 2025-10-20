@@ -1,10 +1,10 @@
 
-
 'use client';
 
 import { useState, useEffect, FormEvent } from 'react';
 import { ShieldCheck, LogIn } from 'lucide-react';
 import GlassCard from '@/components/GlassCard';
+import { PublicLayout } from '@/components/PublicLayout';
 
 const PASSWORD = '23513900';
 const SESSION_STORAGE_KEY = 'admin-authenticated';
@@ -71,7 +71,7 @@ export default function AdminLayout({
 }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [error, setError] = useState('');
-  const [isChecking, setIsChecking] = useState(false);
+  const [isChecking, setIsChecking] = useState(true); // Start with checking
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
@@ -82,6 +82,7 @@ export default function AdminLayout({
     } catch (e) {
       console.error('Session storage is not available.');
     }
+    setIsChecking(false);
   }, []);
 
   useEffect(() => {
@@ -118,42 +119,37 @@ export default function AdminLayout({
   
   if (!isAuthenticated) {
     return (
-      <div className="bg-brand-dark-teal min-h-screen flex items-center justify-center p-4">
-        <div className="w-full max-w-sm mx-auto">
-             <GlassCard>
-                <div className="p-8">
-                    <div className="text-center mb-8">
-                        <ShieldCheck className="mx-auto h-16 w-16 text-brand-bright-green mb-4" />
-                        <h1 className="text-3xl font-bold text-white text-shadow-3d">
-                        Zabezpečená oblasť
-                        </h1>
-                        <p className="text-slate-300 mt-2">
-                        Vyžaduje sa autorizácia
-                        </p>
-                    </div>
-                    
-                    {isChecking && <ProgressBar progress={progress} />}
-                    
-                    {!isChecking && error && <p className="text-red-400 text-sm text-center font-bold mb-4">{error}</p>}
+       <PublicLayout>
+          <div className="min-h-screen flex items-center justify-center p-4">
+            <div className="w-full max-w-sm mx-auto">
+                <GlassCard>
+                    <div className="p-8">
+                        <div className="text-center mb-8">
+                            <ShieldCheck className="mx-auto h-16 w-16 text-brand-bright-green mb-4" />
+                            <h1 className="text-3xl font-bold text-white text-shadow-3d">
+                            Zabezpečená oblasť
+                            </h1>
+                            <p className="text-slate-300 mt-2">
+                            Vyžaduje sa autorizácia
+                            </p>
+                        </div>
+                        
+                        {isChecking && progress > 0 && <ProgressBar progress={progress} />}
+                        
+                        {!isChecking && error && <p className="text-red-400 text-sm text-center font-bold mb-4">{error}</p>}
 
-                    {!isChecking && <LoginForm onLogin={handleLogin} isChecking={isChecking} />}
-                </div>
-            </GlassCard>
-        </div>
-      </div>
+                        {!isChecking && <LoginForm onLogin={handleLogin} isChecking={isChecking} />}
+                    </div>
+                </GlassCard>
+            </div>
+          </div>
+       </PublicLayout>
     );
   }
 
   return (
-    <div className="bg-brand-dark-teal">
-       <div className="liquid-glass-background">
-          <div className="bg-orbs">
-              <div className="orb"></div>
-              <div className="orb"></div>
-              <div className="orb"></div>
-          </div>
-      </div>
-       <div className="relative z-10">{children}</div>
-    </div>
+     <PublicLayout>
+        {children}
+      </PublicLayout>
   );
 }
