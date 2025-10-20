@@ -2,9 +2,10 @@
 import { NextResponse } from 'next/server';
 import { getAllPostsForAdmin } from '@/lib/mdx';
 
+// This is a Route Handler, which is executed on the server.
+// It can safely use server-side modules like 'fs'.
 export async function GET() {
   try {
-    // This function can now be different from getPublishedPosts if needed for the admin panel
     const allPosts = getAllPostsForAdmin(); 
     return NextResponse.json(allPosts);
   } catch (error) {

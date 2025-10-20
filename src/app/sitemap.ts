@@ -5,7 +5,7 @@ import { services } from '@/lib/services';
 
 const base = process.env.NEXT_PUBLIC_BASE_URL || 'https://app.viandmo.com';
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
   
   // Static pages
