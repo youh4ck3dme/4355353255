@@ -118,12 +118,7 @@ export default function AdminLayout({
   
   if (!isAuthenticated) {
     return (
-      <div className="liquid-glass-background min-h-screen flex items-center justify-center p-4">
-         <div className="bg-orbs" aria-hidden="true">
-            <div className="orb"></div>
-            <div className="orb"></div>
-            <div className="orb"></div>
-        </div>
+      <div className="bg-brand-dark-teal min-h-screen flex items-center justify-center p-4">
         <div className="w-full max-w-sm mx-auto">
              <GlassCard>
                 <div className="p-8">
@@ -150,12 +145,7 @@ export default function AdminLayout({
   }
 
   return (
-    <div className="liquid-glass-background">
-      <div className="bg-orbs" aria-hidden="true">
-        <div className="orb"></div>
-        <div className="orb"></div>
-        <div className="orb"></div>
-      </div>
+    <div className="bg-brand-dark-teal">
        <div className="relative z-10">{children}</div>
     </div>
   );

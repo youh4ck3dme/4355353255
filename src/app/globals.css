@@ -4,22 +4,22 @@
 
 @layer base {
   :root {
-    --background-hsl: 0 0% 100%;
-    --foreground-hsl: 220 30% 15%;
+    --background-hsl: 220 20% 97%; /* #F9F7F2 */
+    --foreground-hsl: 198 81% 18%; /* #0B4556 */
     
-    --primary-hsl: 170 80% 45%; /* Jasná zelená ako primárna farba */
+    --primary-hsl: 66 97% 58%; /* #E6FF2B */
 
-    --brand-dark-teal: 220 30% 15%;
-    --brand-bright-green: 170 80% 45%;
-    --brand-light-gray: 220 10% 95%;
-    --brand-secondary-grey: 220 10% 45%;
-    --brand-bg: 220 10% 98%;
-    --brand-text: 220 30% 15%;
+    --brand-dark-teal: 198 81% 18%; /* #0B4556 */
+    --brand-bright-green: 66 97% 58%; /* #E6FF2B */
+    --brand-light-gray: 220 20% 97%; /* #F9F7F2 */
+    --brand-secondary-grey: 220 2% 57%; /* #898A8D */
+    --brand-bg: 220 20% 97%; /* #F9F7F2 */
+    --brand-text: 198 81% 18%; /* #0B4556 */
 
     --background: hsl(var(--background-hsl));
     --foreground: hsl(var(--foreground-hsl));
     --primary: hsl(var(--primary-hsl));
-    --primary-foreground: hsl(220 10% 10%);
+    --primary-foreground: hsl(198 81% 12%);
 
     --secondary: hsl(var(--background-hsl) / 0.5);
     --secondary-foreground: hsl(var(--foreground-hsl));
@@ -28,7 +28,7 @@
     --muted-foreground: hsl(var(--foreground-hsl) / 0.7);
 
     --accent: hsl(var(--primary-hsl));
-    --accent-foreground: hsl(220 10% 10%);
+    --accent-foreground: hsl(198 81% 12%);
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
@@ -39,16 +39,18 @@
   }
  
   .dark {
-    --background-hsl: 220 10% 10%;
-    --foreground-hsl: 220 20% 95%;
-    --primary-hsl: 170 80% 45%;
+    --background-hsl: 198 81% 10%; /* Darker version of #0B4556 */
+    --foreground-hsl: 220 20% 97%; /* #F9F7F2 */
+    --primary-hsl: 66 97% 58%; /* #E6FF2B */
 
     --brand-dark-teal: hsl(var(--foreground-hsl));
     --brand-bright-green: hsl(var(--primary-hsl));
-    --brand-light-gray: hsl(220 15% 85%);
-    --brand-secondary-grey: hsl(220 10% 60%);
+    --brand-light-gray: hsl(220 2% 57%);
+    --brand-secondary-grey: hsl(220 2% 57%);
     --brand-bg: hsl(var(--background-hsl));
     --brand-text: hsl(var(--foreground-hsl));
+     
+    --primary-foreground: hsl(198 81% 12%);
   }
 }
  

@@ -1,4 +1,3 @@
-
 // src/app/(public)/layout.tsx
 import { PublicLayout } from '@/components/PublicLayout';
 import type { Metadata } from 'next';
@@ -12,12 +11,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="liquid-glass-background">
-      <div className="bg-orbs" aria-hidden="true">
-        <div className="orb"></div>
-        <div className="orb"></div>
-        <div className="orb"></div>
-      </div>
+    // The dark class will be applied by next-themes based on system/user preference
+    <div className="bg-brand-bg dark:bg-brand-dark-teal">
       <PublicLayout>
         {children}
       </PublicLayout>
