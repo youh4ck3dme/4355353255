@@ -23,12 +23,11 @@ const config: Config = {
         sans: ["var(--font-sans)", ...fontFamily.sans],
       },
       colors: {
-        'brand-dark-teal': 'hsl(var(--brand-dark-teal))',
-        'brand-bright-green': 'hsl(var(--brand-bright-green))',
-        'brand-light-gray': 'hsl(var(--brand-light-gray))',
-        'brand-secondary-grey': 'hsl(var(--brand-secondary-grey))',
-        'brand-bg': 'hsl(var(--brand-bg))',
-        'brand-text': 'hsl(var(--brand-text))',
+        'brand-dark-teal': 'hsl(var(--brand-dark-teal-hsl))',
+        'brand-bright-green': 'hsl(var(--brand-bright-green-hsl))',
+        'brand-bg': 'hsl(var(--brand-bg-hsl))',
+        'brand-text': 'hsl(var(--brand-text-hsl))',
+        'brand-secondary-grey': 'hsl(var(--brand-secondary-grey-hsl))',
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -79,24 +78,24 @@ const config: Config = {
         DEFAULT: {
           css: {
             '--tw-prose-body': 'hsl(var(--foreground))',
-            '--tw-prose-headings': 'hsl(var(--brand-dark-teal))',
-            '--tw-prose-lead': 'hsl(var(--brand-secondary-grey))',
-            '--tw-prose-links': 'hsl(var(--brand-dark-teal))',
+            '--tw-prose-headings': 'hsl(var(--brand-dark-teal-hsl))',
+            '--tw-prose-lead': 'hsl(var(--brand-secondary-grey-hsl))',
+            '--tw-prose-links': 'hsl(var(--brand-dark-teal-hsl))',
             '--tw-prose-bold': 'hsl(var(--foreground))',
-            '--tw-prose-counters': 'hsl(var(--brand-secondary-grey))',
-            '--tw-prose-bullets': 'hsl(var(--brand-dark-teal))',
-            '--tw-prose-hr': 'hsl(var(--brand-light-gray))',
-            '--tw-prose-quotes': 'hsl(var(--brand-dark-teal))',
-            '--tw-prose-quote-borders': 'hsl(var(--brand-bright-green))',
-            '--tw-prose-captions': 'hsl(var(--brand-secondary-grey))',
+            '--tw-prose-counters': 'hsl(var(--brand-secondary-grey-hsl))',
+            '--tw-prose-bullets': 'hsl(var(--brand-dark-teal-hsl))',
+            '--tw-prose-hr': 'hsl(var(--border))',
+            '--tw-prose-quotes': 'hsl(var(--brand-dark-teal-hsl))',
+            '--tw-prose-quote-borders': 'hsl(var(--brand-bright-green-hsl))',
+            '--tw-prose-captions': 'hsl(var(--brand-secondary-grey-hsl))',
             '--tw-prose-code': 'hsl(var(--foreground))',
             '--tw-prose-pre-code': 'hsl(var(--background))',
             '--tw-prose-pre-bg': 'hsl(var(--foreground))',
             // Invert styles for dark mode
             '--tw-prose-invert-body': 'hsl(var(--foreground))',
-            '--tw-prose-invert-headings': 'hsl(var(--brand-bright-green))',
-            '--tw-prose-invert-lead': 'hsl(var(--brand-secondary-grey))',
-            '--tw-prose-invert-links': 'hsl(var(--brand-bright-green))',
+            '--tw-prose-invert-headings': 'hsl(var(--brand-bright-green-hsl))',
+            '--tw-prose-invert-lead': 'hsl(var(--brand-secondary-grey-hsl))',
+            '--tw-prose-invert-links': 'hsl(var(--brand-bright-green-hsl))',
             '--tw-prose-invert-bold': 'hsl(var(--foreground))',
           },
         },
@@ -129,13 +128,17 @@ const config: Config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
-      }
+      },
+      backdropFilter: {
+        'none': 'none',
+        'blur': 'blur(20px)',
+      },
     },
   },
   plugins: [
     require("@tailwindcss/typography"), 
     require("tailwindcss-animate"),
-     require("tailwindcss-filters"),
+    require("tailwindcss-filters"),
     plugin(function({ theme, addUtilities }: { theme: any, addUtilities: any }) {
       const newUtilities = {
         '.text-shadow-md': {
@@ -154,9 +157,5 @@ const config: Config = {
       addUtilities(newUtilities)
     })
   ],
-   backdropFilter: {
-      'none': 'none',
-      'blur': 'blur(20px)',
-    },
 };
 export default config;
