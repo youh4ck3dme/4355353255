@@ -4,17 +4,18 @@
 
 @layer base {
   :root {
-    --background-hsl: 220 20% 97%; /* #F9F7F2 */
-    --foreground-hsl: 198 81% 18%; /* #0B4556 */
+    --background-hsl: 220 20% 97%; /* Light gray background */
+    --foreground-hsl: 198 81% 15%; /* Darker teal for main text */
     
-    --primary-hsl: 158 100% 41%; /* NEW: rgb(0, 208, 130) */
+    --primary-hsl: 158 100% 41%;
 
-    --brand-dark-teal: 198 81% 18%; /* #0B4556 */
-    --brand-bright-green: 158 100% 41%; /* NEW: rgb(0, 208, 130) */
-    --brand-light-gray: 220 20% 97%; /* #F9F7F2 */
-    --brand-secondary-grey: 220 2% 57%; /* #898A8D */
-    --brand-bg: 220 20% 97%; /* #F9F7F2 */
-    --brand-text: 198 81% 18%; /* #0B4556 */
+    /* Light Theme Palette */
+    --brand-dark-teal: 198 81% 15%; /* Darker teal */
+    --brand-bright-green: 158 100% 41%;
+    --brand-light-gray: 220 20% 97%;
+    --brand-secondary-grey: 210 5% 45%; /* Darker, more legible gray */
+    --brand-bg: 220 20% 97%;
+    --brand-text: 198 81% 15%; /* Darker teal for main text */
 
     --background: hsl(var(--background-hsl));
     --foreground: hsl(var(--foreground-hsl));
@@ -39,14 +40,15 @@
   }
  
   .dark {
-    --background-hsl: 198 81% 10%; /* Darker version of #0B4556 */
-    --foreground-hsl: 220 20% 97%; /* #F9F7F2 */
-    --primary-hsl: 158 100% 41%; /* NEW: rgb(0, 208, 130) */
+    --background-hsl: 198 81% 10%;
+    --foreground-hsl: 220 20% 98%; /* Brighter white for text */
+    --primary-hsl: 158 100% 41%;
 
+    /* Dark Theme Palette */
     --brand-dark-teal: hsl(var(--foreground-hsl));
     --brand-bright-green: hsl(var(--primary-hsl));
-    --brand-light-gray: hsl(220 2% 57%);
-    --brand-secondary-grey: hsl(220 2% 57%);
+    --brand-light-gray: hsl(210 10% 75%); /* Lighter gray for secondary text */
+    --brand-secondary-grey: hsl(210 10% 75%);
     --brand-bg: hsl(var(--background-hsl));
     --brand-text: hsl(var(--foreground-hsl));
      

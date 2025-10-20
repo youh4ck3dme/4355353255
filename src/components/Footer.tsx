@@ -1,4 +1,3 @@
-
 import Link from 'next/link';
 import Image from 'next/image';
 import { Phone, Mail } from 'lucide-react';
@@ -41,7 +40,7 @@ export const Footer = () => {
               <div>
                 <p className="font-semibold text-slate-300">Sťahovanie</p>
                 <p className="text-sm text-slate-400">Miroslav Danihel</p>
-                <a href="tel:+421911275755" className="liquid-glass-button inline-flex items-center justify-center md:justify-start space-x-2 text-slate-300 hover:text-brand-bright-green transition-colors group mt-1">
+                <a href="tel:+421911275755" className="liquid-glass-button inline-flex items-center justify-center md:justify-start space-x-2 text-slate-200 hover:text-brand-bright-green transition-colors group mt-1">
                   <Phone size={16} className="text-brand-bright-green/80 group-hover:text-brand-bright-green" />
                   <span>+421 911 275 755</span>
                 </a>
@@ -49,13 +48,13 @@ export const Footer = () => {
               <div>
                 <p className="font-semibold text-slate-300">Upratovanie</p>
                 <p className="text-sm text-slate-400">Barbora Danihelová Huňková</p>
-                 <a href="tel:+421918895730" className="liquid-glass-button inline-flex items-center justify-center md:justify-start space-x-2 text-slate-300 hover:text-brand-bright-green transition-colors group mt-1">
+                 <a href="tel:+421918895730" className="liquid-glass-button inline-flex items-center justify-center md:justify-start space-x-2 text-slate-200 hover:text-brand-bright-green transition-colors group mt-1">
                   <Phone size={16} className="text-brand-bright-green/80 group-hover:text-brand-bright-green" />
                   <span>+421 918 895 730</span>
                 </a>
               </div>
               <div>
-                 <a href="mailto:info@viandmo.com" className="liquid-glass-button inline-flex items-center justify-center md:justify-start space-x-2 text-slate-300 hover:text-brand-bright-green transition-colors group mt-2">
+                 <a href="mailto:info@viandmo.com" className="liquid-glass-button inline-flex items-center justify-center md:justify-start space-x-2 text-slate-200 hover:text-brand-bright-green transition-colors group mt-2">
                   <Mail size={16} className="text-brand-bright-green/80 group-hover:text-brand-bright-green" />
                   <span>info@viandmo.com</span>
                 </a>
@@ -69,7 +68,7 @@ export const Footer = () => {
             <ul className="space-y-2">
               {footerLinks.map(link => (
                 <li key={link.label}>
-                  <Link href={link.href} className="liquid-glass-button inline-block text-slate-300 hover:text-brand-bright-green hover:underline underline-offset-4 transition-colors">
+                  <Link href={link.href} className="liquid-glass-button inline-block text-slate-200 hover:text-brand-bright-green hover:underline underline-offset-4 transition-colors">
                     {link.label}
                   </Link>
                 </li>

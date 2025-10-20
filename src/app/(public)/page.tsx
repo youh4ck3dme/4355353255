@@ -124,7 +124,7 @@ export default function HomePage() {
                   <h2 className="text-3xl md:text-4xl font-extrabold text-white text-shadow-3d">
                       Často kladené otázky
                   </h2>
-                  <p className="mt-4 text-lg text-slate-300">
+                  <p className="mt-4 text-lg text-slate-200">
                       Rýchle odpovede na vaše najčastejšie otázky.
                   </p>
               </header>

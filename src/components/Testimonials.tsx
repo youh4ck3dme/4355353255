@@ -1,4 +1,3 @@
-
 'use client';
 
 import { testimonials } from '@/lib/testimonials';
@@ -65,7 +64,7 @@ export default function Testimonials() {
             </div>
             
             <div className="text-center md:text-left">
-              <p className="text-lg italic text-slate-300 leading-relaxed">
+              <p className="text-lg italic text-slate-200 leading-relaxed">
                 “{currentTestimonial.text}”
               </p>
             </div>
