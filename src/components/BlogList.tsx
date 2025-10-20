@@ -14,11 +14,12 @@ export const BlogList = ({ initialPosts, initialCategory }: { initialPosts: Post
     const router = useRouter();
     const pathname = usePathname();
 
+    // Initialize state from props/URL params
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState<string | null>(initialCategory || null);
 
     useEffect(() => {
-        // Sync state with URL params on initial load or when URL changes
+        // This effect syncs the component's state if the URL is changed by browser back/forward buttons
         const categoryFromUrl = searchParams.get('category');
         if (categoryFromUrl) {
             setSelectedCategory(categoryFromUrl);
@@ -32,15 +33,16 @@ export const BlogList = ({ initialPosts, initialCategory }: { initialPosts: Post
 
         if (category) {
             current.set('category', category);
-            setSelectedCategory(category);
+            // No need to call setSelectedCategory here, the useEffect will handle it
         } else {
             current.delete('category');
-            setSelectedCategory(null);
+             // No need to call setSelectedCategory here, the useEffect will handle it
         }
         
         const search = current.toString();
         const query = search ? `?${search}` : "";
 
+        // Use router.push to update URL without a full page reload
         router.push(`${pathname}${query}`, { scroll: false });
     };
 
