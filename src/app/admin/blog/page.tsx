@@ -39,13 +39,24 @@ const PostRow = ({ post }: { post: Post }) => {
 export default function AdminBlogPage() {
     const [posts, setPosts] = useState<Post[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const { toast } = useToast();
 
     const fetchPosts = useCallback(async () => {
         setIsLoading(true);
-        const fetchedPosts = await getPublishedPosts();
-        setPosts(fetchedPosts);
-        setIsLoading(false);
-    }, []);
+        try {
+            const fetchedPosts = await getPublishedPosts();
+            setPosts(fetchedPosts);
+        } catch (error) {
+            console.error("Failed to fetch posts:", error);
+            toast({
+                variant: 'destructive',
+                title: 'Chyba pri načítaní článkov',
+                description: 'Nepodarilo sa načítať zoznam článkov. Skontrolujte konzolu pre viac detailov.',
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    }, [toast]);
 
     useEffect(() => {
         fetchPosts();

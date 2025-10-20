@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -30,7 +31,7 @@ export const PostForm = ({ post }: PostFormProps) => {
   const router = useRouter();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitAction, setSubmitAction] = useState<'draft' | 'published'>('draft');
+  const [submitAction, setSubmitAction] = useState<'draft' | 'published'>(post?.status || 'draft');
 
   const {
     register,
@@ -107,7 +108,17 @@ export const PostForm = ({ post }: PostFormProps) => {
       </div>
 
       <div className="flex flex-col sm:flex-row justify-end items-center gap-4 pt-6 border-t border-slate-200 dark:border-slate-700">
-        <p className="text-sm text-brand-secondary-grey dark:text-slate-400">{post ? `Naposledy upravené: ${format(new Date(post.date), 'd.M.yyyy HH:mm')}` : "Nový článok"}</p>
+        <p className="text-sm text-brand-secondary-grey dark:text-slate-400 mr-auto">
+          {post ? `Stav: ` : "Nový článok"}
+          {post && (
+             <span className={cn(
+                    "px-2 py-0.5 text-xs font-bold rounded-full text-white",
+                    post.status === 'published' ? 'bg-green-600' : 'bg-yellow-600'
+                )}>
+                    {post.status === 'published' ? 'Publikovaný' : 'Koncept'}
+              </span>
+          )}
+        </p>
         <div className="flex gap-4">
              <button
                 type="submit"
@@ -125,7 +136,7 @@ export const PostForm = ({ post }: PostFormProps) => {
                 className="flex items-center gap-2 px-6 py-3 bg-brand-bright-green text-brand-dark-teal font-bold rounded-lg hover:bg-opacity-80 transition-colors duration-300 shadow-md disabled:opacity-50 disabled:cursor-wait"
             >
                 {isSubmitting && submitAction === 'published' ? <Loader2 className="animate-spin" size={20}/> : <Send size={20} />}
-                <span>{post?.status === 'published' ? 'Aktualizovať a publikovať' : 'Publikovať'}</span>
+                <span>{post?.status === 'published' ? 'Aktualizovať' : 'Publikovať'}</span>
             </button>
         </div>
       </div>
