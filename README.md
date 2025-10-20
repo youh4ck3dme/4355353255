@@ -8,6 +8,19 @@ Toto je frontendová časť pre VI&MO Blog, postavená na Next.js a Tailwind CSS
 - **Responzívny dizajn:** Plne optimalizované pre desktopy, tablety aj mobilné zariadenia.
 - **Dynamické routovanie:** Stránky pre jednotlivé príspevky sú generované dynamicky.
 - **Statický blog:** Články sú generované z `.mdx` súborov pre maximálny výkon.
+- **Progresívna Webová Aplikácia (PWA):** Možnosť inštalácie a základná offline funkcionalita.
+
+## Environmentálne Premenné
+
+Pred nasadením aplikácie je potrebné vytvoriť súbor `.env.local` v koreňovom adresári projektu a nastaviť nasledujúce premenné:
+
+```
+# Základná URL adresa pre produkčné nasadenie (používa sa pre sitemapu a meta dáta)
+NEXT_PUBLIC_BASE_URL=https://your-production-url.com
+
+# Heslo pre prístup do administrátorskej sekcie
+ADMIN_PASSWORD=your_secret_password
+```
 
 ## Spustenie lokálne
 
@@ -16,18 +29,31 @@ Toto je frontendová časť pre VI&MO Blog, postavená na Next.js a Tailwind CSS
     npm install
     ```
 
-2.  **Spustite vývojový server:**
+2.  **Nastavte environmentálne premenné:**
+    Vytvorte súbor `.env.local` a pridajte do neho potrebné premenné (viď sekcia vyššie).
+
+3.  **Spustite vývojový server:**
     ```bash
     npm run dev
     ```
 
     Aplikácia bude dostupná na adrese [http://localhost:3000](http://localhost:3000).
 
-## Nasadenie na Vercel
+## Build a Nasadenie
 
-Táto aplikácia je pripravená na nasadenie na platformu **Vercel**.
+1.  **Vytvorenie produkčného buildu:**
+    ```bash
+    npm run build
+    ```
+    Tento príkaz skontroluje kód, vygeneruje statické súbory a pripraví aplikáciu na nasadenie.
 
-1.  **Importujte projekt:** Vo vašom Vercel účte importujte tento Git repozitár.
-2.  **Nastavte build príkaz:** Vercel by mal automaticky detegovať Next.js projekt. Uistite sa, že nastavenia sú správne.
-3.  **Nastavte premenné prostredia:** V nastaveniach projektu na Verceli pridajte premennú prostredia `NEXT_PUBLIC_BASE_URL` s hodnotou vašej produkčnej domény (napr. `https://app.viandmo.com`).
-4.  **Nasaďte:** Po kliknutí na "Deploy" sa Vercel postará o build a nasadenie.
+2.  **Spustenie produkčnej verzie lokálne:**
+    ```bash
+    npm run start
+    ```
+
+3.  **Nasadenie na Vercel/Netlify:**
+    Táto aplikácia je pripravená na nasadenie na platformy ako **Vercel** alebo **Netlify**.
+    - Importujte tento Git repozitár do vášho účtu.
+    - Nastavte environmentálne premenné v nastaveniach projektu na danej platforme.
+    - Platforma by mala automaticky detegovať Next.js projekt a postarať sa o build a nasadenie.

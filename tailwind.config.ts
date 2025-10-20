@@ -138,7 +138,6 @@ const config: Config = {
   plugins: [
     require("@tailwindcss/typography"), 
     require("tailwindcss-animate"),
-    require("tailwindcss-filters"),
     plugin(function({ theme, addUtilities }: { theme: any, addUtilities: any }) {
       const newUtilities = {
         '.text-shadow-md': {

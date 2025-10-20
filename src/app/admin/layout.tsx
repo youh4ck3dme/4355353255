@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { useState, useEffect, FormEvent } from 'react';
@@ -7,7 +6,7 @@ import { ShieldCheck, LogIn } from 'lucide-react';
 import GlassCard from '@/components/GlassCard';
 import { PublicLayout } from '@/components/PublicLayout';
 
-const PASSWORD = '23513900';
+const PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || '23513900';
 const SESSION_STORAGE_KEY = 'admin-authenticated';
 
 function ProgressBar({ progress }: { progress: number }) {
@@ -81,7 +80,7 @@ export default function AdminLayout({
         setIsAuthenticated(true);
       }
     } catch (e) {
-      console.error('Session storage is not available.');
+      // Session storage might be disabled
     }
     setIsChecking(false);
   }, []);
@@ -106,7 +105,7 @@ export default function AdminLayout({
         try {
           sessionStorage.setItem(SESSION_STORAGE_KEY, 'true');
         } catch (e) {
-          console.error('Session storage is not available.');
+         // Session storage might be disabled
         }
         setIsAuthenticated(true);
         setError('');
