@@ -6,7 +6,9 @@ import { ShieldCheck, LogIn } from 'lucide-react';
 import GlassCard from '@/components/GlassCard';
 import { PublicLayout } from '@/components/PublicLayout';
 
-const PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || '23513900';
+// Načítanie hesla z environment premenných.
+// V produkcii sa nastavuje na hostingovej platforme (napr. Vercel, Netlify).
+const PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD;
 const SESSION_STORAGE_KEY = 'admin-authenticated';
 
 function ProgressBar({ progress }: { progress: number }) {
@@ -52,12 +54,13 @@ function LoginForm({ onLogin, isChecking }: { onLogin: (password: string) => voi
           <div>
               <button
                   type="submit"
-                  disabled={isChecking}
+                  disabled={isChecking || !PASSWORD}
                   className="w-full flex justify-center items-center gap-2 px-6 py-4 bg-brand-bright-green text-brand-dark-teal font-bold rounded-lg hover:bg-opacity-80 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-wait disabled:transform-none"
               >
                   <LogIn size={20} />
                   <span>{isChecking ? 'Overujem...' : 'Autorizovať'}</span>
               </button>
+               {!PASSWORD && <p className="text-center text-red-400 text-xs mt-2">Admin heslo nie je nastavené v .env.local</p>}
           </div>
       </form>
   );
@@ -80,7 +83,7 @@ export default function AdminLayout({
         setIsAuthenticated(true);
       }
     } catch (e) {
-      // Session storage might be disabled
+      console.error("Failed to access sessionStorage:", e);
     }
     setIsChecking(false);
   }, []);
@@ -96,6 +99,10 @@ export default function AdminLayout({
   }, [isChecking, progress]);
 
   const handleLogin = (password: string) => {
+    if (!PASSWORD) {
+        setError('Heslo pre administrátora nie je nastavené na serveri.');
+        return;
+    }
     setError('');
     setIsChecking(true);
     setProgress(1);
@@ -105,7 +112,7 @@ export default function AdminLayout({
         try {
           sessionStorage.setItem(SESSION_STORAGE_KEY, 'true');
         } catch (e) {
-         // Session storage might be disabled
+         console.error("Failed to set sessionStorage:", e);
         }
         setIsAuthenticated(true);
         setError('');

@@ -6,6 +6,7 @@ const withPWA = createNextPwa({
   dest: 'public',
   register: true,
   skipWaiting: true,
+  // Povolí PWA iba v produkčnom prostredí
   disable: process.env.NODE_ENV === 'development',
   runtimeCaching: [
     {
@@ -16,7 +17,7 @@ const withPWA = createNextPwa({
         networkTimeoutSeconds: 15,
         expiration: {
           maxEntries: 150,
-          maxAgeSeconds: 30 * 24 * 60 * 60, // 1 month
+          maxAgeSeconds: 30 * 24 * 60 * 60, // 30 dní
         },
         cacheableResponse: {
           statuses: [0, 200],
