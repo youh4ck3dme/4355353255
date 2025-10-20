@@ -6,8 +6,6 @@ import { z } from 'zod';
 import { useFirestore } from '@/firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { Loader2 } from 'lucide-react';
-import { errorEmitter } from '@/firebase/error-emitter';
-import { FirestorePermissionError } from '@/firebase/errors';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { cn } from '@/lib/utils';
@@ -57,17 +55,11 @@ export const ContactForm = () => {
             reset();
 
         } catch (serverError) {
-             const permissionError = new FirestorePermissionError({
-              path: submissionsCollection.path,
-              operation: 'create',
-              requestResourceData: data,
-            });
-            errorEmitter.emit('permission-error', permissionError);
-            
+            console.error("Firestore error:", serverError);
             toast({
               variant: "destructive",
               title: "Chyba pri odosielaní",
-              description: "Vyskytla sa chyba. Skúste to prosím znova.",
+              description: "Vyskytla sa chyba. Skúste to prosím znova, alebo nás kontaktujte telefonicky.",
             });
         }
     };

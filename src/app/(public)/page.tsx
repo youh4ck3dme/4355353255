@@ -1,8 +1,5 @@
 
-import { ArrowDown } from 'lucide-react';
-import Link from 'next/link';
 import FaqAccordion from '@/components/FaqAccordion';
-import GlassCard from '@/components/GlassCard';
 import dynamic from 'next/dynamic';
 import { services } from '@/lib/services';
 import Services from '@/components/Services';
@@ -117,15 +114,11 @@ export default async function HomePage() {
                   <h2 className="text-3xl md:text-4xl font-extrabold text-white text-shadow-3d">
                       Často kladené otázky
                   </h2>
-                  <p className="mt-4 text-lg text-slate-200">
+                  <p className="mt-4 text-lg text-slate-300">
                       Rýchle odpovede na vaše najčastejšie otázky.
                   </p>
               </header>
-              <GlassCard>
-                <div className="p-4 sm:p-8">
-                  <FaqAccordion items={faqItems} />
-                </div>
-              </GlassCard>
+              <FaqAccordion items={faqItems} />
           </div>
         </section>
 

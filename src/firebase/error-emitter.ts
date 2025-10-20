@@ -19,7 +19,6 @@ type Callback<T> = (data: T) => void;
  */
 function createEventEmitter<T extends Record<string, any>>() {
   // The events object stores arrays of callbacks, keyed by event name.
-  // The types ensure that a callback for a specific event matches its payload type.
   const events: { [K in keyof T]?: Array<Callback<T[K]>> } = {};
 
   return {
@@ -61,5 +60,4 @@ function createEventEmitter<T extends Record<string, any>>() {
   };
 }
 
-// Create and export a singleton instance of the emitter, typed with our AppEvents interface.
 export const errorEmitter = createEventEmitter<AppEvents>();
