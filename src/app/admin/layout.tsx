@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useEffect, FormEvent } from 'react';
@@ -71,7 +72,7 @@ export default function AdminLayout({
 }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [error, setError] = useState('');
-  const [isChecking, setIsChecking] = useState(true); // Start with checking
+  const [isChecking, setIsChecking] = useState(true);
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
@@ -90,7 +91,7 @@ export default function AdminLayout({
     if (isChecking && progress < 100) {
       timer = setTimeout(() => {
         setProgress(prev => Math.min(prev + 1, 100));
-      }, 20); // Animate over 2 seconds
+      }, 20); 
     }
     return () => clearTimeout(timer);
   }, [isChecking, progress]);
