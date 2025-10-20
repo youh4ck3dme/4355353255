@@ -1,6 +1,6 @@
 
 import type { MetadataRoute } from 'next';
-import { getAllPosts } from '@/lib/api';
+import { getPublishedPosts as getAllPosts } from '@/lib/mdx';
 import { services } from '@/lib/services';
 
 const base = process.env.NEXT_PUBLIC_BASE_URL || 'https://app.viandmo.com';

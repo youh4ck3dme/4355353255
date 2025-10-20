@@ -2,10 +2,8 @@
 // All post-related API calls were removed as the blog is now statically generated from MDX files.
 // See src/lib/mdx.ts for the new data fetching logic.
 // If you need to add other API calls (e.g., for a contact form), you can add them here.
-
-import { Post } from './types';
 import { getPublishedPosts } from './mdx';
 
-export async function getAllPosts(): Promise<Post[]> {
+export async function getAllPosts() {
     return getPublishedPosts();
 }

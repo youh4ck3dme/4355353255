@@ -6,7 +6,8 @@ import { Post } from './types';
 
 const postsDirectory = path.join(process.cwd(), 'src', 'content', 'blog');
 
-export async function getPublishedPosts(): Promise<Post[]> {
+// This function is now intended to be used only in server-side environments (like API routes or generateStaticParams).
+export function getPublishedPosts(): Post[] {
   const fileNames = fs.readdirSync(postsDirectory);
   const allPostsData = fileNames.map(fileName => {
     // Remove ".mdx" from file name to get slug
@@ -40,7 +41,7 @@ export async function getPublishedPosts(): Promise<Post[]> {
 }
 
 
-export async function getPostBySlug(slug: string): Promise<Post | null> {
+export function getPostBySlug(slug: string): Post | null {
     const fullPath = path.join(postsDirectory, `${slug}.mdx`);
     try {
         const fileContents = fs.readFileSync(fullPath, 'utf8');
