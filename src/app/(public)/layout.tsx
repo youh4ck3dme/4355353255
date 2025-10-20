@@ -1,3 +1,4 @@
+
 // src/app/(public)/layout.tsx
 import { PublicLayout } from '@/components/PublicLayout';
 import type { Metadata } from 'next';

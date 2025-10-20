@@ -32,6 +32,7 @@ export const Header = () => {
     } else {
       document.body.classList.remove('overflow-hidden');
     }
+    return () => document.body.classList.remove('overflow-hidden');
   }, [isMenuOpen]);
   
   useEffect(() => {
