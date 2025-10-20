@@ -47,7 +47,7 @@ export default function HomePage() {
     '@type': 'Organization',
     name: 'VI&MO - Sťahovanie Bratislava',
     url: siteUrl,
-    logo: `${siteUrl}/images/viandmo-logo.svg`,
+    logo: 'https://viandmo.com/wp-content/uploads/viandmo_logo_regular_land.svg',
     contactPoint: {
       '@type': 'ContactPoint',
       telephone: '+421-911-275-755',
@@ -100,7 +100,7 @@ export default function HomePage() {
       />
       
         {/* Hero Section */}
-        <section className="relative min-h-screen flex items-center justify-center text-center text-white px-4 -mt-16 bg-brand-dark-teal">
+        <section className="relative min-h-screen flex items-center justify-center text-center text-white px-4 -mt-16">
           <div className="relative z-10 animate-fade-in text-center">
             <h1 className="text-5xl md:text-7xl font-extrabold mb-4 text-shadow-3d-dark">
               Sťahovanie bez starostí
@@ -118,7 +118,7 @@ export default function HomePage() {
         <DynamicTestimonials />
 
         {/* FAQ Section */}
-        <section id="faq" className="py-16 md:py-24 bg-brand-dark-teal text-white">
+        <section id="faq" className="py-16 md:py-24">
           <div className="container mx-auto px-4 max-w-4xl">
               <header className="text-center mb-12">
                   <h2 className="text-3xl md:text-4xl font-extrabold text-white text-shadow-3d">

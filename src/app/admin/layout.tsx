@@ -1,9 +1,9 @@
 
+
 'use client';
 
 import { useState, useEffect, FormEvent } from 'react';
 import { ShieldCheck, LogIn } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import GlassCard from '@/components/GlassCard';
 
 const PASSWORD = '23513900';
@@ -146,6 +146,13 @@ export default function AdminLayout({
 
   return (
     <div className="bg-brand-dark-teal">
+       <div className="liquid-glass-background">
+          <div className="bg-orbs">
+              <div className="orb"></div>
+              <div className="orb"></div>
+              <div className="orb"></div>
+          </div>
+      </div>
        <div className="relative z-10">{children}</div>
     </div>
   );
