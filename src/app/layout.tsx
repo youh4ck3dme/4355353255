@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import { Toaster } from '@/components/ui/toaster'
 import { Providers } from '@/components/Providers'
+import { PublicLayout } from '@/components/PublicLayout'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -21,7 +22,18 @@ export default function RootLayout({
     <html lang="sk" suppressHydrationWarning>
       <body className={inter.className}>
         <Providers>
-            {children}
+           <div className="bg-background text-foreground">
+              <div className="liquid-glass-background">
+                  <div className="bg-orbs">
+                      <div className="orb"></div>
+                      <div className="orb"></div>
+                      <div className="orb"></div>
+                  </div>
+              </div>
+              <PublicLayout>
+                {children}
+              </PublicLayout>
+            </div>
             <Toaster />
         </Providers>
       </body>
