@@ -1,10 +1,15 @@
 
-
 import { ArrowDown } from 'lucide-react';
 import Link from 'next/link';
 import FaqAccordion from '@/components/FaqAccordion';
 import GlassCard from '@/components/GlassCard';
 import dynamic from 'next/dynamic';
+import { services } from '@/lib/services';
+import Services from '@/components/Services';
+import { getPublishedPosts } from '@/lib/mdx';
+import Blog from '@/components/Blog';
+import Contact from '@/components/Contact';
+import Hero from '@/components/Hero';
 
 const DynamicTestimonials = dynamic(() => import('@/components/Testimonials'), { 
   loading: () => <div className="min-h-[300px]"></div>,
@@ -40,7 +45,9 @@ const faqItems = [
 ];
 
 
-export default function HomePage() {
+export default async function HomePage() {
+  const latestPosts = (await getPublishedPosts()).slice(0, 3);
+
   const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://app.viandmo.com';
   const organizationJsonLd = {
     '@context': 'https://schema.org',
@@ -99,25 +106,11 @@ export default function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
       
-        {/* Hero Section */}
-        <section className="relative min-h-[60vh] flex items-center justify-center text-center text-white px-4">
-          <div className="relative z-10 animate-fade-in text-center">
-            <h1 className="text-5xl md:text-7xl font-extrabold mb-4 text-shadow-3d-dark">
-              Sťahovanie bez starostí
-            </h1>
-            <p className="text-2xl md:text-3xl font-light text-slate-200 text-shadow-md">
-              Pevné ruky & poctivý prístup
-            </p>
-            <Link href="/sluzby" className="glass-button mt-8 inline-flex items-center px-8 py-4 font-bold rounded-full hover:bg-opacity-90 transition-colors duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
-                Naše Služby <ArrowDown className="w-5 h-5 ml-2 transition-transform group-hover:translate-y-1" />
-            </Link>
-          </div>
-        </section>
-
-        {/* Testimonials Section */}
+        <Hero />
+        <Services services={services} />
         <DynamicTestimonials />
-
-        {/* FAQ Section */}
+        <Blog posts={latestPosts} />
+        
         <section id="faq" className="py-16 md:py-24">
           <div className="container mx-auto px-4 max-w-4xl">
               <header className="text-center mb-12">
@@ -135,6 +128,8 @@ export default function HomePage() {
               </GlassCard>
           </div>
         </section>
+
+        <Contact />
     </>
   );
 }
