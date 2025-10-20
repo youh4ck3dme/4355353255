@@ -9,13 +9,67 @@ import GlassCard from '@/components/GlassCard';
 const PASSWORD = '23513900';
 const SESSION_STORAGE_KEY = 'admin-authenticated';
 
+function ProgressBar({ progress }: { progress: number }) {
+    return (
+        <div className="space-y-2">
+            <p className="text-sm text-center text-slate-400">Overujem prístup... {progress}%</p>
+            <div className="w-full bg-slate-700/50 rounded-full h-2.5">
+                <div 
+                    className="bg-brand-bright-green h-2.5 rounded-full transition-all duration-150 ease-linear" 
+                    style={{ width: `${progress}%` }}
+                ></div>
+            </div>
+        </div>
+    );
+}
+
+function LoginForm({ onLogin, isChecking }: { onLogin: (password: string) => void, isChecking: boolean }) {
+  const [password, setPassword] = useState('');
+  
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (isChecking) return;
+    onLogin(password);
+  }
+
+  return (
+      <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+              <label htmlFor="password" className="sr-only">Heslo</label>
+              <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autoComplete="current-password"
+                  required
+                  disabled={isChecking}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full p-4 border-2 border-white/20 rounded-lg focus:border-brand-bright-green focus:ring focus:ring-brand-bright-green/50 outline-none transition-all duration-300 bg-white/10 backdrop-blur-sm text-white placeholder-slate-400 text-lg text-center"
+                  placeholder="• • • • • • • •"
+              />
+          </div>
+          <div>
+              <button
+                  type="submit"
+                  disabled={isChecking}
+                  className="w-full flex justify-center items-center gap-2 px-6 py-4 bg-brand-bright-green text-brand-dark-teal font-bold rounded-lg hover:bg-opacity-80 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-wait disabled:transform-none"
+              >
+                  <LogIn size={20} />
+                  <span>{isChecking ? 'Overujem...' : 'Autorizovať'}</span>
+              </button>
+          </div>
+      </form>
+  );
+}
+
+
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isChecking, setIsChecking] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -40,10 +94,7 @@ export default function AdminLayout({
     return () => clearTimeout(timer);
   }, [isChecking, progress]);
 
-  const handlePasswordSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (isChecking) return;
-
+  const handleLogin = (password: string) => {
     setError('');
     setIsChecking(true);
     setProgress(1);
@@ -57,13 +108,12 @@ export default function AdminLayout({
         }
         setIsAuthenticated(true);
         setError('');
-        setPassword('');
       } else {
         setError('Nesprávne heslo. Prístup zamietnutý.');
       }
       setIsChecking(false);
       setProgress(0);
-    }, 2200); // Wait for animation to finish + a little buffer
+    }, 2200); 
   };
   
   if (!isAuthenticated) {
@@ -86,55 +136,12 @@ export default function AdminLayout({
                         Vyžaduje sa autorizácia
                         </p>
                     </div>
-                    <form onSubmit={handlePasswordSubmit} className="space-y-6">
-                        <div>
-                        <label
-                            htmlFor="password"
-                            className="sr-only"
-                        >
-                            Heslo
-                        </label>
-                        <input
-                            id="password"
-                            name="password"
-                            type="password"
-                            autoComplete="current-password"
-                            required
-                            disabled={isChecking}
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="w-full p-4 border-2 border-white/20 rounded-lg focus:border-brand-bright-green 
-                                    focus:ring focus:ring-brand-bright-green/50 outline-none transition-all duration-300
-                                    bg-white/10 backdrop-blur-sm text-white placeholder-slate-400 text-lg text-center"
-                            placeholder="• • • • • • • •"
-                        />
-                        </div>
+                    
+                    {isChecking && <ProgressBar progress={progress} />}
+                    
+                    {!isChecking && error && <p className="text-red-400 text-sm text-center font-bold mb-4">{error}</p>}
 
-                        {isChecking && (
-                        <div className="space-y-2">
-                            <p className="text-sm text-center text-slate-400">Overujem prístup... {progress}%</p>
-                            <div className="w-full bg-slate-700/50 rounded-full h-2.5">
-                                <div 
-                                    className="bg-brand-bright-green h-2.5 rounded-full transition-all duration-150 ease-linear" 
-                                    style={{ width: `${progress}%` }}
-                                ></div>
-                            </div>
-                        </div>
-                        )}
-                        
-                        {error && !isChecking && <p className="text-red-400 text-sm text-center font-bold">{error}</p>}
-
-                        <div>
-                        <button
-                            type="submit"
-                            disabled={isChecking}
-                            className="w-full flex justify-center items-center gap-2 px-6 py-4 bg-brand-bright-green text-brand-dark-teal font-bold rounded-lg hover:bg-opacity-80 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-wait disabled:transform-none"
-                        >
-                            <LogIn size={20} />
-                            <span>{isChecking ? 'Overujem...' : 'Autorizovať'}</span>
-                        </button>
-                        </div>
-                    </form>
+                    {!isChecking && <LoginForm onLogin={handleLogin} isChecking={isChecking} />}
                 </div>
             </GlassCard>
         </div>
