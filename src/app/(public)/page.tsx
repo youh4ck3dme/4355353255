@@ -95,7 +95,7 @@ export default function HomePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
-      <div className="bg-brand-bg text-brand-text dark:bg-brand-dark-teal dark:text-brand-bg">
+      
         {/* Hero Section */}
         <section className="relative h-screen flex items-center justify-center text-center text-white px-4">
           <Image 
@@ -134,8 +134,6 @@ export default function HomePage() {
               <FaqAccordion items={faqItems} />
           </div>
         </section>
-
-      </div>
     </>
   );
 }

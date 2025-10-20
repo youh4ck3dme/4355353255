@@ -1,26 +1,14 @@
+
 'use client';
+
 import { useEffect } from 'react';
 
+// This component is now simplified and can be potentially removed if not used for other PWA logic.
+// The main logic for the install prompt is now in InstallPrompt.tsx and the service worker registration is in main.tsx or layout.
 export function PWAProvider() {
   useEffect(() => {
-    // --- Service Worker register ---
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker
-        .register('/sw.js')
-        .catch((e) => console.error('SW register fail', e));
-    }
-
-    // --- beforeinstallprompt (custom install UX) ---
-    const handler = (e: any) => {
-      // zabrániť default bublinovaniu banneru; uložíme event do window
-      e.preventDefault();
-      (window as any).__deferredInstallPrompt = e;
-      document.dispatchEvent(new CustomEvent('viandmo:pwa:install-ready'));
-    };
-
-    window.addEventListener('beforeinstallprompt', handler);
-    return () => window.removeEventListener('beforeinstallprompt', handler);
+    // You can add other PWA-related initializations here if needed in the future.
   }, []);
 
-  return null;
+  return null; // This component does not render anything.
 }

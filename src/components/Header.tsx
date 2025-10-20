@@ -6,11 +6,16 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useState, useEffect } from 'react';
-import { Menu, X, KeyRound } from 'lucide-react';
+import { Menu, X, KeyRound, Moon, Sun } from 'lucide-react';
+import { useTheme } from 'next-themes';
 
 export const Header = () => {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
 
   const navLinks = [
     { href: '/sluzby', label: 'Služby' },
@@ -21,7 +26,6 @@ export const Header = () => {
   ];
 
   useEffect(() => {
-    // Prevent scrolling when menu is open
     if (isMenuOpen) {
       document.body.classList.add('overflow-hidden');
     } else {
@@ -29,11 +33,13 @@ export const Header = () => {
     }
   }, [isMenuOpen]);
   
-  // Close menu on route change
   useEffect(() => {
     setIsMenuOpen(false);
   }, [pathname]);
 
+  const toggleTheme = () => {
+    setTheme(theme === 'light' ? 'dark' : 'light');
+  }
 
   return (
     <>
@@ -58,7 +64,6 @@ export const Header = () => {
             />
           </Link>
           
-          {/* Desktop Navigation */}
           <nav className="hidden sm:flex items-center space-x-6">
             {navLinks.map(link => (
               <Link 
@@ -81,9 +86,13 @@ export const Header = () => {
                   <span className="absolute bottom-0 left-4 w-[22px] h-0.5 bg-brand-bright-green animate-fade-in"></span>
                 )}
             </Link>
+             {mounted && (
+                <button onClick={toggleTheme} className="p-2 rounded-full hover:bg-brand-light-gray dark:hover:bg-brand-dark-teal" aria-label="Prepnúť režim">
+                    {theme === 'light' ? <Moon size={22} /> : <Sun size={22} className="text-yellow-400" />}
+                </button>
+            )}
           </nav>
 
-          {/* Mobile Menu Button */}
           <div className="sm:hidden flex items-center gap-2">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -96,7 +105,6 @@ export const Header = () => {
         </div>
       </header>
 
-      {/* Mobile Menu Overlay */}
       <div
         className={cn(
           "fixed inset-0 z-50 bg-brand-dark-teal/95 backdrop-blur-lg transition-opacity duration-500 sm:hidden",

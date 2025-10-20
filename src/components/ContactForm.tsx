@@ -1,7 +1,6 @@
 
 'use client';
 
-import { useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { z } from 'zod';
 import { useFirestore } from '@/firebase';
@@ -9,6 +8,9 @@ import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { Loader2 } from 'lucide-react';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { cn } from '@/lib/utils';
 
 
 const contactFormSchema = z.object({
@@ -19,46 +21,23 @@ const contactFormSchema = z.object({
 });
 
 type ContactFormValues = z.infer<typeof contactFormSchema>;
-type FormErrors = z.inferFlattenedErrors<typeof contactFormSchema>;
 
 
 export const ContactForm = () => {
-    const [values, setValues] = useState<ContactFormValues>({
-        name: '',
-        phone: '',
-        email: '',
-        address: '',
-    });
-    const [errors, setErrors] = useState<FormErrors['fieldErrors'] | null>(null);
-    const [status, setStatus] = useState<'idle' | 'submitting'>('idle');
     const { toast } = useToast();
     const firestore = useFirestore();
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setValues({ ...values, [e.target.id]: e.target.value });
-    };
+    const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm<ContactFormValues>({
+        resolver: zodResolver(contactFormSchema),
+    });
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        setStatus('submitting');
-        setErrors(null);
-
-        const validationResult = contactFormSchema.safeParse(values);
-
-        if (!validationResult.success) {
-            const zodErrors = validationResult.error.flatten();
-            setErrors(zodErrors.fieldErrors);
-            setStatus('idle');
-            return;
-        }
-
+    const onSubmit = async (data: ContactFormValues) => {
         if (!firestore) {
             toast({
                 variant: "destructive",
                 title: "Chyba pri inicializácii",
                 description: "Databáza nie je dostupná. Skúste to prosím neskôr.",
             });
-            setStatus('idle');
             return;
         }
 
@@ -66,7 +45,7 @@ export const ContactForm = () => {
         
         try {
             await addDoc(submissionsCollection, {
-                ...validationResult.data,
+                ...data,
                 submittedAt: serverTimestamp(),
             });
 
@@ -75,13 +54,13 @@ export const ContactForm = () => {
                 title: 'Požiadavka odoslaná!',
                 description: 'Ďakujeme! Čoskoro sa vám ozveme.',
             });
-            setValues({ name: '', phone: '', email: '', address: '' });
+            reset();
 
         } catch (serverError) {
              const permissionError = new FirestorePermissionError({
               path: submissionsCollection.path,
               operation: 'create',
-              requestResourceData: validationResult.data,
+              requestResourceData: data,
             });
             errorEmitter.emit('permission-error', permissionError);
             
@@ -90,39 +69,30 @@ export const ContactForm = () => {
               title: "Chyba pri odosielaní",
               description: "Vyskytla sa chyba. Skúste to prosím znova.",
             });
-        } finally {
-            setStatus('idle');
         }
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label htmlFor="name" className="block text-sm font-medium text-brand-secondary-grey dark:text-slate-300 mb-1">Meno / Firma *</label>
                     <input
-                        type="text"
                         id="name"
-                        value={values.name}
-                        onChange={handleChange}
-                        className="w-full p-3 border-2 border-slate-300 dark:border-slate-600 rounded-lg focus:border-brand-bright-green 
-                                   focus:ring focus:ring-brand-bright-green/50 outline-none transition-colors 
-                                   bg-brand-bg dark:bg-brand-dark-teal dark:text-brand-bg placeholder-brand-secondary-grey"
+                        {...register('name')}
+                        className={cn("w-full p-3 border-2 rounded-lg focus:border-brand-bright-green focus:ring focus:ring-brand-bright-green/50 outline-none transition-colors bg-brand-bg dark:bg-brand-dark-teal dark:text-brand-bg placeholder-brand-secondary-grey", errors.name ? "border-red-500" : "border-slate-300 dark:border-slate-600")}
                     />
-                    {errors?.name && <p className="text-red-500 text-sm mt-1">{errors.name[0]}</p>}
+                    {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
                 </div>
                 <div>
                     <label htmlFor="phone" className="block text-sm font-medium text-brand-secondary-grey dark:text-slate-300 mb-1">Mobil *</label>
                     <input
                         type="tel"
                         id="phone"
-                        value={values.phone}
-                        onChange={handleChange}
-                        className="w-full p-3 border-2 border-slate-300 dark:border-slate-600 rounded-lg focus:border-brand-bright-green 
-                                   focus:ring focus:ring-brand-bright-green/50 outline-none transition-colors 
-                                   bg-brand-bg dark:bg-brand-dark-teal dark:text-brand-bg placeholder-brand-secondary-grey"
+                        {...register('phone')}
+                        className={cn("w-full p-3 border-2 rounded-lg focus:border-brand-bright-green focus:ring focus:ring-brand-bright-green/50 outline-none transition-colors bg-brand-bg dark:bg-brand-dark-teal dark:text-brand-bg placeholder-brand-secondary-grey", errors.phone ? "border-red-500" : "border-slate-300 dark:border-slate-600")}
                     />
-                     {errors?.phone && <p className="text-red-500 text-sm mt-1">{errors.phone[0]}</p>}
+                     {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>}
                 </div>
             </div>
             <div>
@@ -130,34 +100,28 @@ export const ContactForm = () => {
                 <input
                     type="email"
                     id="email"
-                    value={values.email}
-                    onChange={handleChange}
-                    className="w-full p-3 border-2 border-slate-300 dark:border-slate-600 rounded-lg focus:border-brand-bright-green 
-                               focus:ring focus:ring-brand-bright-green/50 outline-none transition-colors 
-                               bg-brand-bg dark:bg-brand-dark-teal dark:text-brand-bg placeholder-brand-secondary-grey"
+                    {...register('email')}
+                    className={cn("w-full p-3 border-2 rounded-lg focus:border-brand-bright-green focus:ring focus:ring-brand-bright-green/50 outline-none transition-colors bg-brand-bg dark:bg-brand-dark-teal dark:text-brand-bg placeholder-brand-secondary-grey", errors.email ? "border-red-500" : "border-slate-300 dark:border-slate-600")}
                 />
-                {errors?.email && <p className="text-red-500 text-sm mt-1">{errors.email[0]}</p>}
+                {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
             </div>
             <div>
                 <label htmlFor="address" className="block text-sm font-medium text-brand-secondary-grey dark:text-slate-300 mb-1">Adresa sťahovania</label>
                 <input
                     type="text"
                     id="address"
-                    value={values.address || ''}
-                    onChange={handleChange}
+                    {...register('address')}
                     placeholder='Odkiaľ a kam sa sťahujete?'
-                    className="w-full p-3 border-2 border-slate-300 dark:border-slate-600 rounded-lg focus:border-brand-bright-green 
-                               focus:ring focus:ring-brand-bright-green/50 outline-none transition-colors 
-                               bg-brand-bg dark:bg-brand-dark-teal dark:text-brand-bg placeholder-brand-secondary-grey"
+                    className="w-full p-3 border-2 border-slate-300 dark:border-slate-600 rounded-lg focus:border-brand-bright-green focus:ring focus:ring-brand-bright-green/50 outline-none transition-colors bg-brand-bg dark:bg-brand-dark-teal dark:text-brand-bg placeholder-brand-secondary-grey"
                 />
             </div>
             <div>
                 <button
                     type="submit"
-                    disabled={status === 'submitting'}
+                    disabled={isSubmitting}
                     className="liquid-glass-button w-full px-8 py-4 bg-brand-bright-green text-brand-dark-teal font-bold rounded-lg hover:bg-opacity-80 transition-colors duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 disabled:bg-opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                 >
-                    {status === 'submitting' ? (
+                    {isSubmitting ? (
                         <>
                             <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                             Odosielam...

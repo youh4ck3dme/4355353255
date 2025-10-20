@@ -1,4 +1,4 @@
-// src/components/PublicLayout.tsx
+
 'use client';
 
 import { Header } from "@/components/Header";
@@ -31,7 +31,7 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <Header />
-      <main id="main-content" className="pt-16 min-h-screen">
+      <main id="main-content" className="pt-16 min-h-screen bg-brand-bg dark:bg-brand-dark-teal">
           {children}
       </main>
       <Footer />
