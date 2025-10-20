@@ -70,8 +70,10 @@ const config: Config = {
         'inner-lg': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
       },
        textShadow: {
+        'md': '0 2px 4px var(--shadow-color)',
+        'lg': '0 10px 20px var(--shadow-color)',
         '3d': '1px 1px 0px rgba(0,0,0,0.1), 2px 2px 0px rgba(0,0,0,0.09), 3px 3px 0px rgba(0,0,0,0.08)',
-        '3d-green': '1px 1px 0px hsl(var(--brand-dark-teal) / 0.7), 2px 2px 0px hsl(var(--brand-dark-teal) / 0.5), 3px 3px 0px hsl(var(--brand-dark-teal) / 0.3)',
+        '3d-dark': '1px 1px 0px rgba(0,0,0,0.3), 2px 2px 0px rgba(0,0,0,0.2), 3px 3px 0px rgba(0,0,0,0.1)',
       },
       typography: ({ theme }: { theme: any }) => ({
         DEFAULT: {
@@ -133,17 +135,28 @@ const config: Config = {
   plugins: [
     require("@tailwindcss/typography"), 
     require("tailwindcss-animate"),
+     require("tailwindcss-filters"),
     plugin(function({ theme, addUtilities }: { theme: any, addUtilities: any }) {
       const newUtilities = {
+        '.text-shadow-md': {
+          textShadow: theme('textShadow.md'),
+        },
+         '.text-shadow-lg': {
+          textShadow: theme('textShadow.lg'),
+        },
         '.text-shadow-3d': {
           textShadow: theme('textShadow.3d'),
         },
-        '.text-shadow-3d-green': {
-          textShadow: theme('textShadow.3d-green'),
+        '.text-shadow-3d-dark': {
+          textShadow: theme('textShadow.3d-dark'),
         },
       }
       addUtilities(newUtilities)
     })
   ],
+   backdropFilter: {
+      'none': 'none',
+      'blur': 'blur(20px)',
+    },
 };
 export default config;

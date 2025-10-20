@@ -7,6 +7,7 @@ import { services } from '@/lib/services';
 import FaqAccordion from '@/components/FaqAccordion';
 import Testimonials from '@/components/Testimonials';
 import { testimonials } from '@/lib/testimonials';
+import GlassCard from '@/components/GlassCard';
 
 const faqItems = [
     {
@@ -135,24 +136,15 @@ export default function HomePage() {
       />
       
         {/* Hero Section */}
-        <section className="relative h-screen flex items-center justify-center text-center text-white px-4">
-          <Image 
-            src={heroImage.src}
-            alt={heroImage.alt}
-            fill
-            className="object-cover"
-            priority
-            data-ai-hint={heroImage.hint}
-          />
-          <div className="absolute inset-0 bg-brand-dark-teal/70"></div>
+        <section className="relative min-h-screen flex items-center justify-center text-center text-white px-4 -mt-16">
           <div className="relative z-10 animate-fade-in text-center">
-            <h1 className="text-5xl md:text-7xl font-extrabold mb-4 text-brand-bright-green text-shadow-3d-green">
+            <h1 className="text-5xl md:text-7xl font-extrabold mb-4 text-shadow-3d-dark">
               Sťahovanie bez starostí
             </h1>
-            <p className="text-2xl md:text-3xl font-light text-slate-200">
+            <p className="text-2xl md:text-3xl font-light text-slate-200 text-shadow-md">
               Pevné ruky & poctivý prístup
             </p>
-            <Link href="/sluzby" className="liquid-glass-button mt-8 inline-flex items-center px-8 py-4 bg-brand-bright-green text-brand-dark-teal font-bold rounded-lg hover:bg-opacity-90 transition-colors duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1">
+            <Link href="/sluzby" className="glass-button mt-8 inline-flex items-center px-8 py-4 font-bold rounded-full hover:bg-opacity-90 transition-colors duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
                 Naše Služby <ArrowDown className="w-5 h-5 ml-2 transition-transform group-hover:translate-y-1" />
             </Link>
           </div>
@@ -162,17 +154,21 @@ export default function HomePage() {
         <Testimonials />
 
         {/* FAQ Section */}
-        <section id="faq" className="py-16 md:py-24 bg-brand-light-gray dark:bg-brand-dark-teal/80">
+        <section id="faq" className="py-16 md:py-24">
           <div className="container mx-auto px-4 max-w-4xl">
               <header className="text-center mb-12">
-                  <h2 className="text-3xl md:text-4xl font-extrabold text-brand-dark-teal dark:text-brand-bg text-shadow-3d">
+                  <h2 className="text-3xl md:text-4xl font-extrabold text-white text-shadow-3d">
                       Často kladené otázky
                   </h2>
-                  <p className="mt-4 text-lg text-brand-secondary-grey dark:text-slate-300">
+                  <p className="mt-4 text-lg text-slate-300">
                       Rýchle odpovede na vaše najčastejšie otázky.
                   </p>
               </header>
-              <FaqAccordion items={faqItems} />
+              <GlassCard>
+                <div className="p-4 sm:p-8">
+                  <FaqAccordion items={faqItems} />
+                </div>
+              </GlassCard>
           </div>
         </section>
     </>

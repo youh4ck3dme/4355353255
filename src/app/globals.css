@@ -4,48 +4,21 @@
 
 @layer base {
   :root {
-    --background: 210 40% 98%; /* brand-light-gray */
-    --foreground: 183 50% 15%; /* Custom dark text color, close to brand-dark-teal but slightly lighter */
-
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
- 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
- 
-    --primary: 183 50% 25%; /* brand-dark-teal */
-    --primary-foreground: 145 70% 95%; /* Lighter green for text on dark teal */
- 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
- 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
- 
-    --accent: 145 70% 48%; /* brand-bright-green */
-    --accent-foreground: 0 0% 100%;
- 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 145 70% 48%;
- 
-    --radius: 0.5rem;
-
-    /* Custom variables */
-    --brand-dark-teal: 183 50% 25%;
+    /* Liquid Glass Light Theme (Conceptual) - Defaults to Dark as per design */
+    --glass-bg: rgba(255, 255, 255, 0.12);
+    --glass-brd: rgba(255, 255, 255, 0.18);
+    --glass-hover: rgba(255, 255, 255, 0.18);
+    --text-primary: #ffffff;
+    --text-muted: rgba(255, 255, 255, 0.75);
+    --shadow-color: rgba(0, 0, 0, 0.18);
+    
+    --brand-dark-teal: 183 50% 15%;
     --brand-bright-green: 145 70% 48%; 
     --brand-light-gray: 210 40% 98%;
     --brand-secondary-grey: 215 20% 65%;
-    --brand-bg: 0 0% 100%;
-    --brand-text: 183 50% 15%;
-  }
- 
-  .dark {
-    --background: 183 50% 15%; /* brand-dark-teal */
-    --foreground: 0 0% 98%; /* White */
+    
+    --background: 183 50% 15%;
+    --foreground: 0 0% 98%;
 
     --card: 222.2 84% 4.9%;
     --card-foreground: 0 0% 98%;
@@ -71,14 +44,23 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 145 70% 48%;
+ 
+    --radius: 0.5rem;
+  }
+ 
+  /* The "light" class can be used to switch to a light theme if needed */
+  .light {
+    --glass-bg: rgba(240, 240, 240, 0.7);
+    --glass-brd: rgba(0, 0, 0, 0.1);
+    --glass-hover: rgba(240, 240, 240, 0.9);
+    --text-primary: #1A202C;
+    --text-muted: #718096;
+    --shadow-color: rgba(0, 0, 0, 0.1);
 
-     /* Custom variables */
-    --brand-dark-teal: 183 50% 15%;
-    --brand-bright-green: 145 70% 48%;
-    --brand-light-gray: 217.2 32.6% 17.5%;
-    --brand-secondary-grey: 215 20.2% 65.1%;
-    --brand-bg: 183 50% 15%;
-    --brand-text: 0 0% 100%;
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    /* Re-map other colors for light mode if necessary */
   }
 }
  
@@ -87,38 +69,86 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
-     -webkit-font-smoothing: antialiased;
+    -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
   h1, h2, h3, h4, h5, h6 {
     @apply tracking-tight;
   }
+
+  .liquid-glass-background {
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Inter,system-ui,Arial,sans-serif;
+      min-height:100vh;
+      background-image:url("https://images.pexels.com/photos/8801154/pexels-photo-8801154.jpeg");
+      background-size:cover;background-repeat:no-repeat;background-position:center center;
+      background-attachment:fixed;
+      position:relative;overflow-x:hidden;
+      color: var(--text-primary);
+  }
+  
+  @media (max-width: 768px){
+      .liquid-glass-background { background-attachment: scroll; }
+  }
+
+  .bg-orbs{
+      position:fixed;inset:0;width:100%;height:100%;
+      pointer-events:none;z-index:0;
+  }
+  .orb{
+      position:absolute;border-radius:50%;
+      background:rgba(255,255,255,.1);filter:blur(40px);
+      animation:float 8s ease-in-out infinite;
+  }
+  .orb:nth-child(1){ width:200px;height:200px;top:20%;left:10%;animation-delay:0s;}
+  .orb:nth-child(2){ width:150px;height:150px;top:60%;right:15%;animation-delay:2s;}
+  .orb:nth-child(3){ width:100px;height:100px;top:78%;left:60%;animation-delay:4s;}
+}
+
+@layer components {
+  .glass-card {
+    @apply relative isolate bg-white/10 backdrop-filter backdrop-blur-2xl border border-white/20 rounded-2xl shadow-large transition-all duration-300;
+  }
+  .glass-card:hover {
+    @apply transform -translate-y-1 scale-[1.015] bg-white/20;
+  }
+
+  .glass-button {
+    @apply relative isolate bg-white/20 backdrop-filter backdrop-blur-md border border-white/30 text-white transition-all duration-300;
+  }
+   .glass-button-sm {
+    @apply relative isolate bg-white/10 backdrop-filter backdrop-blur-md border border-white/20 text-white transition-all duration-300;
+  }
+  .glass-button:hover, .glass-button-sm:hover {
+     @apply bg-white/25;
+  }
 }
 
 @layer utilities {
+  .text-shadow-md {
+    text-shadow: 0 2px 4px var(--shadow-color);
+  }
+  .text-shadow-lg {
+    text-shadow: 0 10px 20px var(--shadow-color);
+  }
+   .text-shadow-3d {
+    text-shadow: 1px 1px 0px rgba(0,0,0,0.1), 2px 2px 0px rgba(0,0,0,0.09), 3px 3px 0px rgba(0,0,0,0.08);
+  }
+   .text-shadow-3d-dark {
+    text-shadow: 1px 1px 0px rgba(0,0,0,0.3), 2px 2px 0px rgba(0,0,0,0.2), 3px 3px 0px rgba(0,0,0,0.1);
+  }
+
+  @keyframes float{
+      0%,100%{ transform:translateY(0) rotate(0deg)}
+      50%{ transform:translateY(-20px) rotate(180deg)}
+  }
+
   .animate-fade-in {
     animation: fade-in 0.75s ease-out forwards;
   }
 
-  .liquid-glass-button {
-    @apply relative overflow-hidden;
-  }
-
-  .liquid-glass-button::after {
-    content: '';
-    @apply absolute top-1/2 left-1/2 w-0 h-0 bg-white bg-opacity-20 rounded-full transform -translate-x-1/2 -translate-y-1/2;
-    transition: width 0.4s ease-in-out, height 0.4s ease-in-out;
-  }
-
-  .liquid-glass-button:hover::after,
-  .liquid-glass-button:focus::after {
-    @apply w-48 h-48;
-  }
-
-  /* Prevent body scroll when mobile menu is open */
-  .overflow-hidden {
-    overflow: hidden;
+  @keyframes fade-in {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
   }
 }

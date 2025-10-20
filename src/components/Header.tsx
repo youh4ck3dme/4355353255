@@ -44,24 +44,15 @@ export const Header = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-50 bg-brand-bg/95 backdrop-blur-sm shadow-medium text-brand-text dark:bg-brand-dark-teal/95 dark:text-brand-bg">
+      <header className="sticky top-0 z-50 bg-white/10 backdrop-blur-md shadow-medium text-white border-b border-white/20">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center hover:opacity-90 transition-opacity" aria-label="Domov - VI&MO">
-            <Image 
-              src="/images/viandmo-logo.svg" 
-              alt="VI&MO Logo" 
-              width={120} 
-              height={40} 
-              priority
-              className="dark:hidden"
-            />
              <Image 
               src="/images/viandmo-logo-white.svg" 
               alt="VI&MO Logo" 
               width={120} 
               height={40} 
               priority
-              className="hidden dark:block"
             />
           </Link>
           
@@ -71,7 +62,7 @@ export const Header = () => {
                 key={link.href}
                 href={link.href} 
                 className={cn(
-                  "relative text-lg text-brand-text dark:text-brand-bg hover:text-brand-bright-green transition-colors pb-1",
+                  "relative text-lg text-white hover:text-brand-bright-green transition-colors pb-1",
                   { "text-brand-bright-green font-bold": pathname.startsWith(link.href) && link.href !== '/' || pathname === link.href }
                 )}
               >
@@ -81,14 +72,14 @@ export const Header = () => {
                 )}
               </Link>
             ))}
-             <Link href="/admin" aria-label="Admin Login" className={cn("relative text-brand-text dark:text-brand-bg hover:text-brand-bright-green transition-colors pb-1 pl-4", { "text-brand-bright-green": pathname.startsWith('/admin') })}>
+             <Link href="/admin" aria-label="Admin Login" className={cn("relative text-white hover:text-brand-bright-green transition-colors pb-1 pl-4", { "text-brand-bright-green": pathname.startsWith('/admin') })}>
                 <KeyRound size={22} />
                 {pathname.startsWith('/admin') && (
                   <span className="absolute bottom-0 left-4 w-[22px] h-0.5 bg-brand-bright-green animate-fade-in"></span>
                 )}
             </Link>
              {mounted && (
-                <button onClick={toggleTheme} className="p-2 rounded-full hover:bg-brand-light-gray dark:hover:bg-brand-dark-teal" aria-label="Prepnúť režim">
+                <button onClick={toggleTheme} className="p-2 rounded-full hover:bg-white/10" aria-label="Prepnúť režim">
                     {theme === 'light' ? <Moon size={22} /> : <Sun size={22} className="text-yellow-400" />}
                 </button>
             )}
@@ -97,7 +88,7 @@ export const Header = () => {
           <div className="sm:hidden flex items-center gap-2">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="p-2 text-brand-dark-teal dark:text-brand-bg hover:text-brand-bright-green transition-colors"
+              className="p-2 text-white hover:text-brand-bright-green transition-colors"
               aria-label="Otvoriť menu"
             >
               <Menu size={28} />
@@ -137,7 +128,7 @@ export const Header = () => {
                 href="/"
                 className={cn(
                   "text-3xl font-bold transition-all duration-300",
-                  pathname === "/" ? "text-brand-bright-green" : "text-brand-bg hover:text-brand-bright-green",
+                  pathname === "/" ? "text-brand-bright-green" : "text-white hover:text-brand-bright-green",
                   isMenuOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4",
                 )}
               >
@@ -149,7 +140,7 @@ export const Header = () => {
                 href={link.href}
                 className={cn(
                   "text-3xl font-bold transition-all duration-300",
-                  pathname.startsWith(link.href) ? "text-brand-bright-green" : "text-brand-bg hover:text-brand-bright-green",
+                  pathname.startsWith(link.href) ? "text-brand-bright-green" : "text-white hover:text-brand-bright-green",
                   isMenuOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4",
                 )}
                 style={{ transitionDelay: `${(index + 1) * 100}ms` }}
@@ -162,7 +153,7 @@ export const Header = () => {
                 aria-label="Admin Login"
                 className={cn(
                   "flex items-center gap-2 text-3xl font-bold transition-all duration-300 mt-4",
-                  pathname.startsWith('/admin') ? "text-brand-bright-green" : "text-brand-bg hover:text-brand-bright-green",
+                  pathname.startsWith('/admin') ? "text-brand-bright-green" : "text-white hover:text-brand-bright-green",
                   isMenuOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4",
                 )}
                 style={{ transitionDelay: `${(navLinks.length + 1) * 100}ms` }}

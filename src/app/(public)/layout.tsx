@@ -11,8 +11,15 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <PublicLayout>
-      {children}
-    </PublicLayout>
+    <div className="liquid-glass-background">
+      <div className="bg-orbs" aria-hidden="true">
+        <div className="orb"></div>
+        <div className="orb"></div>
+        <div className="orb"></div>
+      </div>
+      <PublicLayout>
+        {children}
+      </PublicLayout>
+    </div>
   );
 }

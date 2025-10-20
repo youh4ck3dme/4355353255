@@ -14,12 +14,10 @@ export const BlogList = ({ initialPosts, initialCategory }: { initialPosts: Post
     const router = useRouter();
     const pathname = usePathname();
 
-    // Initialize state from props/URL params
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState<string | null>(initialCategory || null);
 
     useEffect(() => {
-        // This effect syncs the component's state if the URL is changed by browser back/forward buttons
         const categoryFromUrl = searchParams.get('category');
         if (categoryFromUrl) {
             setSelectedCategory(categoryFromUrl);
@@ -33,16 +31,13 @@ export const BlogList = ({ initialPosts, initialCategory }: { initialPosts: Post
 
         if (category) {
             current.set('category', category);
-            // No need to call setSelectedCategory here, the useEffect will handle it
         } else {
             current.delete('category');
-             // No need to call setSelectedCategory here, the useEffect will handle it
         }
         
         const search = current.toString();
         const query = search ? `?${search}` : "";
 
-        // Use router.push to update URL without a full page reload
         router.push(`${pathname}${query}`, { scroll: false });
     };
 
@@ -70,8 +65,8 @@ export const BlogList = ({ initialPosts, initialCategory }: { initialPosts: Post
                     <button 
                         onClick={() => handleCategoryClick(null)}
                         className={cn(
-                            "px-4 py-2 text-sm font-bold rounded-full transition-colors",
-                            !selectedCategory ? 'bg-brand-bright-green text-brand-dark-teal' : 'bg-brand-light-gray dark:bg-brand-dark-teal/80 dark:text-brand-bg hover:bg-brand-bright-green/50'
+                            "px-4 py-2 text-sm font-bold rounded-full transition-colors glass-button-sm",
+                            !selectedCategory ? 'bg-brand-bright-green text-brand-dark-teal' : 'text-white'
                         )}
                     >
                         Všetky
@@ -81,8 +76,8 @@ export const BlogList = ({ initialPosts, initialCategory }: { initialPosts: Post
                             key={category}
                             onClick={() => handleCategoryClick(category)}
                             className={cn(
-                                "px-4 py-2 text-sm font-bold rounded-full transition-colors",
-                                selectedCategory === category ? 'bg-brand-bright-green text-brand-dark-teal' : 'bg-brand-light-gray dark:bg-brand-dark-teal/80 dark:text-brand-bg hover:bg-brand-bright-green/50'
+                                "px-4 py-2 text-sm font-bold rounded-full transition-colors glass-button-sm",
+                                selectedCategory === category ? 'bg-brand-bright-green text-brand-dark-teal' : 'text-white'
                             )}
                         >
                             {category}
@@ -94,9 +89,9 @@ export const BlogList = ({ initialPosts, initialCategory }: { initialPosts: Post
                     placeholder="Hľadať v článkoch..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full max-w-lg p-3 border-2 border-brand-secondary-grey/20 rounded-lg focus:border-brand-bright-green 
+                    className="w-full max-w-lg p-3 border-2 border-white/20 rounded-lg focus:border-brand-bright-green 
                                focus:ring focus:ring-brand-bright-green/50 outline-none transition-colors 
-                               bg-brand-bg dark:bg-brand-dark-teal dark:text-brand-bg dark:placeholder-brand-secondary-grey"
+                               bg-white/10 backdrop-blur-sm text-white placeholder-slate-400"
                     aria-label="Vyhľadávanie článkov"
                 />
             </div>
@@ -108,9 +103,11 @@ export const BlogList = ({ initialPosts, initialCategory }: { initialPosts: Post
                     ))}
                 </div>
             ) : (
-                <p className="text-xl text-center text-brand-secondary-grey py-16">
-                    Žiadne výsledky pre &apos;{searchQuery || selectedCategory}&apos;. Skúste iný filter alebo kľúčové slovo.
-                </p>
+                <GlassCard>
+                    <p className="text-xl text-center text-slate-300 py-16">
+                        Žiadne výsledky pre &apos;{searchQuery || selectedCategory}&apos;. Skúste iný filter alebo kľúčové slovo.
+                    </p>
+                </GlassCard>
             )}
         </div>
     );

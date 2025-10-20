@@ -31,7 +31,7 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <Header />
-      <main id="main-content" className="pt-16 min-h-screen bg-brand-bg dark:bg-brand-dark-teal">
+      <main id="main-content" className="pt-16 min-h-screen relative z-10">
           {children}
       </main>
       <Footer />
