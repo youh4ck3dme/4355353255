@@ -6,7 +6,6 @@ const withPWA = createNextPwa({
   dest: 'public',
   register: true,
   skipWaiting: true,
-  // Povolí PWA iba v produkčnom prostredí
   disable: process.env.NODE_ENV === 'development',
 });
 
