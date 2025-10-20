@@ -6,6 +6,7 @@ import { Post } from '@/lib/types';
 import { BlogCard } from './BlogCard';
 import { cn } from '@/lib/utils';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
+import GlassCard from './GlassCard';
 
 const ALL_CATEGORIES = ['Tipy na sťahovanie', 'Upratovanie', 'Novinky', 'Vypratávanie'];
 
