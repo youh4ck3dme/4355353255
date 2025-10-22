@@ -54,7 +54,7 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
 }
 
 // Function to save or update a post
-type PostData = Omit<Post, 'date'> & { date?: string };
+type PostData = Omit<Post, 'date'>;
 
 export async function savePost(postData: PostData): Promise<void> {
     const db = await getFirestoreInstance();
@@ -69,7 +69,8 @@ export async function savePost(postData: PostData): Promise<void> {
     const dataToSave = {
         ...data,
         updatedAt: new Date().toISOString(),
-        ...(docSnapshot.exists() ? {} : { date: new Date().toISOString() }), // Set initial date only if it's a new post
+        // Set initial date only if it's a new post (document doesn't exist)
+        ...(!docSnapshot.exists() && { date: new Date().toISOString() }),
     };
     
     await setDoc(postRef, dataToSave, { merge: true });

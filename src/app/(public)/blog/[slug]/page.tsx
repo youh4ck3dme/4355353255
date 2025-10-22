@@ -76,7 +76,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
     const post = await getPostBySlug(params.slug);
     
-    if (!post) {
+    if (!post || post.status !== 'published') {
         notFound();
     }
     
@@ -109,7 +109,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             },
         },
         datePublished: post.date,
-        dateModified: post.date,
+        dateModified: post.updatedAt || post.date,
         mainEntityOfPage: {
             '@type': 'WebPage',
             '@id': postUrl,
