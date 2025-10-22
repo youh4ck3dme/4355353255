@@ -61,4 +61,3 @@ Toto je frontendová časť pre VI&MO Blog, postavená na Next.js, Tailwind CSS 
     - Pripojte tento Git repozitár k vášmu účtu na hostingovej platforme.
     - V nastaveniach projektu na danej platforme nastavte produkčné environmentálne premenné.
     - Platforma by mala automaticky detegovať Next.js projekt a postarať sa o build a nasadenie po každom `git push` do hlavnej vetvy.
-
