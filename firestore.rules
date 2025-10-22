@@ -1,174 +1,77 @@
 /**
- * @file Firestore Security Rules for the FITNESS ESHOP FAST PWA application.
- *
- * Core Philosophy:
- * This ruleset enforces a strict user-ownership model for personal data and allows public read access to product information.
+ * @file Firebase Security Rules for Firestore.
+ * @description This ruleset enforces a strict user-ownership model for checklist data.
  *
  * Data Structure:
- * - User profiles are stored under `/users/{userId}`, where `{userId}` matches the Firebase Auth UID.
- * - Products are stored under `/products/{productId}` and are publicly readable.
- * - User-specific data like orders, order items, tasks, tags, and project files are nested under `/users/{userId}`.
+ * All checklist data is nested under `/checklists/{userId}`, where `{userId}` corresponds to the Firebase Auth UID. Each user has a single document at this path containing their checklist data.
  *
  * Key Security Decisions:
- * - Users can only create, read, update, and delete their own data (orders, tasks, etc.).
- * - Products are publicly readable but not writable via the client (writes are implicitly disallowed).
- * - Listing of user documents is allowed only for the user themselves, for user-owned subcollections.
- * - No database-wide administrator roles are defined in this initial ruleset.
+ * - Users can only access their own checklist data. No cross-user access is permitted.
+ * - Listing all checklists is disallowed for security. Only `get` is allowed.
+ * - Data schema validation is relaxed in this prototyping phase to allow for rapid iteration, but ownership of the data is strictly enforced.
  *
  * Denormalization for Authorization:
- *  - Ownership is encoded in the path itself (e.g., `/users/{userId}/orders/{orderId}`), avoiding the need for `get()` calls to determine ownership.
+ * - The `userId` is included both in the document path (`/checklists/{userId}`) and as a field within the document itself.  The security rules validate that these two IDs match, ensuring that the user ID is not spoofed.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Enforces user-ownership for user profiles.  Users can only read/write their own profile.
-     * @path /users/{userId}
-     * @allow (create) User with ID matching auth UID can create their profile.
-     * @allow (get, list, update, delete) User with ID matching auth UID can read, update, and delete their profile.
-     * @deny (create, get, list, update, delete) Any other user attempting to access this profile.
-     * @principle Enforces strict document ownership for all operations.
+     * @description Secure access to checklist data for individual users.
+     * @path /checklists/{userId}
+     * @allow (create) Signed-in user creates their own checklist with matching userId.
+     *   - request.auth.uid: "user_abc"
+     *   - request.resource.data: { userId: "user_abc", categories: ["A", "B"], lastUpdated: "2024-01-01T00:00:00Z" }
+     * @allow (get) Signed-in user retrieves their own checklist.
+     *   - request.auth.uid: "user_abc"
+     * @allow (update) Signed-in user updates their own checklist.
+     *   - request.auth.uid: "user_abc"
+     *   - request.resource.data: { userId: "user_abc", categories: ["A", "B", "C"], lastUpdated: "2024-01-02T00:00:00Z" }
+     * @allow (delete) Signed-in user deletes their own checklist.
+     *   - request.auth.uid: "user_abc"
+     * @deny (create) Signed-in user attempts to create a checklist for another user.
+     *   - request.auth.uid: "user_abc"
+     *   - request.resource.data: { userId: "user_def", categories: ["A", "B"], lastUpdated: "2024-01-01T00:00:00Z" }
+     * @deny (get) Signed-in user attempts to retrieve another user's checklist.
+     *   - request.auth.uid: "user_abc"
+     * @deny (update) Signed-in user attempts to update another user's checklist.
+     *   - request.auth.uid: "user_abc"
+     *   - request.resource.data: { userId: "user_def", categories: ["A", "B", "C"], lastUpdated: "2024-01-02T00:00:00Z" }
+     * @deny (delete) Signed-in user attempts to delete another user's checklist.
+     *   - request.auth.uid: "user_abc"
+     * @principle Enforces document ownership for all operations.
      */
-    match /users/{userId} {
+    match /checklists/{userId} {
+      // Helper function to check if the user is signed in
       function isSignedIn() {
         return request.auth != null;
       }
 
+      // Helper function to check if the authenticated user is the owner of the document
       function isOwner(userId) {
-        return request.auth.uid == userId;
+        return isSignedIn() && request.auth.uid == userId;
       }
 
-      allow get, list: if isSignedIn() && isOwner(userId);
-      allow create: if isSignedIn() && isOwner(userId) && request.auth.uid == userId;
-      allow update: if isSignedIn() && isOwner(userId);
-      allow delete: if isSignedIn() && isOwner(userId);
-    }
-
-    /**
-     * @description Allows public read access to product information.  No client-side writes are permitted.
-     * @path /products/{productId}
-     * @allow (get, list) Any user can read product information.
-     * @deny (create, update, delete) No user can create, update, or delete product information through the client.
-     * @principle Provides public read access while preventing unauthorized data modification.
-     */
-    match /products/{productId} {
-      allow get, list: if true;
-    }
-
-    /**
-     * @description Enforces user-ownership for orders. Users can only read/write orders they own.
-     * @path /users/{userId}/orders/{orderId}
-     * @allow (create) User with ID matching auth UID can create orders under their profile.
-     * @allow (get, list, update, delete) User with ID matching auth UID can read, update, and delete orders under their profile.
-     * @deny (create, get, list, update, delete) Any other user attempting to access this order.
-     * @principle Enforces strict document ownership for all operations.
-     */
-    match /users/{userId}/orders/{orderId} {
-      function isSignedIn() {
-        return request.auth != null;
+      // Helper function to check if the authenticated user is the owner of the document, and the document exists.
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
       }
 
-      function isOwner(userId) {
-        return request.auth.uid == userId;
-      }
+      // Allow a user to create their own checklist if the userId matches their auth UID
+      allow create: if isOwner(userId) && request.resource.data.userId == userId;
 
-      allow get, list: if isSignedIn() && isOwner(userId);
-      allow create: if isSignedIn() && isOwner(userId);
-      allow update: if isSignedIn() && isOwner(userId);
-      allow delete: if isSignedIn() && isOwner(userId);
-    }
+      // Allow a user to get their own checklist
+      allow get: if isSignedIn() && isOwner(userId);
 
-    /**
-     * @description Enforces user-ownership for order items. Users can only read/write order items within their own orders.
-     * @path /users/{userId}/orders/{orderId}/orderItems/{orderItemId}
-     * @allow (create) User with ID matching auth UID can create order items under their order.
-     * @allow (get, list, update, delete) User with ID matching auth UID can read, update, and delete order items under their order.
-     * @deny (create, get, list, update, delete) Any other user attempting to access this order item.
-     * @principle Enforces strict document ownership for all operations.
-     */
-    match /users/{userId}/orders/{orderId}/orderItems/{orderItemId} {
-      function isSignedIn() {
-        return request.auth != null;
-      }
+      // Disallow listing all checklists.
+      allow list: if false;
 
-      function isOwner(userId) {
-        return request.auth.uid == userId;
-      }
+      // Allow a user to update their own checklist if they are the owner and the document exists.
+      allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
 
-      allow get, list: if isSignedIn() && isOwner(userId);
-      allow create: if isSignedIn() && isOwner(userId);
-      allow update: if isSignedIn() && isOwner(userId);
-      allow delete: if isSignedIn() && isOwner(userId);
-    }
-
-    /**
-     * @description Enforces user-ownership for tasks. Users can only read/write tasks they own.
-     * @path /users/{userId}/tasks/{taskId}
-     * @allow (create) User with ID matching auth UID can create tasks under their profile.
-     * @allow (get, list, update, delete) User with ID matching auth UID can read, update, and delete tasks under their profile.
-     * @deny (create, get, list, update, delete) Any other user attempting to access this task.
-     * @principle Enforces strict document ownership for all operations.
-     */
-    match /users/{userId}/tasks/{taskId} {
-      function isSignedIn() {
-        return request.auth != null;
-      }
-
-      function isOwner(userId) {
-        return request.auth.uid == userId;
-      }
-
-      allow get, list: if isSignedIn() && isOwner(userId);
-      allow create: if isSignedIn() && isOwner(userId);
-      allow update: if isSignedIn() && isOwner(userId);
-      allow delete: if isSignedIn() && isOwner(userId);
-    }
-
-    /**
-     * @description Enforces user-ownership for tags. Users can only read/write tags they own.
-     * @path /users/{userId}/tags/{tagId}
-     * @allow (create) User with ID matching auth UID can create tags under their profile.
-     * @allow (get, list, update, delete) User with ID matching auth UID can read, update, and delete tags under their profile.
-     * @deny (create, get, list, update, delete) Any other user attempting to access this tag.
-     * @principle Enforces strict document ownership for all operations.
-     */
-    match /users/{userId}/tags/{tagId} {
-      function isSignedIn() {
-        return request.auth != null;
-      }
-
-      function isOwner(userId) {
-        return request.auth.uid == userId;
-      }
-
-      allow get, list: if isSignedIn() && isOwner(userId);
-      allow create: if isSignedIn() && isOwner(userId);
-      allow update: if isSignedIn() && isOwner(userId);
-      allow delete: if isSignedIn() && isOwner(userId);
-    }
-
-    /**
-     * @description Enforces user-ownership for project files. Users can only read/write project files they own.
-     * @path /users/{userId}/projectFiles/{projectFileId}
-     * @allow (create) User with ID matching auth UID can create project files under their profile.
-     * @allow (get, list, update, delete) User with ID matching auth UID can read, update, and delete project files under their profile.
-     * @deny (create, get, list, update, delete) Any other user attempting to access this project file.
-     * @principle Enforces strict document ownership for all operations.
-     */
-    match /users/{userId}/projectFiles/{projectFileId} {
-      function isSignedIn() {
-        return request.auth != null;
-      }
-
-      function isOwner(userId) {
-        return request.auth.uid == userId;
-      }
-
-      allow get, list: if isSignedIn() && isOwner(userId);
-      allow create: if isSignedIn() && isOwner(userId);
-      allow update: if isSignedIn() && isOwner(userId);
-      allow delete: if isSignedIn() && isOwner(userId);
+      // Allow a user to delete their own checklist if they are the owner and the document exists.
+      allow delete: if isExistingOwner(userId);
     }
   }
 }
