@@ -1,56 +1,138 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useUser, useFirestore, useMemoFirebase } from '@/firebase/client-provider';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
+import debounce from 'lodash.debounce';
 import { ChecklistCategory } from '@/lib/checklist-data';
 import { Check, Circle } from 'lucide-react';
 import { cn } from '@/lib/utils';
-
-const LOCAL_STORAGE_KEY = 'vimo-checklist-state';
+import { useToast } from './ui/use-toast';
+import { Loader2 } from 'lucide-react';
 
 interface ChecklistProps {
   categories: ChecklistCategory[];
 }
 
-export const Checklist = ({ categories }: ChecklistProps) => {
-  const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
+type CheckedItemsState = Record<string, boolean>;
 
-  useEffect(() => {
-    try {
-      const savedState = localStorage.getItem(LOCAL_STORAGE_KEY);
-      if (savedState) {
-        setCheckedItems(JSON.parse(savedState));
+export const Checklist = ({ categories }: ChecklistProps) => {
+  const { user, isUserLoading } = useUser();
+  const firestore = useFirestore();
+  const { toast } = useToast();
+
+  const [checkedItems, setCheckedItems] = useState<CheckedItemsState>({});
+  const [isDataLoading, setIsDataLoading] = useState(true);
+
+  const userChecklistRef = useMemoFirebase(() => {
+    if (!user || !firestore) return null;
+    return doc(firestore, `checklists/${user.uid}`);
+  }, [user, firestore]);
+
+  // --- Debounced Firestore update ---
+  const debouncedUpdateFirestore = useCallback(
+    debounce(async (itemsToUpdate: CheckedItemsState) => {
+      if (!userChecklistRef) return;
+      try {
+        // We use setDoc with merge: true which is equivalent to a batched update
+        await setDoc(userChecklistRef, { items: itemsToUpdate, lastUpdated: new Date() }, { merge: true });
+      } catch (error) {
+        console.error("Firestore update failed:", error);
+        toast({
+            variant: 'destructive',
+            title: 'Chyba pri ukladaní',
+            description: 'Nepodarilo sa uložiť váš postup. Skúste to prosím znova.',
+        });
       }
-    } catch (error) {
-      console.error("Failed to load checklist state from localStorage", error);
-    }
-  }, []);
+    }, 500),
+    [userChecklistRef, toast]
+  );
+
+  // --- Load data from Firestore on user login ---
+  useEffect(() => {
+    const loadData = async () => {
+      if (user && userChecklistRef) {
+        setIsDataLoading(true);
+        try {
+          const docSnap = await getDoc(userChecklistRef);
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            setCheckedItems(data.items || {});
+          }
+        } catch (error) {
+          console.error("Failed to load checklist state from Firestore", error);
+        } finally {
+          setIsDataLoading(false);
+        }
+      } else if (!isUserLoading) {
+          setIsDataLoading(false);
+      }
+    };
+    loadData();
+  }, [user, isUserLoading, userChecklistRef]);
 
   const handleToggle = (itemId: string) => {
-    const newCheckedItems = { ...checkedItems, [itemId]: !checkedItems[itemId] };
+    const newCheckedState = !checkedItems[itemId];
+    const newCheckedItems = { ...checkedItems, [itemId]: newCheckedState };
     setCheckedItems(newCheckedItems);
-    try {
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newCheckedItems));
-    } catch (error) {
-       console.error("Failed to save checklist state to localStorage", error);
-    }
+    debouncedUpdateFirestore(newCheckedItems);
+  };
+  
+  const handleResetCategory = (category: ChecklistCategory) => {
+      const itemsToReset = category.items.reduce((acc, item) => {
+          acc[item.id] = false;
+          return acc;
+      }, {} as CheckedItemsState);
+      
+      const newCheckedItems = { ...checkedItems, ...itemsToReset };
+      setCheckedItems(newCheckedItems);
+      debouncedUpdateFirestore(newCheckedItems);
   };
 
-  const getCategoryProgress = (category: ChecklistCategory) => {
+  const getCategoryProgress = useMemo(() => (category: ChecklistCategory) => {
     const totalItems = category.items.length;
     if (totalItems === 0) return 0;
     const completedItems = category.items.filter(item => checkedItems[item.id]).length;
     return (completedItems / totalItems) * 100;
-  };
+  }, [checkedItems]);
+
+
+  if (isUserLoading || isDataLoading) {
+      return (
+          <div className="text-center py-16 flex flex-col items-center justify-center min-h-[50vh]">
+              <Loader2 className="mx-auto h-12 w-12 animate-spin text-brand-bright-green" />
+              <p className="mt-4 text-slate-300">Načítavam váš osobný checklist...</p>
+          </div>
+      );
+  }
+  
+  if (!user) {
+      return (
+           <div className="text-center py-16 bg-red-900/20 border border-red-500/50 rounded-lg">
+                <h3 className="text-2xl font-bold text-red-300">Chyba pri autentifikácii</h3>
+                <p className="mt-2 text-slate-400">Na používanie checklistu je potrebné prihlásenie. Skúste obnoviť stránku.</p>
+           </div>
+      )
+  }
 
   return (
     <div className="space-y-12">
       {categories.map(category => {
         const progress = getCategoryProgress(category);
         return (
-          <div key={category.id} className="bg-brand-light-gray dark:bg-brand-dark-teal/80 p-6 md:p-8 rounded-xl shadow-lg">
-            <h2 className="text-2xl font-bold mb-2 text-brand-dark-teal dark:text-brand-bg">{category.title}</h2>
-             <div className="w-full bg-slate-300 dark:bg-slate-700 rounded-full h-2.5 mb-6">
+          <div key={category.id} className="bg-brand-light-gray dark:bg-brand-dark-teal/80 p-6 md:p-8 rounded-xl shadow-lg transition-all duration-300 hover:shadow-2xl hover:border-white/20 border border-transparent">
+            <div className="flex justify-between items-center mb-4">
+                <h2 className="text-2xl font-bold text-brand-dark-teal dark:text-brand-bg">{category.title}</h2>
+                <button 
+                  onClick={() => handleResetCategory(category)}
+                  className="text-xs text-slate-400 hover:text-red-400 hover:underline"
+                  aria-label={`Resetovať kategóriu ${category.title}`}
+                >
+                  Resetovať
+                </button>
+            </div>
+             <div className="w-full bg-slate-300 dark:bg-slate-700 rounded-full h-2.5 mb-6 overflow-hidden">
                 <div 
                     className="bg-brand-bright-green h-2.5 rounded-full transition-all duration-500 ease-out" 
                     style={{ width: `${progress}%` }}
@@ -61,7 +143,7 @@ export const Checklist = ({ categories }: ChecklistProps) => {
                 <li key={item.id}>
                   <label
                     htmlFor={item.id}
-                    className="flex items-center cursor-pointer group"
+                    className="flex items-center cursor-pointer group p-2 rounded-md hover:bg-black/10"
                   >
                     <input
                       id={item.id}
