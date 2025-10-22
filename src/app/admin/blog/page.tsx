@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Post } from '@/lib/types';
 import { format } from 'date-fns';
@@ -9,6 +9,8 @@ import { cn } from '@/lib/utils';
 import { PlusCircle, Edit, Loader2, RefreshCw, Newspaper, Info } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
 import GlassCard from '@/components/GlassCard';
+import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
+import { collection } from 'firebase/firestore';
 
 const PostRow = ({ post }: { post: Post }) => {
     return (
@@ -17,7 +19,7 @@ const PostRow = ({ post }: { post: Post }) => {
                 <div className="md:col-span-3">
                     <h3 className="font-bold text-lg text-white">{post.title}</h3>
                     <p className="text-sm text-slate-400">
-                        Dátum: {format(new Date(post.date), 'd. M. yyyy')} | Súbor: <code className="text-xs bg-white/10 p-1 rounded">{post.slug}.mdx</code>
+                        Dátum: {format(new Date(post.date), 'd. M. yyyy')} | Slug: <code className="text-xs bg-white/10 p-1 rounded">{post.slug}</code>
                     </p>
                 </div>
                 <div className="flex items-center justify-start md:justify-end gap-2">
@@ -38,38 +40,23 @@ const PostRow = ({ post }: { post: Post }) => {
 
 
 export default function AdminBlogPage() {
-    const [posts, setPosts] = useState<Post[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const firestore = useFirestore();
+    const postsCollectionRef = useMemoFirebase(() => collection(firestore, 'blogPosts'), [firestore]);
+    const { data: posts, isLoading, error } = useCollection<Post>(postsCollectionRef);
     const { toast } = useToast();
 
-    const fetchPosts = useCallback(async () => {
-        setIsLoading(true);
-        try {
-            const response = await fetch('/api/posts');
-            if (!response.ok) {
-                throw new Error('Failed to fetch posts');
-            }
-            const fetchedPosts = await response.json();
-            setPosts(fetchedPosts);
-        } catch (error) {
+    useEffect(() => {
+        if(error) {
             console.error("Failed to fetch posts:", error);
             toast({
                 variant: 'destructive',
                 title: 'Chyba pri načítaní článkov',
-                description: 'Nepodarilo sa načítať zoznam článkov. Skontrolujte konzolu pre viac detailov.',
+                description: 'Nepodarilo sa načítať zoznam článkov z databázy.',
             });
-        } finally {
-            setIsLoading(false);
         }
-    }, [toast]);
+    }, [error, toast]);
 
-    useEffect(() => {
-        fetchPosts();
-    }, [fetchPosts]);
-
-    const handleRefresh = () => {
-        fetchPosts();
-    };
+    const sortedPosts = posts ? [...posts].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()) : [];
 
     return (
         <div className="container mx-auto px-4 py-12 max-w-6xl">
@@ -82,13 +69,10 @@ export default function AdminBlogPage() {
                         </h1>
                     </div>
                     <p className="text-lg text-slate-300 mt-2">
-                        Prehľad staticky generovaných článkov zo súborov v <code className="text-sm bg-white/10 p-1 rounded">src/content/blog</code>.
+                        Prehľad článkov uložených v databáze Firestore.
                     </p>
                 </div>
                 <div className="flex items-center gap-4 mt-4 md:mt-0">
-                    <button onClick={handleRefresh} disabled={isLoading} className="p-3 bg-white/10 backdrop-blur-sm rounded-lg hover:bg-white/20 transition-colors duration-300 shadow-md disabled:opacity-50 disabled:cursor-wait" aria-label="Obnoviť zoznam">
-                        <RefreshCw size={20} className={cn(isLoading && "animate-spin")} />
-                    </button>
                     <Link href="/admin/blog/new"
                         className="inline-flex items-center gap-2 px-6 py-3 bg-brand-bright-green text-brand-dark-teal font-bold rounded-lg hover:bg-opacity-80 transition-colors duration-300 shadow-md"
                         aria-label="Vytvoriť nový článok"
@@ -103,26 +87,26 @@ export default function AdminBlogPage() {
                 <div className="bg-blue-900/30 border-l-4 border-blue-400 text-blue-200 p-4 rounded-t-2xl flex gap-3">
                     <Info className="h-5 w-5 mt-1 flex-shrink-0" />
                     <div>
-                        <h3 className="font-bold">Statický blogový systém</h3>
-                        <p className="text-sm">Tento blog je generovaný staticky z MDX súborov. Pre vytvorenie nového článku môžete použiť tlačidlo "Vytvoriť nový článok", ale pre pokročilé úpravy alebo zmazanie je potrebné editovať súbory priamo v priečinku <code className="text-xs bg-white/10 p-1 rounded">src/content/blog</code>.</p>
+                        <h3 className="font-bold">Dynamický blogový systém</h3>
+                        <p className="text-sm">Tento blog je načítavaný priamo z Firestore databázy. Akákoľvek zmena sa prejaví v reálnom čase.</p>
                     </div>
                 </div>
                  <div className="p-6">
                     {isLoading ? (
                         <div className="text-center py-16">
                             <Loader2 className="mx-auto h-12 w-12 animate-spin text-brand-bright-green" />
-                            <p className="mt-4 text-slate-300">Načítavam články...</p>
+                            <p className="mt-4 text-slate-300">Načítavam články z databázy...</p>
                         </div>
-                    ) : posts.length > 0 ? (
+                    ) : sortedPosts.length > 0 ? (
                         <div>
-                            {posts.map(post => (
+                            {sortedPosts.map(post => (
                                 <PostRow key={post.slug} post={post} />
                             ))}
                         </div>
                     ) : (
                         <div className="text-center py-16">
                             <h2 className="text-2xl font-bold text-white mb-2">Žiadne články</h2>
-                            <p className="text-slate-300">V priečinku <code className="text-sm bg-white/10 p-1 rounded">src/content/blog</code> sa nenachádzajú žiadne MDX súbory.</p>
+                            <p className="text-slate-300">V databáze sa zatiaľ nenachádzajú žiadne články.</p>
                         </div>
                     )}
                  </div>

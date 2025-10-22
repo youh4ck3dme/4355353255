@@ -1,101 +1,76 @@
 
-import fs from 'fs';
-import path from 'path';
-import matter from 'gray-matter';
 import { Post } from './types';
+import { collection, getDocs, doc, getDoc, query, where, setDoc } from 'firebase/firestore';
+import { initializeFirebaseAdmin } from './firebase-admin';
+import slugify from 'slugify';
 
-// This file contains server-side only code.
+// --- SERVER-SIDE ONLY ---
 
-const postsDirectory = path.join(process.cwd(), 'src', 'content', 'blog');
+async function getFirestoreInstance() {
+    const { firestore } = await initializeFirebaseAdmin();
+    return firestore;
+}
 
-function readAndParsePost(fileName: string): Post | null {
-    const slug = fileName.replace(/\.mdx$/, '');
-    const fullPath = path.join(postsDirectory, fileName);
+export async function getPublishedPosts(): Promise<Post[]> {
+    const db = await getFirestoreInstance();
+    const postsCollection = collection(db, 'blogPosts');
+    const q = query(postsCollection, where('status', '==', 'published'));
+    const postSnapshot = await getDocs(q);
     
-    try {
-        const fileContents = fs.readFileSync(fullPath, 'utf8');
-        const { data, content } = matter(fileContents);
+    const posts = postSnapshot.docs.map(doc => ({
+        slug: doc.id,
+        ...doc.data()
+    } as Post));
+    
+    return posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+}
 
-        // Basic validation
-        if (typeof data.title !== 'string' || typeof data.date !== 'string' || typeof data.status !== 'string') {
-          console.warn(`Skipping invalid post file: ${fileName}. Missing required frontmatter.`);
-          return null;
-        }
+export async function getAllPostsForAdmin(): Promise<Post[]> {
+    const db = await getFirestoreInstance();
+    const postsCollection = collection(db, 'blogPosts');
+    const postSnapshot = await getDocs(postsCollection);
 
-        return {
-            slug,
-            title: data.title,
-            date: data.date,
-            status: data.status,
-            author: data.author,
-            imageUrl: data.imageUrl,
-            tags: data.tags,
-            excerpt: data.excerpt,
-            metaTitle: data.metaTitle,
-            metaDescription: data.metaDescription,
-            content,
-        };
-    } catch (error) {
-        console.error(`Error reading or parsing file: ${fileName}`, error);
+    const posts = postSnapshot.docs.map(doc => ({
+        slug: doc.id,
+        ...doc.data()
+    } as Post));
+
+    return posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+}
+
+export async function getPostBySlug(slug: string): Promise<Post | null> {
+    const db = await getFirestoreInstance();
+    const postDoc = doc(db, 'blogPosts', slug);
+    const postSnapshot = await getDoc(postDoc);
+
+    if (!postSnapshot.exists()) {
         return null;
     }
+
+    return {
+        slug: postSnapshot.id,
+        ...postSnapshot.data()
+    } as Post;
 }
 
+// Function to save or update a post
+type PostData = Omit<Post, 'date'> & { date?: string };
 
-export function getPublishedPosts(): Post[] {
-  try {
-    const fileNames = fs.readdirSync(postsDirectory);
-    const allPosts = fileNames
-      .map(readAndParsePost)
-      .filter((post): post is Post => post !== null && post.status === 'published');
+export async function savePost(postData: PostData): Promise<void> {
+    const db = await getFirestoreInstance();
+    const { slug, ...data } = postData;
     
-    // Sort posts by date
-    return allPosts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  } catch (error) {
-    console.error(`Error reading posts directory: ${postsDirectory}`, error);
-    return [];
-  }
-}
+    const finalSlug = slug || slugify(postData.title, { lower: true, strict: true });
+    
+    const postRef = doc(db, 'blogPosts', finalSlug);
 
-export function getAllPostsForAdmin(): Post[] {
-    try {
-        const fileNames = fs.readdirSync(postsDirectory);
-        const allPosts = fileNames
-            .map(readAndParsePost)
-            .filter((post): post is Post => post !== null);
-        
-        return allPosts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-    } catch (error) {
-        console.error(`Error reading posts directory for admin: ${postsDirectory}`, error);
-        return [];
-    }
-}
+    const docSnapshot = await getDoc(postRef);
 
-
-export function getPostBySlug(slug: string): Post | null {
-    const fullPath = path.join(postsDirectory, `${slug}.mdx`);
-    try {
-        if (!fs.existsSync(fullPath)) {
-            return null;
-        }
-        const fileContents = fs.readFileSync(fullPath, 'utf8');
-        const { data, content } = matter(fileContents);
-
-        return {
-            slug,
-            title: data.title,
-            date: data.date,
-            status: data.status,
-            author: data.author,
-            imageUrl: data.imageUrl,
-            tags: data.tags,
-            excerpt: data.excerpt,
-            metaTitle: data.metaTitle,
-            metaDescription: data.metaDescription,
-            content,
-        };
-    } catch (err) {
-        console.error(`Error reading post with slug ${slug}:`, err);
-        return null;
-    }
+    const dataToSave = {
+        ...data,
+        updatedAt: new Date().toISOString(),
+        ...(docSnapshot.exists() ? {} : { date: new Date().toISOString() }), // Set initial date only if it's a new post
+    };
+    
+    await setDoc(postRef, dataToSave, { merge: true });
 }

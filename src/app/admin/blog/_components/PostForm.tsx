@@ -10,7 +10,8 @@ import { Post } from '@/lib/types';
 import { useToast } from '@/components/ui/use-toast';
 import { Loader2, Save, Send } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { format } from 'date-fns';
+import { useAuth } from '@/firebase';
+import slugify from 'slugify';
 
 const postSchema = z.object({
   title: z.string().min(3, 'Titulok musí mať aspoň 3 znaky.'),
@@ -18,7 +19,6 @@ const postSchema = z.object({
   author: z.string().optional(),
   imageUrl: z.string().url('Zadajte platnú URL adresu obrázka.').optional().or(z.literal('')),
   tags: z.string().optional(),
-  status: z.enum(['draft', 'published']),
 });
 
 type PostFormData = z.infer<typeof postSchema>;
@@ -29,6 +29,7 @@ interface PostFormProps {
 
 export const PostForm = ({ post }: PostFormProps) => {
   const router = useRouter();
+  const auth = useAuth();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitAction, setSubmitAction] = useState<'draft' | 'published'>(post?.status || 'draft');
@@ -37,6 +38,7 @@ export const PostForm = ({ post }: PostFormProps) => {
     register,
     handleSubmit,
     formState: { errors },
+    watch
   } = useForm<PostFormData>({
     resolver: zodResolver(postSchema),
     defaultValues: {
@@ -45,36 +47,71 @@ export const PostForm = ({ post }: PostFormProps) => {
       author: post?.author || 'VI&MO Team',
       imageUrl: post?.imageUrl || '',
       tags: post?.tags?.join(', ') || '',
-      status: post?.status || 'draft',
     },
   });
+  
+  const watchedTitle = watch("title");
+  const slug = post?.slug || slugify(watchedTitle || '', { lower: true, strict: true });
 
   const onSubmit: SubmitHandler<PostFormData> = async (data) => {
     setIsSubmitting(true);
-    
-    // This is a placeholder for the actual API call
-    // In a real app, you would send this data to a serverless function
-    // that creates/updates the MDX file.
-    console.log('Submitting data to serverless function (placeholder):', {
-      slug: post?.slug, // undefined for new posts
-      ...data,
-      status: submitAction,
-    });
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    const user = auth.currentUser;
+    if (!user) {
+        toast({
+            variant: 'destructive',
+            title: 'Chyba autorizácie',
+            description: 'Musíte byť prihlásený, aby ste mohli uložiť článok.',
+        });
+        setIsSubmitting(false);
+        return;
+    }
 
-    toast({
-      variant: 'success',
-      title: 'Simulácia úspešná!',
-      description: `Článok "${data.title}" by bol ${post ? 'aktualizovaný' : 'vytvorený'}. (Toto je len ukážka)`,
-    });
-    
-    // In a real app, you'd wait for revalidation before navigating
-    router.push('/admin/blog');
-    router.refresh();
+    try {
+        const idToken = await user.getIdToken();
+        const payload = {
+            slug: slug,
+            title: data.title,
+            content: data.content || '',
+            author: data.author || 'VI&MO Team',
+            imageUrl: data.imageUrl || '',
+            tags: data.tags ? data.tags.split(',').map(tag => tag.trim()).filter(Boolean) : [],
+            status: submitAction,
+        };
 
-    setIsSubmitting(false);
+        const response = await fetch('/api/posts', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${idToken}`,
+            },
+            body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Nastala neznáma chyba na serveri.');
+        }
+
+        toast({
+          variant: 'success',
+          title: 'Úspešne uložené!',
+          description: `Článok "${data.title}" bol uložený ako ${submitAction === 'published' ? 'publikovaný' : 'koncept'}.`,
+        });
+        
+        router.push('/admin/blog');
+        router.refresh();
+
+    } catch (error) {
+        console.error("Failed to save post:", error);
+        toast({
+            variant: 'destructive',
+            title: 'Chyba pri ukladaní',
+            description: (error as Error).message || 'Nepodarilo sa uložiť článok.',
+        });
+    } finally {
+        setIsSubmitting(false);
+    }
   };
 
   return (
@@ -83,10 +120,11 @@ export const PostForm = ({ post }: PostFormProps) => {
         <label htmlFor="title" className="block text-sm font-medium text-slate-300 mb-1">Titulok *</label>
         <input {...register('title')} id="title" className={cn("w-full p-3 rounded-lg bg-white/10 backdrop-blur-sm border-2 text-white", errors.title ? "border-red-500" : "border-white/20")} />
         {errors.title && <p className="text-red-400 text-sm mt-1">{errors.title.message}</p>}
+        <p className="text-xs text-slate-400 mt-1">Slug: <code className="bg-white/10 p-1 rounded">{slug}</code></p>
       </div>
 
       <div>
-        <label htmlFor="content" className="block text-sm font-medium text-slate-300 mb-1">Obsah (MDX/HTML)</label>
+        <label htmlFor="content" className="block text-sm font-medium text-slate-300 mb-1">Obsah (HTML)</label>
         <textarea {...register('content')} id="content" rows={15} className="w-full p-3 rounded-lg bg-white/10 backdrop-blur-sm border-2 border-white/20 font-mono text-sm text-white" placeholder='<p>Váš text...</p>' />
       </div>
 
@@ -108,35 +146,25 @@ export const PostForm = ({ post }: PostFormProps) => {
       </div>
 
       <div className="flex flex-col sm:flex-row justify-end items-center gap-4 pt-6 border-t border-white/20">
-        <p className="text-sm text-slate-400 mr-auto">
-          {post ? `Stav: ` : "Nový článok"}
-          {post && (
-             <span className={cn(
-                    "px-2 py-0.5 text-xs font-bold rounded-full text-black",
-                    post.status === 'published' ? 'bg-green-400' : 'bg-yellow-400'
-                )}>
-                    {post.status === 'published' ? 'Publikovaný' : 'Koncept'}
-              </span>
-          )}
-        </p>
+        <div className="text-sm text-slate-400 mr-auto flex items-center gap-2">
+          <span>Status:</span>
+           <select 
+             value={submitAction}
+             onChange={(e) => setSubmitAction(e.target.value as 'draft' | 'published')}
+             className="bg-white/10 p-2 rounded-md border-white/20 border"
+           >
+             <option value="draft">Koncept</option>
+             <option value="published">Publikovaný</option>
+           </select>
+        </div>
         <div className="flex gap-4">
              <button
                 type="submit"
-                onClick={() => setSubmitAction('draft')}
                 disabled={isSubmitting}
                 className="flex items-center gap-2 px-6 py-3 bg-slate-500 text-white font-bold rounded-lg hover:bg-slate-600 transition-colors duration-300 shadow-md disabled:opacity-50 disabled:cursor-wait"
             >
-                {isSubmitting && submitAction === 'draft' ? <Loader2 className="animate-spin" size={20}/> : <Save size={20} />}
-                <span>Uložiť koncept</span>
-            </button>
-            <button
-                type="submit"
-                onClick={() => setSubmitAction('published')}
-                disabled={isSubmitting}
-                className="flex items-center gap-2 px-6 py-3 bg-brand-bright-green text-brand-dark-teal font-bold rounded-lg hover:bg-opacity-80 transition-colors duration-300 shadow-md disabled:opacity-50 disabled:cursor-wait"
-            >
-                {isSubmitting && submitAction === 'published' ? <Loader2 className="animate-spin" size={20}/> : <Send size={20} />}
-                <span>{post?.status === 'published' ? 'Aktualizovať' : 'Publikovať'}</span>
+                {isSubmitting ? <Loader2 className="animate-spin" size={20}/> : <Save size={20} />}
+                <span>Uložiť</span>
             </button>
         </div>
       </div>
