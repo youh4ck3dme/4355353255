@@ -3,9 +3,10 @@
 import { useState, useEffect, FormEvent, ReactNode } from 'react';
 import { ShieldCheck, LogIn, Loader2 } from 'lucide-react';
 import GlassCard from '@/components/GlassCard';
-import { User } from 'firebase/auth';
 import { useFirebase } from '@/firebase/provider';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
 
 const ADMIN_EMAIL = "admin@vimo.com";
 const PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD;
@@ -160,5 +161,13 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <AuthGuard>{children}</AuthGuard>;
+  return (
+      <AuthGuard>
+        <Header />
+        <main id="main-content" className="flex-grow bg-brand-bg dark:bg-brand-dark-teal">
+          {children}
+        </main>
+        <Footer />
+      </AuthGuard>
+  );
 }

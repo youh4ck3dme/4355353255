@@ -4,8 +4,6 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { Providers } from '@/components/Providers';
 import { FirebaseProvider } from '@/firebase/provider';
-import { Header } from '@/components/Header';
-import { Footer } from '@/components/Footer';
 import dynamic from 'next/dynamic';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
@@ -67,11 +65,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <Providers>
           <FirebaseProvider>
-              <Header />
-              <main id="main-content" className="flex-grow bg-brand-bg dark:bg-brand-dark-teal">
-                {children}
-              </main>
-              <Footer />
+              {children}
               <DynamicInstallPrompt />
           </FirebaseProvider>
           <Toaster />
