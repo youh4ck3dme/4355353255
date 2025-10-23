@@ -9,11 +9,11 @@
     --brand-bright-green-hsl: 158 100% 41%; /* rgb(0, 208, 130) */
 
     /* Base dark color */
-    --brand-dark-teal-hsl: 198 81% 10%; /* #0B4556 -> approx hsl(198, 81%, 18%) -> darkened to 10% */
+    --brand-dark-teal-hsl: 200 90% 12%; /* Darkened for more depth */
 
     /* Neutrals */
     --brand-bg-hsl: 210 14% 97%; /* #F9F7F2 -> approx hsl(40, 25%, 97%) -> cooled to 210 hue */
-    --brand-text-hsl: 198 81% 10%;
+    --brand-text-hsl: 200 90% 12%;
     --brand-secondary-grey-hsl: 220 5% 55%; /* #898A8D -> approx hsl(232, 2%, 54%) */
 
     /* Light Theme */
@@ -105,16 +105,16 @@
   }
 
   .text-shadow-3d {
-      text-shadow: 1px 1px 0px hsl(var(--primary-hsl) / 0.1), 2px 2px 0px hsl(var(--primary-hsl) / 0.09), 3px 3px 0px hsl(var(--primary-hsl) / 0.05);
+      text-shadow: 1px 1px 0px hsl(var(--brand-dark-teal-hsl) / 0.4);
   }
   .text-shadow-3d-green {
-      text-shadow: 1px 1px 0px hsl(var(--primary-hsl) / 0.2), 2px 2px 0px hsl(var(--primary-hsl) / 0.15), 3px 3px 0px hsl(var(--primary-hsl) / 0.1);
+      text-shadow: 1px 1px 0px hsl(var(--brand-bright-green-hsl) / 0.2);
   }
   .text-shadow-md {
     text-shadow: 0 2px 4px rgba(0,0,0,0.2);
   }
   .text-shadow-3d-dark {
-    text-shadow: 1px 1px 0px rgba(0,0,0,0.3), 2px 2px 0px rgba(0,0,0,0.2), 3px 3px 0px rgba(0,0,0,0.1);
+    text-shadow: 1px 1px 0px rgba(0,0,0,0.3), 2px 2px 0px rgba(0,0,0,0.2);
   }
 }
 
