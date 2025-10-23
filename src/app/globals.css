@@ -77,21 +77,22 @@
   body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground overflow-x-hidden;
   }
 
   h1, h2, h3, h4, h5, h6 {
     @apply tracking-tight;
   }
   
-  .liquid-glass-background {
-      @apply bg-black min-h-screen w-full overflow-hidden;
+   .liquid-glass-background {
+      @apply bg-black min-h-screen w-full;
       position: relative;
   }
 
   .bg-orbs {
       @apply absolute inset-0 z-0;
       filter: blur(80px);
+      overflow: hidden;
   }
 
   .orb {
