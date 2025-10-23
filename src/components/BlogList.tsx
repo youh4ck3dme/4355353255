@@ -7,6 +7,10 @@ import { BlogCard } from './BlogCard';
 import { cn } from '@/lib/utils';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import GlassCard from './GlassCard';
+import { useFirestore, useCollection, useMemoFirebase, useFirebase } from '@/firebase';
+import { Loader2 } from 'lucide-react';
+import { collection, query, where } from 'firebase/firestore';
+
 
 const ALL_CATEGORIES = ['Tipy na sťahovanie', 'Upratovanie', 'Novinky', 'Vypratávanie'];
 
@@ -14,17 +18,31 @@ export const BlogList = ({ initialPosts, initialCategory }: { initialPosts: Post
     const searchParams = useSearchParams();
     const router = useRouter();
     const pathname = usePathname();
+    const { firestore, areServicesAvailable } = useFirebase();
 
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState<string | null>(initialCategory || null);
 
+    const postsCollectionRef = useMemoFirebase(() => {
+        if (!areServicesAvailable || !firestore) return null;
+        return collection(firestore, 'blogPosts');
+    }, [firestore, areServicesAvailable]);
+    
+    // We can use the initialPosts for the first render, and then update with live data.
+    // This improves SEO and initial load performance.
+    const { data: livePosts, isLoading: areLivePostsLoading } = useCollection<Post>(
+        useMemoFirebase(() => {
+            if (!postsCollectionRef) return null;
+            if (selectedCategory) {
+                 return query(postsCollectionRef, where('tags', 'array-contains', selectedCategory), where('status', '==', 'published'));
+            }
+            return query(postsCollectionRef, where('status', '==', 'published'));
+        }, [postsCollectionRef, selectedCategory])
+    );
+    
     useEffect(() => {
         const categoryFromUrl = searchParams.get('category');
-        if (categoryFromUrl) {
-            setSelectedCategory(categoryFromUrl);
-        } else {
-            setSelectedCategory(null);
-        }
+        setSelectedCategory(categoryFromUrl || null);
     }, [searchParams]);
 
     const handleCategoryClick = (category: string | null) => {
@@ -42,22 +60,17 @@ export const BlogList = ({ initialPosts, initialCategory }: { initialPosts: Post
         router.push(`${pathname}${query}`, { scroll: false });
     };
 
-    const filteredPosts = useMemo(() => {
-        let postsToFilter = initialPosts;
+    const postsToDisplay = livePosts ?? initialPosts;
 
-        if (selectedCategory) {
-            postsToFilter = postsToFilter.filter(post => (post.tags || []).includes(selectedCategory));
-        }
-
-        if (searchQuery) {
-            postsToFilter = postsToFilter.filter(post => 
-                post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                (post.excerpt && post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()))
-            );
-        }
-
-        return postsToFilter;
-    }, [initialPosts, selectedCategory, searchQuery]);
+    const filteredBySearch = useMemo(() => {
+        if (!searchQuery) return postsToDisplay;
+        return postsToDisplay.filter(post => 
+            post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (post.excerpt && post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()))
+        );
+    }, [postsToDisplay, searchQuery]);
+    
+    const showLoading = areLivePostsLoading || !areServicesAvailable;
 
     return (
         <div>
@@ -97,9 +110,13 @@ export const BlogList = ({ initialPosts, initialCategory }: { initialPosts: Post
                 />
             </div>
 
-            {filteredPosts.length > 0 ? (
+            {showLoading ? (
+                <div className="text-center py-16">
+                    <Loader2 className="mx-auto h-12 w-12 animate-spin text-brand-bright-green" />
+                </div>
+            ) : filteredBySearch.length > 0 ? (
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {filteredPosts.map(post => (
+                    {filteredBySearch.map(post => (
                         <BlogCard key={post.slug} post={post} />
                     ))}
                 </div>

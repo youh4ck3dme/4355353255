@@ -2,9 +2,11 @@
 'use client';
 
 import { useState, useEffect, FormEvent } from 'react';
-import { ShieldCheck, LogIn } from 'lucide-react';
+import { ShieldCheck, LogIn, Loader2 } from 'lucide-react';
 import GlassCard from '@/components/GlassCard';
 import { PublicLayout } from '@/components/PublicLayout';
+import { useAuth, useFirebase } from '@/firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 
 // Načítanie hesla z environment premenných.
 // V produkcii sa nastavuje na hostingovej platforme (napr. Vercel, Netlify).
@@ -57,10 +59,19 @@ function LoginForm({ onLogin, isChecking }: { onLogin: (password: string) => voi
                   disabled={isChecking || !PASSWORD}
                   className="w-full flex justify-center items-center gap-2 px-6 py-4 bg-brand-bright-green text-brand-dark-teal font-bold rounded-lg hover:bg-opacity-80 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-wait disabled:transform-none"
               >
-                  <LogIn size={20} />
-                  <span>{isChecking ? 'Overujem...' : 'Autorizovať'}</span>
+                  {isChecking ? (
+                      <>
+                        <Loader2 className="animate-spin" size={20} />
+                        <span>Overujem...</span>
+                      </>
+                  ) : (
+                      <>
+                        <LogIn size={20} />
+                        <span>Autorizovať</span>
+                      </>
+                  )}
               </button>
-               {!PASSWORD && <p className="text-center text-red-400 text-xs mt-2">Admin heslo nie je nastavené v .env.local</p>}
+               {!PASSWORD && <p className="text-center text-red-400 text-xs mt-2">Admin heslo nie je nastavené v .env</p>}
           </div>
       </form>
   );
@@ -72,12 +83,15 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const { auth, areServicesAvailable } = useFirebase();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthResolved, setIsAuthResolved] = useState(false);
   const [error, setError] = useState('');
-  const [isChecking, setIsChecking] = useState(true);
+  const [isChecking, setIsChecking] = useState(false);
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
+    // Check session storage first for quick access
     try {
       if (sessionStorage.getItem(SESSION_STORAGE_KEY) === 'true') {
         setIsAuthenticated(true);
@@ -85,8 +99,20 @@ export default function AdminLayout({
     } catch (e) {
       console.error("Failed to access sessionStorage:", e);
     }
-    setIsChecking(false);
-  }, []);
+    
+    // Then, listen for actual Firebase Auth state
+    if (auth) {
+        const unsubscribe = onAuthStateChanged(auth, user => {
+            if (!user) {
+                console.warn("No Firebase user found for admin section.");
+            }
+            setIsAuthResolved(true); // Firebase auth state is now known
+        });
+        return () => unsubscribe();
+    } else if (areServicesAvailable === false) { // Handle case where auth is not ready
+      setIsAuthResolved(true);
+    }
+  }, [auth, areServicesAvailable]);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -124,6 +150,19 @@ export default function AdminLayout({
     }, 2200); 
   };
   
+  if (!isAuthResolved) {
+      return (
+        <PublicLayout>
+            <div className="min-h-screen flex items-center justify-center p-4">
+                <div className="text-center">
+                    <Loader2 className="mx-auto h-12 w-12 animate-spin text-brand-bright-green" />
+                    <p className="mt-4 text-slate-300">Inicializujem Firebase...</p>
+                </div>
+            </div>
+        </PublicLayout>
+      )
+  }
+
   if (!isAuthenticated) {
     return (
        <PublicLayout>

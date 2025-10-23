@@ -1,13 +1,10 @@
 
+
 import { Metadata } from 'next';
-import dynamic from 'next/dynamic';
 import { Phone, Mail, Building, MapPin } from 'lucide-react';
 import GlassCard from '@/components/GlassCard';
+import { ContactForm } from '@/components/ContactForm';
 
-const DynamicContactForm = dynamic(() => import('@/components/ContactForm').then(mod => mod.ContactForm), { 
-    ssr: false,
-    loading: () => <div className="min-h-[400px]"></div>
-});
 
 export const metadata: Metadata = {
   title: 'Kontakt | Nezáväzná cenová ponuka | VI&MO',
@@ -79,7 +76,7 @@ export default function ContactPage() {
            <GlassCard>
               <div className="p-8">
                 <h2 className="text-3xl font-bold mb-6 text-center text-white">Sťahujete sa? Napíšte nám.</h2>
-                <DynamicContactForm />
+                <ContactForm />
               </div>
           </GlassCard>
 

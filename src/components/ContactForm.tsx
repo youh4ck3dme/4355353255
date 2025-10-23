@@ -3,7 +3,7 @@
 
 import { useToast } from '@/components/ui/use-toast';
 import { z } from 'zod';
-import { useFirestore } from '@/firebase';
+import { useFirebase } from '@/firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
@@ -23,7 +23,7 @@ type ContactFormValues = z.infer<typeof contactFormSchema>;
 
 export const ContactForm = () => {
     const { toast } = useToast();
-    const firestore = useFirestore();
+    const { firestore, areServicesAvailable } = useFirebase();
 
     const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm<ContactFormValues>({
         resolver: zodResolver(contactFormSchema),
@@ -63,6 +63,15 @@ export const ContactForm = () => {
             });
         }
     };
+    
+    if (!areServicesAvailable) {
+        return (
+            <div className="min-h-[300px] flex flex-col items-center justify-center text-center">
+                <Loader2 className="mx-auto h-8 w-8 animate-spin text-brand-bright-green" />
+                <p className="mt-4 text-slate-300">Načítavam formulár...</p>
+            </div>
+        );
+    }
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
