@@ -7,7 +7,7 @@ import { Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { cn } from '@/lib/utils';
-import { firestore } from '@/lib/firebase';
+import { useFirebase } from '@/firebase/provider';
 
 const contactFormSchema = z.object({
   name: z.string().min(2, { message: 'Meno musí mať aspoň 2 znaky.' }),
@@ -21,12 +21,22 @@ type ContactFormValues = z.infer<typeof contactFormSchema>;
 
 export const ContactForm = () => {
     const { toast } = useToast();
+    const { firestore } = useFirebase();
 
     const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm<ContactFormValues>({
         resolver: zodResolver(contactFormSchema),
     });
 
     const onSubmit = async (data: ContactFormValues) => {
+        if (!firestore) {
+            toast({
+              variant: "destructive",
+              title: "Chyba pripojenia",
+              description: "Databáza nie je pripravená. Skúste to prosím neskôr.",
+            });
+            return;
+        }
+
         try {
             const submissionsCollection = collection(firestore, 'contact_submissions');
             await addDoc(submissionsCollection, {
@@ -97,7 +107,7 @@ export const ContactForm = () => {
             <div>
                 <button
                     type="submit"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || !firestore}
                     className="w-full px-8 py-4 bg-brand-bright-green text-brand-dark-teal font-bold rounded-lg hover:bg-opacity-80 transition-colors duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 disabled:bg-opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                 >
                     {isSubmitting ? (

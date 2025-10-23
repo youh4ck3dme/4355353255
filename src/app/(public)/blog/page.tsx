@@ -54,10 +54,10 @@ export const metadata: Metadata = {
 
 
 export default async function BlogIndexPage({ searchParams }: { searchParams?: { [key: string]: string | string[] | undefined }}) {
+  // Although posts are loaded live, we can get the latest one for the featured card during build.
   const posts = await getPublishedPosts();
   const featuredPost = posts.length > 0 ? posts[0] : null;
-  const otherPosts = posts.length > 1 ? posts.slice(1) : [];
-
+  
   const initialCategory = typeof searchParams?.category === 'string' ? searchParams.category : undefined;
 
   return (
@@ -72,9 +72,9 @@ export default async function BlogIndexPage({ searchParams }: { searchParams?: {
       {featuredPost && <FeaturedPostCard post={featuredPost} />}
 
       <h2 className="text-2xl font-bold mt-12 mb-6 text-center text-brand-dark-teal dark:text-brand-bg text-shadow-3d-green">
-        Ďalšie články
+        Všetky články
       </h2>
-      <BlogList initialPosts={otherPosts} initialCategory={initialCategory} />
+      <BlogList initialCategory={initialCategory} />
     </div>
   );
 }

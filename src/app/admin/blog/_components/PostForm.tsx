@@ -11,7 +11,6 @@ import { Loader2, Save } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import slugify from 'slugify';
 import { auth } from '@/lib/firebase';
-import { onAuthStateChanged } from 'firebase/auth';
 
 const postSchema = z.object({
   title: z.string().min(3, 'Titulok musí mať aspoň 3 znaky.'),
@@ -55,17 +54,17 @@ export const PostForm = ({ post }: PostFormProps) => {
   const onSubmit: SubmitHandler<PostFormData> = async (data) => {
     setIsSubmitting(true);
     
-    const user = auth.currentUser;
-
-    if (!user) {
+    if (!auth.currentUser) {
         toast({
             variant: 'destructive',
             title: 'Chyba autorizácie',
-            description: 'Musíte byť prihlásený, aby ste mohli uložiť článok.',
+            description: 'Musíte byť prihlásený, aby ste mohli uložiť článok. Skúste znova o chvíľu.',
         });
         setIsSubmitting(false);
         return;
     }
+
+    const user = auth.currentUser;
 
     try {
         const idToken = await user.getIdToken();

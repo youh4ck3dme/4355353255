@@ -14,14 +14,16 @@ interface FirebaseContextType {
   firestore: Firestore | null;
   auth: Auth | null;
   user: User | null;
+  isLoading: boolean;
 }
 
-// Create the context with a default value of null
+// Create the context with a default value
 const FirebaseContext = createContext<FirebaseContextType>({
   app: null,
   firestore: null,
   auth: null,
   user: null,
+  isLoading: true,
 });
 
 // Fullscreen loader component
@@ -41,7 +43,7 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Initialize Firebase
+    // Initialize Firebase only once
     const appInstance = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
     const authInstance = getAuth(appInstance);
     const firestoreInstance = getFirestore(appInstance);
@@ -52,16 +54,18 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
 
     // Set up the auth state listener
     const unsubscribe = onAuthStateChanged(authInstance, async (currentUser) => {
+      // If user is already signed in, we are good
       if (currentUser) {
         setUser(currentUser);
         setIsLoading(false);
       } else {
-        // If no user, try to sign in anonymously
+        // If no user, try to sign in anonymously. Show loader until this is done.
         try {
           const userCredential = await signInAnonymously(authInstance);
           setUser(userCredential.user);
         } catch (error) {
           console.error("Anonymous sign-in failed:", error);
+          // Even on failure, we stop loading to not block the app forever
         } finally {
             setIsLoading(false);
         }
@@ -72,12 +76,11 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
     return () => unsubscribe();
   }, []);
 
-  const value = { app, firestore, auth, user };
+  const value = { app, firestore, auth, user, isLoading };
 
   return (
     <FirebaseContext.Provider value={value}>
-      {isLoading && <FullscreenLoader />}
-      {!isLoading && children}
+      {isLoading ? <FullscreenLoader /> : children}
     </FirebaseContext.Provider>
   );
 };

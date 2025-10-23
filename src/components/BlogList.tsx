@@ -7,28 +7,70 @@ import { cn } from '@/lib/utils';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import GlassCard from './GlassCard';
 import { Loader2 } from 'lucide-react';
-import { useLiveBlogPosts } from '@/hooks/useLiveBlogPosts';
+import { useFirebase } from '@/firebase/provider';
+import { collection, query, where, orderBy, onSnapshot, QueryConstraint } from 'firebase/firestore';
 
 
 const ALL_CATEGORIES = ['Tipy na sťahovanie', 'Upratovanie', 'Novinky', 'Vypratávanie'];
 
-export const BlogList = ({ initialPosts, initialCategory }: { initialPosts: Post[], initialCategory?: string }) => {
+export const BlogList = ({ initialCategory }: { initialCategory?: string }) => {
     const searchParams = useSearchParams();
     const router = useRouter();
     const pathname = usePathname();
+    const { firestore } = useFirebase();
 
+    const [posts, setPosts] = useState<Post[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState<string | null>(initialCategory || null);
-
-    const { posts: livePosts, isLoading, error } = useLiveBlogPosts({
-        category: selectedCategory || undefined,
-        includeDrafts: false,
-    });
-
+    
     useEffect(() => {
         const categoryFromUrl = searchParams.get('category');
         setSelectedCategory(categoryFromUrl || null);
     }, [searchParams]);
+
+    const postsQuery = useMemo(() => {
+        if (!firestore) return null;
+        
+        const queryConstraints: QueryConstraint[] = [];
+        queryConstraints.push(where('status', '==', 'published'));
+        
+        if (selectedCategory) {
+          queryConstraints.push(where('tags', 'array-contains', selectedCategory));
+        }
+        
+        queryConstraints.push(orderBy('date', 'desc'));
+
+        return query(collection(firestore, 'blogPosts'), ...queryConstraints);
+    }, [firestore, selectedCategory]);
+
+    useEffect(() => {
+        if (!postsQuery) {
+            setIsLoading(!firestore); // Still loading if firestore is not ready
+            return;
+        };
+
+        setIsLoading(true);
+
+        const unsubscribe = onSnapshot(
+          postsQuery,
+          (snapshot) => {
+            const results: Post[] = snapshot.docs.map((doc) => ({
+              ...(doc.data() as Omit<Post, 'slug'>),
+              slug: doc.id,
+            }));
+            setPosts(results);
+            setIsLoading(false);
+          },
+          (err) => {
+            console.error("Error fetching live blog posts:", err);
+            setIsLoading(false);
+          }
+        );
+
+        return () => unsubscribe();
+    }, [postsQuery, firestore]);
     
     const handleCategoryClick = (category: string | null) => {
         const current = new URLSearchParams(Array.from(searchParams.entries()));
@@ -46,14 +88,13 @@ export const BlogList = ({ initialPosts, initialCategory }: { initialPosts: Post
     };
 
     const filteredBySearch = useMemo(() => {
-        const postsToFilter = livePosts || [];
-        if (!searchQuery) return postsToFilter;
-        return postsToFilter.filter(post =>
+        if (!searchQuery) return posts;
+        return posts.filter(post =>
             post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
             (post.excerpt && post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()))
         );
-    }, [livePosts, searchQuery]);
-    
+    }, [posts, searchQuery]);
+
     return (
         <div>
             <div className="mb-8 max-w-2xl mx-auto flex flex-col items-center gap-4">
@@ -77,8 +118,7 @@ export const BlogList = ({ initialPosts, initialCategory }: { initialPosts: Post
                             )}
                         >
                             {category}
-                        </button>
-                    ))}
+                        </button>))}
                 </div>
                 <input
                     type="text"

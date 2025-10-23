@@ -1,12 +1,13 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { doc, setDoc, getDoc, writeBatch, serverTimestamp, signInAnonymously, onAuthStateChanged, User } from 'firebase/firestore';
+import { doc, setDoc, onSnapshot, DocumentReference } from 'firebase/firestore';
 import { ChecklistCategory } from '@/lib/checklist-data';
 import { Check, Circle, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from './ui/use-toast';
-import { firestore, auth } from '@/lib/firebase';
+import { useFirebase } from '@/firebase/provider';
+
 
 interface ChecklistProps {
   categories: ChecklistCategory[];
@@ -17,45 +18,59 @@ type CheckedItemsState = Record<string, boolean>;
 function debounce<F extends (...args: any[]) => any>(func: F, waitFor: number) {
   let timeout: ReturnType<typeof setTimeout> | null = null;
 
-  return (...args: Parameters<F>): void => {
+  const debounced = (...args: Parameters<F>): void => {
     if (timeout) {
       clearTimeout(timeout);
     }
     timeout = setTimeout(() => func(...args), waitFor);
   };
+  
+  return debounced as (...args: Parameters<F>) => void;
 }
+
 
 export const Checklist = ({ categories }: ChecklistProps) => {
   const { toast } = useToast();
+  const { firestore, user, isLoading: isFirebaseLoading } = useFirebase();
   
   const [checkedItems, setCheckedItems] = useState<CheckedItemsState>({});
-  const [isLoading, setIsLoading] = useState(true);
-  const [user, setUser] = useState<User | null>(null);
+  const [isDataLoading, setIsDataLoading] = useState(true);
 
+  const userChecklistRef = user && firestore ? doc(firestore, `checklists/${user.uid}`) : null;
+
+  // Data listener
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      if (currentUser) {
-        setUser(currentUser);
-      } else {
-        try {
-            const userCredential = await signInAnonymously(auth);
-            setUser(userCredential.user);
-        } catch (error) {
-            console.error("Anonymous sign-in failed:", error);
-            setIsLoading(false);
-        }
-      }
-    });
-    return () => unsubscribe();
-  }, []);
+    if (!userChecklistRef) {
+        if(!isFirebaseLoading) setIsDataLoading(false);
+        return;
+    }
 
-  const userChecklistRef = user ? doc(firestore, `checklists/${user.uid}`) : null;
+    const unsubscribe = onSnapshot(userChecklistRef, 
+      (docSnap) => {
+        if (docSnap.exists()) {
+          setCheckedItems(docSnap.data().items || {});
+        }
+        setIsDataLoading(false);
+      },
+      (error) => {
+        console.error("Failed to load checklist state from Firestore", error);
+        toast({
+            variant: 'destructive',
+            title: 'Chyba pri načítaní',
+            description: 'Nepodarilo sa načítať váš uložený postup.',
+        });
+        setIsDataLoading(false);
+      }
+    );
+    
+    return () => unsubscribe();
+  }, [user, firestore, userChecklistRef, toast, isFirebaseLoading]);
+
 
   const debouncedUpdateFirestore = useCallback(
-    debounce(async (itemsToUpdate: CheckedItemsState) => {
-      if (!userChecklistRef) return;
+    debounce(async (ref: DocumentReference, items: CheckedItemsState) => {
       try {
-        await setDoc(userChecklistRef, { items: itemsToUpdate }, { merge: true });
+        await setDoc(ref, { items }, { merge: true });
       } catch (error) {
         console.error("Firestore update failed:", error);
         toast({
@@ -65,44 +80,17 @@ export const Checklist = ({ categories }: ChecklistProps) => {
         });
       }
     }, 1000),
-    [userChecklistRef, toast]
+    [toast]
   );
 
-  useEffect(() => {
-    if (!userChecklistRef) {
-        if(user) setIsLoading(false);
-        return;
-    }
-    
-    const loadData = async () => {
-      setIsLoading(true);
-      try {
-        const docSnap = await getDoc(userChecklistRef);
-        if (docSnap.exists()) {
-          setCheckedItems(docSnap.data().items || {});
-        }
-      } catch (error) {
-        console.error("Failed to load checklist state from Firestore", error);
-        toast({
-            variant: 'destructive',
-            title: 'Chyba pri načítaní',
-            description: 'Nepodarilo sa načítať váš uložený postup.',
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
-    loadData();
-  }, [userChecklistRef, toast, user]);
-
   const handleToggle = (itemId: string) => {
+    if (!userChecklistRef) return;
     const newCheckedItems = { ...checkedItems, [itemId]: !checkedItems[itemId] };
     setCheckedItems(newCheckedItems);
-    debouncedUpdateFirestore(newCheckedItems);
+    debouncedUpdateFirestore(userChecklistRef, newCheckedItems);
   };
 
-  const handleResetCategory = async (category: ChecklistCategory) => {
+  const handleResetCategory = (category: ChecklistCategory) => {
       if (!userChecklistRef) return;
 
       const itemsToReset = category.items.reduce((acc, item) => {
@@ -112,25 +100,16 @@ export const Checklist = ({ categories }: ChecklistProps) => {
 
       const newCheckedItems = { ...checkedItems, ...itemsToReset };
       setCheckedItems(newCheckedItems);
-
-      try {
-        const batch = writeBatch(firestore);
-        const updateData: { [key: string]: boolean } = {};
-        category.items.forEach(item => {
-            updateData[`items.${item.id}`] = false;
-        });
-
-        batch.update(userChecklistRef, updateData);
-        await batch.commit();
-
-      } catch (error) {
-         console.error("Firestore batch update failed:", error);
+      
+      // Directly update firestore without debounce for instant reset
+      setDoc(userChecklistRef, { items: newCheckedItems }, { merge: true }).catch(error => {
+         console.error("Firestore reset failed:", error);
          toast({
             variant: 'destructive',
             title: 'Chyba pri resetovaní',
             description: 'Nepodarilo sa resetovať kategóriu. Skúste to prosím znova.',
         });
-      }
+      });
   };
 
   const getCategoryProgress = (category: ChecklistCategory) => {
@@ -140,7 +119,7 @@ export const Checklist = ({ categories }: ChecklistProps) => {
     return (completedItems / totalItems) * 100;
   };
 
-  if (isLoading) {
+  if (isFirebaseLoading || isDataLoading) {
       return (
           <div className="text-center py-16 flex flex-col items-center justify-center min-h-[50vh]">
               <Loader2 className="mx-auto h-12 w-12 animate-spin text-brand-bright-green" />
@@ -184,6 +163,7 @@ export const Checklist = ({ categories }: ChecklistProps) => {
                       className="sr-only"
                       checked={!!checkedItems[item.id]}
                       onChange={() => handleToggle(item.id)}
+                      disabled={!user || !firestore}
                     />
                     <div className="flex-shrink-0 w-6 h-6 mr-4 flex items-center justify-center rounded-full border-2 border-brand-secondary-grey dark:border-slate-500 group-hover:border-brand-bright-green transition-colors">
                       {checkedItems[item.id] ? (

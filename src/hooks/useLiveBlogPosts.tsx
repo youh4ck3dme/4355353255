@@ -1,34 +1,33 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { collection, query, where, orderBy, onSnapshot, Query } from 'firebase/firestore';
-import { firestore } from '@/lib/firebase';
 import { Post } from '@/lib/types';
-import { useToast } from "@/components/ui/use-toast";
+import { firestore } from '@/lib/firebase';
+import { collection, query, where, orderBy, onSnapshot, QueryConstraint } from 'firebase/firestore';
 
-interface UseLiveBlogPostsOptions {
-  category?: string;
+interface UseLiveBlogPostsProps {
   includeDrafts?: boolean;
+  filters?: {
+    category?: string;
+  };
 }
 
-export const useLiveBlogPosts = (options: UseLiveBlogPostsOptions = {}) => {
-  const { category, includeDrafts = false } = options;
-  const { toast } = useToast();
-  
+export const useLiveBlogPosts = ({ includeDrafts = false, filters = {} }: UseLiveBlogPostsProps = {}) => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     setIsLoading(true);
-
-    const queryConstraints = [];
+    
+    const queryConstraints: QueryConstraint[] = [];
     
     if (!includeDrafts) {
       queryConstraints.push(where('status', '==', 'published'));
     }
-    if (category) {
-      queryConstraints.push(where('tags', 'array-contains', category));
+    
+    if (filters.category) {
+      queryConstraints.push(where('tags', 'array-contains', filters.category));
     }
     
     queryConstraints.push(orderBy('date', 'desc'));
@@ -49,16 +48,11 @@ export const useLiveBlogPosts = (options: UseLiveBlogPostsOptions = {}) => {
         console.error("Error fetching live blog posts:", err);
         setError(err);
         setIsLoading(false);
-        toast({
-            variant: 'destructive',
-            title: 'Chyba pri načítaní článkov',
-            description: 'Nepodarilo sa načítať zoznam článkov z databázy.',
-        });
       }
     );
 
     return () => unsubscribe();
-  }, [category, includeDrafts, toast]);
+  }, [includeDrafts, filters.category]);
 
   return { posts, isLoading, error };
 };

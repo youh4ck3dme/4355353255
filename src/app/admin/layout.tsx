@@ -5,7 +5,7 @@ import { ShieldCheck, LogIn, Loader2 } from 'lucide-react';
 import GlassCard from '@/components/GlassCard';
 import { PublicLayout } from '@/components/PublicLayout';
 import { signInWithEmailAndPassword, onAuthStateChanged, User } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { useFirebase } from '@/firebase/provider';
 
 
 // Načítanie hesla z environment premenných.
@@ -14,26 +14,12 @@ const PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD;
 const SESSION_STORAGE_KEY = 'admin-authenticated';
 
 
-function ProgressBar({ progress }: { progress: number }) {
-    return (
-        <div className="space-y-2">
-            <p className="text-sm text-center text-slate-400">Overujem prístup... {progress}%</p>
-            <div className="w-full bg-slate-700/50 rounded-full h-2.5">
-                <div 
-                    className="bg-brand-bright-green h-2.5 rounded-full transition-all duration-150 ease-linear" 
-                    style={{ width: `${progress}%` }}
-                ></div>
-            </div>
-        </div>
-    );
-}
-
-function LoginForm({ onLogin, isChecking }: { onLogin: (password: string) => void, isChecking: boolean }) {
+function LoginForm({ onLogin, isLoggingIn }: { onLogin: (password: string) => void, isLoggingIn: boolean }) {
   const [password, setPassword] = useState('');
   
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (isChecking) return;
+    if (isLoggingIn) return;
     onLogin(password);
   }
 
@@ -47,7 +33,7 @@ function LoginForm({ onLogin, isChecking }: { onLogin: (password: string) => voi
                   type="password"
                   autoComplete="current-password"
                   required
-                  disabled={isChecking}
+                  disabled={isLoggingIn}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full p-4 border-2 border-white/20 rounded-lg focus:border-brand-bright-green focus:ring focus:ring-brand-bright-green/50 outline-none transition-all duration-300 bg-white/10 backdrop-blur-sm text-white placeholder-slate-400 text-lg text-center"
@@ -57,10 +43,10 @@ function LoginForm({ onLogin, isChecking }: { onLogin: (password: string) => voi
           <div>
               <button
                   type="submit"
-                  disabled={isChecking || !PASSWORD}
+                  disabled={isLoggingIn || !PASSWORD}
                   className="w-full flex justify-center items-center gap-2 px-6 py-4 bg-brand-bright-green text-brand-dark-teal font-bold rounded-lg hover:bg-opacity-80 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-wait disabled:transform-none"
               >
-                  {isChecking ? (
+                  {isLoggingIn ? (
                       <>
                         <Loader2 className="animate-spin" size={20} />
                         <span>Overujem...</span>
@@ -84,65 +70,43 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { auth, user, isLoading: isFirebaseLoading } = useFirebase();
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [error, setError] = useState('');
-  const [isChecking, setIsChecking] = useState(true);
-  const [progress, setProgress] = useState(0);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+
 
   useEffect(() => {
-    // onAuthStateChanged is the most reliable way to check the user's status
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-        try {
-          if (user && sessionStorage.getItem(SESSION_STORAGE_KEY) === 'true') {
-              setIsAuthenticated(true);
-          } else {
-              setIsAuthenticated(false);
-          }
-        } catch (e) {
-          console.error("Failed to access sessionStorage:", e);
-          setIsAuthenticated(false);
-        } finally {
-            setIsChecking(false);
-        }
-    });
+    if (isFirebaseLoading) return;
 
-    return () => unsubscribe();
-  }, []);
-
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (isChecking && progress < 100) {
-      timer = setTimeout(() => {
-        setProgress(prev => Math.min(prev + 1, 100));
-      }, 20); 
-    }
-    return () => clearTimeout(timer);
-  }, [isChecking, progress]);
+    // We determine authentication status based on the user object and our session flag
+    const isAdminSessionActive = typeof window !== 'undefined' && sessionStorage.getItem(SESSION_STORAGE_KEY) === 'true';
+    setIsAuthenticated(!!user && user.email === ADMIN_EMAIL && isAdminSessionActive);
+  }, [user, isFirebaseLoading]);
 
   const handleLogin = async (password: string) => {
     if (!PASSWORD) {
         setError('Heslo pre administrátora nie je nastavené na serveri.');
         return;
     }
-    setError('');
-    setIsChecking(true);
-    setProgress(1);
+    if (!auth) {
+        setError('Služba autentifikácie nie je pripravená. Skúste znova o chvíľu.');
+        return;
+    }
 
-    // Simulate network delay for better UX
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    setError('');
+    setIsLoggingIn(true);
 
     try {
         if (password === PASSWORD) {
              try {
-                // Sign in to firebase to get a token for API calls
                 await signInWithEmailAndPassword(auth, ADMIN_EMAIL, password);
                 sessionStorage.setItem(SESSION_STORAGE_KEY, 'true');
+                setIsAuthenticated(true);
             } catch (e) {
                 console.error("Failed to set sessionStorage or sign in:", e);
-                // If firebase sign-in fails, don't authenticate the user
                 throw new Error("Firebase prihlásenie zlyhalo.");
             }
-            setIsAuthenticated(true);
             setError('');
         } else {
             throw new Error("Nesprávne heslo.");
@@ -150,19 +114,19 @@ export default function AdminLayout({
     } catch (e) {
         setError((e as Error).message || 'Nesprávne heslo. Prístup zamietnutý.');
         console.error("Authentication failed:", e);
-        // Clear session storage on failed login attempt
         try {
           sessionStorage.removeItem(SESSION_STORAGE_KEY);
         } catch (sessionError) {
           console.error("Failed to clear sessionStorage:", sessionError);
         }
+        setIsAuthenticated(false);
     } finally {
-        setIsChecking(false);
-        setProgress(0);
+        setIsLoggingIn(false);
     }
   };
   
-  if (isChecking) {
+  // Display a loader while we are determining the auth state
+  if (isFirebaseLoading || isAuthenticated === null) {
       return (
          <PublicLayout>
             <div className="min-h-screen flex items-center justify-center p-4">
@@ -189,11 +153,9 @@ export default function AdminLayout({
                             </p>
                         </div>
                         
-                        {progress > 0 && <ProgressBar progress={progress} />}
-                        
-                        {error && !progress && <p className="text-red-400 text-sm text-center font-bold mb-4">{error}</p>}
+                        {error && <p className="text-red-400 text-sm text-center font-bold mb-4">{error}</p>}
 
-                        {!progress && <LoginForm onLogin={handleLogin} isChecking={isChecking} />}
+                        <LoginForm onLogin={handleLogin} isLoggingIn={isLoggingIn} />
                     </div>
                 </GlassCard>
             </div>

@@ -4,9 +4,11 @@ import Link from 'next/link';
 import { Post } from '@/lib/types';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
-import { PlusCircle, Edit, Loader2, Newspaper, Info } from 'lucide-react';
+import { PlusCircle, Edit, Loader2, Newspaper, Info, ShieldAlert } from 'lucide-react';
 import GlassCard from '@/components/GlassCard';
-import { useLiveBlogPosts } from '@/hooks/useLiveBlogPosts';
+import { useState, useEffect, useMemo } from 'react';
+import { useFirebase } from '@/firebase/provider';
+import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
 
 
 const PostRow = ({ post }: { post: Post }) => {
@@ -37,7 +39,39 @@ const PostRow = ({ post }: { post: Post }) => {
 
 
 export default function AdminBlogPage() {
-    const { posts: livePosts, isLoading, error } = useLiveBlogPosts({ includeDrafts: true });
+    const { firestore } = useFirebase();
+    const [posts, setPosts] = useState<Post[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<Error | null>(null);
+
+    const postsQuery = useMemo(() => {
+        if (!firestore) return null;
+        return query(collection(firestore, 'blogPosts'), orderBy('date', 'desc'));
+    }, [firestore]);
+
+
+    useEffect(() => {
+        if (!postsQuery) return;
+
+        const unsubscribe = onSnapshot(
+            postsQuery,
+            (snapshot) => {
+                const results: Post[] = snapshot.docs.map((doc) => ({
+                    ...(doc.data() as Omit<Post, 'slug'>),
+                    slug: doc.id,
+                }));
+                setPosts(results);
+                setIsLoading(false);
+            },
+            (err) => {
+                console.error("Error fetching live blog posts:", err);
+                setError(err);
+                setIsLoading(false);
+            }
+        );
+
+        return () => unsubscribe();
+    }, [postsQuery]);
     
     return (
         <div className="container mx-auto px-4 py-12 max-w-6xl">
@@ -73,19 +107,20 @@ export default function AdminBlogPage() {
                     </div>
                 </div>
                  <div className="p-6">
-                    {isLoading ? (
+                    {(isLoading || !firestore) ? (
                         <div className="text-center py-16">
                             <Loader2 className="mx-auto h-12 w-12 animate-spin text-brand-bright-green" />
                             <p className="mt-4 text-slate-300">Načítavam články z databázy...</p>
                         </div>
                     ) : error ? (
-                         <div className="text-center py-16 text-red-400">
+                         <div className="text-center py-16 text-red-400 bg-red-900/20 rounded-lg">
+                            <ShieldAlert className="mx-auto h-12 w-12 mb-4" />
                             <h2 className="text-2xl font-bold mb-2">Chyba pri načítaní</h2>
-                            <p>{error.message}</p>
+                            <p className="font-mono text-xs">{error.message}</p>
                         </div>
-                    ) : livePosts && livePosts.length > 0 ? (
+                    ) : posts && posts.length > 0 ? (
                         <div>
-                            {livePosts.map(post => (
+                            {posts.map(post => (
                                 <PostRow key={post.slug} post={post} />
                             ))}
                         </div>
