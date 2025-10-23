@@ -7,8 +7,7 @@ import { cn } from '@/lib/utils';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import GlassCard from './GlassCard';
 import { Loader2 } from 'lucide-react';
-import { useFirebase } from '@/firebase/provider';
-import { collection, query, where, orderBy, onSnapshot, Query } from 'firebase/firestore';
+import { useLiveBlogPosts } from '@/hooks/useLiveBlogPosts';
 
 
 const ALL_CATEGORIES = ['Tipy na sťahovanie', 'Upratovanie', 'Novinky', 'Vypratávanie'];
@@ -17,56 +16,19 @@ export const BlogList = ({ initialPosts, initialCategory }: { initialPosts: Post
     const searchParams = useSearchParams();
     const router = useRouter();
     const pathname = usePathname();
-    const { firestore } = useFirebase();
 
-    const [livePosts, setLivePosts] = useState<Post[] | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState<string | null>(initialCategory || null);
+
+    const { posts: livePosts, isLoading, error } = useLiveBlogPosts({
+        category: selectedCategory || undefined,
+        includeDrafts: false,
+    });
 
     useEffect(() => {
         const categoryFromUrl = searchParams.get('category');
         setSelectedCategory(categoryFromUrl || null);
     }, [searchParams]);
-
-     const postsQuery = useMemo(() => {
-        if (!firestore) return null;
-
-        const queryConstraints = [where('status', '==', 'published')];
-        if (selectedCategory) {
-            queryConstraints.push(where('tags', 'array-contains', selectedCategory));
-        }
-        queryConstraints.push(orderBy('date', 'desc'));
-
-        return query(collection(firestore, 'blogPosts'), ...queryConstraints);
-    }, [firestore, selectedCategory]);
-
-     useEffect(() => {
-        if (!postsQuery) {
-            if(firestore) setIsLoading(false);
-            return;
-        };
-        
-        setIsLoading(true);
-        const unsubscribe = onSnapshot(
-            postsQuery,
-            (snapshot) => {
-                const results: Post[] = snapshot.docs.map((doc) => ({
-                    ...(doc.data() as Omit<Post, 'slug'>),
-                    slug: doc.id,
-                }));
-                setLivePosts(results);
-                setIsLoading(false);
-            },
-            (err) => {
-                console.error("Error fetching live blog posts:", err);
-                setIsLoading(false);
-                setLivePosts([]);
-            }
-        );
-
-        return () => unsubscribe();
-    }, [postsQuery, firestore]);
     
     const handleCategoryClick = (category: string | null) => {
         const current = new URLSearchParams(Array.from(searchParams.entries()));

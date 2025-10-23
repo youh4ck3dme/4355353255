@@ -62,11 +62,9 @@ export default function RootLayout({
     <html lang="sk" suppressHydrationWarning>
       <body className={inter.className}>
         <Providers>
-          <FirebaseProvider>
             <PublicLayout>
               {children}
             </PublicLayout>
-          </FirebaseProvider>
           <Toaster />
         </Providers>
       </body>

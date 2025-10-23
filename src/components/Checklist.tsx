@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
-import { doc, setDoc, getDoc, writeBatch } from 'firebase/firestore';
+import { useState, useEffect, useCallback } from 'react';
+import { doc, setDoc, getDoc, writeBatch, serverTimestamp, signInAnonymously, onAuthStateChanged, User } from 'firebase/firestore';
 import { ChecklistCategory } from '@/lib/checklist-data';
 import { Check, Circle, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from './ui/use-toast';
-import { useFirebase } from '@/firebase/provider';
+import { firestore, auth } from '@/lib/firebase';
 
 interface ChecklistProps {
   categories: ChecklistCategory[];
@@ -27,15 +27,29 @@ function debounce<F extends (...args: any[]) => any>(func: F, waitFor: number) {
 
 export const Checklist = ({ categories }: ChecklistProps) => {
   const { toast } = useToast();
-  const { firestore, user } = useFirebase();
   
   const [checkedItems, setCheckedItems] = useState<CheckedItemsState>({});
   const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(null);
 
-  const userChecklistRef = useMemo(() => {
-    if (!firestore || !user) return null;
-    return doc(firestore, `checklists/${user.uid}`);
-  }, [firestore, user]);
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+      } else {
+        try {
+            const userCredential = await signInAnonymously(auth);
+            setUser(userCredential.user);
+        } catch (error) {
+            console.error("Anonymous sign-in failed:", error);
+            setIsLoading(false);
+        }
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const userChecklistRef = user ? doc(firestore, `checklists/${user.uid}`) : null;
 
   const debouncedUpdateFirestore = useCallback(
     debounce(async (itemsToUpdate: CheckedItemsState) => {
@@ -56,7 +70,7 @@ export const Checklist = ({ categories }: ChecklistProps) => {
 
   useEffect(() => {
     if (!userChecklistRef) {
-        if(user && firestore) setIsLoading(false);
+        if(user) setIsLoading(false);
         return;
     }
     
@@ -80,7 +94,7 @@ export const Checklist = ({ categories }: ChecklistProps) => {
     };
     
     loadData();
-  }, [userChecklistRef, toast, user, firestore]);
+  }, [userChecklistRef, toast, user]);
 
   const handleToggle = (itemId: string) => {
     const newCheckedItems = { ...checkedItems, [itemId]: !checkedItems[itemId] };
@@ -89,7 +103,7 @@ export const Checklist = ({ categories }: ChecklistProps) => {
   };
 
   const handleResetCategory = async (category: ChecklistCategory) => {
-      if (!userChecklistRef || !firestore) return;
+      if (!userChecklistRef) return;
 
       const itemsToReset = category.items.reduce((acc, item) => {
           acc[item.id] = false;

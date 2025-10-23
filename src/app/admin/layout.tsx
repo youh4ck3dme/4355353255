@@ -4,8 +4,8 @@ import { useState, useEffect, FormEvent } from 'react';
 import { ShieldCheck, LogIn, Loader2 } from 'lucide-react';
 import GlassCard from '@/components/GlassCard';
 import { PublicLayout } from '@/components/PublicLayout';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { useFirebase } from '@/firebase/provider';
+import { signInWithEmailAndPassword, onAuthStateChanged, User } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
 
 
 // Načítanie hesla z environment premenných.
@@ -84,22 +84,30 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { auth, user } = useFirebase();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [error, setError] = useState('');
-  const [isChecking, setIsChecking] = useState(false);
+  const [isChecking, setIsChecking] = useState(true);
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    // Check session storage first for quick access
-    try {
-      if (sessionStorage.getItem(SESSION_STORAGE_KEY) === 'true' && user) {
-        setIsAuthenticated(true);
-      }
-    } catch (e) {
-      console.error("Failed to access sessionStorage:", e);
-    }
-  }, [user]);
+    // onAuthStateChanged is the most reliable way to check the user's status
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+        try {
+          if (user && sessionStorage.getItem(SESSION_STORAGE_KEY) === 'true') {
+              setIsAuthenticated(true);
+          } else {
+              setIsAuthenticated(false);
+          }
+        } catch (e) {
+          console.error("Failed to access sessionStorage:", e);
+          setIsAuthenticated(false);
+        } finally {
+            setIsChecking(false);
+        }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -116,10 +124,6 @@ export default function AdminLayout({
         setError('Heslo pre administrátora nie je nastavené na serveri.');
         return;
     }
-    if (!auth) {
-        setError('Autentifikačná služba nie je pripravená.');
-        return;
-    }
     setError('');
     setIsChecking(true);
     setProgress(1);
@@ -130,7 +134,7 @@ export default function AdminLayout({
     try {
         if (password === PASSWORD) {
              try {
-                // Also sign in to firebase to get a token for API calls
+                // Sign in to firebase to get a token for API calls
                 await signInWithEmailAndPassword(auth, ADMIN_EMAIL, password);
                 sessionStorage.setItem(SESSION_STORAGE_KEY, 'true');
             } catch (e) {
@@ -146,11 +150,27 @@ export default function AdminLayout({
     } catch (e) {
         setError((e as Error).message || 'Nesprávne heslo. Prístup zamietnutý.');
         console.error("Authentication failed:", e);
+        // Clear session storage on failed login attempt
+        try {
+          sessionStorage.removeItem(SESSION_STORAGE_KEY);
+        } catch (sessionError) {
+          console.error("Failed to clear sessionStorage:", sessionError);
+        }
     } finally {
         setIsChecking(false);
         setProgress(0);
     }
   };
+  
+  if (isChecking) {
+      return (
+         <PublicLayout>
+            <div className="min-h-screen flex items-center justify-center p-4">
+                <Loader2 className="h-16 w-16 animate-spin text-brand-bright-green" />
+            </div>
+         </PublicLayout>
+      )
+  }
 
   if (!isAuthenticated) {
     return (
@@ -169,11 +189,11 @@ export default function AdminLayout({
                             </p>
                         </div>
                         
-                        {isChecking && progress > 0 && <ProgressBar progress={progress} />}
+                        {progress > 0 && <ProgressBar progress={progress} />}
                         
-                        {!isChecking && error && <p className="text-red-400 text-sm text-center font-bold mb-4">{error}</p>}
+                        {error && !progress && <p className="text-red-400 text-sm text-center font-bold mb-4">{error}</p>}
 
-                        {!isChecking && <LoginForm onLogin={handleLogin} isChecking={isChecking} />}
+                        {!progress && <LoginForm onLogin={handleLogin} isChecking={isChecking} />}
                     </div>
                 </GlassCard>
             </div>
