@@ -18,15 +18,19 @@ export const BlogList = ({ initialPosts, initialCategory }: { initialPosts: Post
     const searchParams = useSearchParams();
     const router = useRouter();
     const pathname = usePathname();
-    const { firestore, areServicesAvailable } = useFirebase();
+    // useFirebase now guarantees that firestore is available
+    const { firestore } = useFirebase();
 
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState<string | null>(initialCategory || null);
 
     const postsCollectionQuery = useMemo(() => {
-        if (!firestore) return null; // Wait for firestore to be available
+        // This check is a safeguard, but the provider should prevent rendering until firestore is ready.
+        if (!firestore) return null; 
+        
         const postsCollectionRef = collection(firestore, 'blogPosts');
         let q: Query = query(postsCollectionRef, where('status', '==', 'published'));
+        
         if (selectedCategory) {
              q = query(q, where('tags', 'array-contains', selectedCategory));
         }
@@ -55,6 +59,7 @@ export const BlogList = ({ initialPosts, initialCategory }: { initialPosts: Post
         router.push(`${pathname}${query}`, { scroll: false });
     };
 
+    // Use live posts if available, otherwise fall back to initial static posts
     const postsToDisplay = livePosts ?? initialPosts;
 
     const filteredBySearch = useMemo(() => {
@@ -64,9 +69,7 @@ export const BlogList = ({ initialPosts, initialCategory }: { initialPosts: Post
             (post.excerpt && post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()))
         );
     }, [postsToDisplay, searchQuery]);
-
-    const showLoading = areLivePostsLoading || !areServicesAvailable;
-
+    
     return (
         <div>
             <div className="mb-8 max-w-2xl mx-auto flex flex-col items-center gap-4">
@@ -105,7 +108,7 @@ export const BlogList = ({ initialPosts, initialCategory }: { initialPosts: Post
                 />
             </div>
 
-            {showLoading ? (
+            {areLivePostsLoading ? (
                 <div className="text-center py-16">
                     <Loader2 className="mx-auto h-12 w-12 animate-spin text-brand-bright-green" />
                 </div>

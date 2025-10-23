@@ -26,29 +26,17 @@ export interface UseCollectionResult<T> {
   error: FirestoreError | Error | null; // Error object, or null.
 }
 
-/* Internal implementation of Query:
-  https://github.com/firebase/firebase-js-sdk/blob/c5f08a9bc5da0d2b0207802c972d53724ccef055/packages/firestore/src/lite-api/reference.ts#L143
-*/
-export interface InternalQuery extends Query<DocumentData> {
-  _query: {
-    path: {
-      canonicalString(): string;
-      toString(): string;
-    }
-  }
-}
-
 /**
  * React hook to subscribe to a Firestore collection or query in real-time.
- * Handles nullable references/queries.
+ * Handles nullable references/queries safely.
  *
- * IMPORTANT! YOU MUST MEMOIZE the inputted memoizedTargetRefOrQuery or BAD THINGS WILL HAPPEN
- * use useMemo to memoize it per React guidence.  Also make sure that it's dependencies are stable
- * references
+ * IMPORTANT! YOU MUST MEMOIZE the `memoizedTargetRefOrQuery` input using React's `useMemo` hook,
+ * or you risk creating infinite re-renders. The memoized query should only be re-created
+ * when its dependencies (like a user ID) actually change.
  *
  * @template T Optional type for document data. Defaults to any.
  * @param {CollectionReference<DocumentData> | Query<DocumentData> | null | undefined} memoizedTargetRefOrQuery -
- * The Firestore CollectionReference or Query. Waits if null/undefined.
+ * The Firestore CollectionReference or Query, memoized with `useMemo`. The hook waits if this is null/undefined.
  * @returns {UseCollectionResult<T>} Object with data, isLoading, error.
  */
 export function useCollection<T = any>(
@@ -62,7 +50,8 @@ export function useCollection<T = any>(
   const [error, setError] = useState<FirestoreError | Error | null>(null);
 
   useEffect(() => {
-    // If the query/ref is not ready, set loading and wait.
+    // If the query/ref is not provided or not ready, set loading and wait.
+    // This is the primary safeguard against the "Expected first argument to collection()" error.
     if (!memoizedTargetRefOrQuery) {
       setIsLoading(true);
       setData(null);
@@ -85,6 +74,7 @@ export function useCollection<T = any>(
         setIsLoading(false);
       },
       (error: FirestoreError) => {
+        // Attempt to get the path for better error context.
         const path: string | null = (memoizedTargetRefOrQuery as any)?._query?.path?.canonicalString() ?? (memoizedTargetRefOrQuery as any)?.path ?? null;
 
         if (path) {
@@ -104,8 +94,10 @@ export function useCollection<T = any>(
       }
     );
 
+    // Cleanup function to unsubscribe from the listener when the component unmounts
+    // or when the query changes.
     return () => unsubscribe();
-  }, [memoizedTargetRefOrQuery]);
+  }, [memoizedTargetRefOrQuery]); // Effect runs only when the memoized query object changes
 
   return { data, isLoading, error };
 }

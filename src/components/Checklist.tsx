@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
@@ -28,22 +29,24 @@ function debounce<F extends (...args: any[]) => any>(func: F, waitFor: number) {
 }
 
 export const Checklist = ({ categories }: ChecklistProps) => {
-  const { user, isUserLoading } = useUser();
-  const { firestore, areServicesAvailable } = useFirebase();
+  // useFirebase provides all necessary state, including user and service availability
+  const { user, firestore, areServicesAvailable, isUserLoading } = useFirebase();
   const { toast } = useToast();
 
   const [checkedItems, setCheckedItems] = useState<CheckedItemsState>({});
   const [isDataLoading, setIsDataLoading] = useState(true);
 
+  // Memoize the document reference. It will be created only when both firestore and user are available.
   const userChecklistRef = useMemo(() => {
     if (!firestore || !user) return null;
     return doc(firestore, `checklists/${user.uid}`);
-  }, [user, firestore]);
+  }, [firestore, user]);
 
   const debouncedUpdateFirestore = useCallback(
     debounce(async (itemsToUpdate: CheckedItemsState) => {
       if (!userChecklistRef) return;
       try {
+        // Use the memoized ref to update the document
         await setDoc(userChecklistRef, { items: itemsToUpdate }, { merge: true });
       } catch (error) {
         console.error("Firestore update failed:", error);
@@ -54,23 +57,26 @@ export const Checklist = ({ categories }: ChecklistProps) => {
         });
       }
     }, 1000),
-    [userChecklistRef, toast]
+    [userChecklistRef, toast] // Dependency on the memoized ref
   );
 
+  // Effect to load data from Firestore when the component mounts or user changes
   useEffect(() => {
-    const loadData = async () => {
-      if (!userChecklistRef) {
-        if (!isUserLoading && !user) {
-          setIsDataLoading(false);
-        }
-        return;
+    // Don't do anything if the ref isn't ready
+    if (!userChecklistRef) {
+      // If services are ready but still no ref, it means we are logged out, so stop loading.
+      if(areServicesAvailable) {
+        setIsDataLoading(false);
       }
-      setIsDataLoading(true);
+      return;
+    }
+    
+    setIsDataLoading(true);
+    const loadData = async () => {
       try {
         const docSnap = await getDoc(userChecklistRef);
         if (docSnap.exists()) {
-          const data = docSnap.data();
-          setCheckedItems(data.items || {});
+          setCheckedItems(docSnap.data().items || {});
         }
       } catch (error) {
         console.error("Failed to load checklist state from Firestore", error);
@@ -78,8 +84,9 @@ export const Checklist = ({ categories }: ChecklistProps) => {
         setIsDataLoading(false);
       }
     };
+    
     loadData();
-  }, [user, userChecklistRef, isUserLoading]);
+  }, [userChecklistRef, areServicesAvailable]); // Depend on the memoized ref
 
   const handleToggle = (itemId: string) => {
     const newCheckedItems = { ...checkedItems, [itemId]: !checkedItems[itemId] };
@@ -115,10 +122,9 @@ export const Checklist = ({ categories }: ChecklistProps) => {
             title: 'Chyba pri resetovaní',
             description: 'Nepodarilo sa resetovať kategóriu. Skúste to prosím znova.',
         });
-        // Revert optimistic update on failure - find a better way if this becomes complex
+        // In a real-world app, you might want to revert the state change here
       }
   };
-
 
   const getCategoryProgress = (category: ChecklistCategory) => {
     const totalItems = category.items.length;
@@ -127,7 +133,9 @@ export const Checklist = ({ categories }: ChecklistProps) => {
     return (completedItems / totalItems) * 100;
   };
 
-  if (isUserLoading || isDataLoading || !areServicesAvailable) {
+  // The FirebaseProvider already handles the main loading state.
+  // This loader is for the specific data of this component.
+  if (isDataLoading) {
       return (
           <div className="text-center py-16 flex flex-col items-center justify-center min-h-[50vh]">
               <Loader2 className="mx-auto h-12 w-12 animate-spin text-brand-bright-green" />
@@ -136,6 +144,8 @@ export const Checklist = ({ categories }: ChecklistProps) => {
       );
   }
 
+  // This should theoretically not be shown because the provider handles user state,
+  // but it's a good fallback.
   if (!user) {
       return (
            <div className="text-center py-16 bg-red-900/20 border border-red-500/50 rounded-lg">

@@ -40,16 +40,19 @@ const PostRow = ({ post }: { post: Post }) => {
 
 
 export default function AdminBlogPage() {
-    const { firestore, areServicesAvailable } = useFirebase();
+    // useFirebase now guarantees that firestore is available because the provider handles the loading state.
+    const { firestore } = useFirebase();
     const { toast } = useToast();
 
-    // The query is only created when firestore is available.
+    // The query is only created when firestore is available. `useMemo` ensures it's not recreated on every render.
     const postsCollectionQuery = useMemo((): Query | null => {
+        // This check is now a safeguard, but the provider should prevent this component
+        // from rendering until firestore is ready.
         if (!firestore) return null;
         return collection(firestore, 'blogPosts');
     }, [firestore]);
     
-    // The hook will now safely handle the null query until firestore is ready.
+    // The useCollection hook is now robust enough to handle an initially null query.
     const { data: posts, isLoading, error } = useCollection<Post>(postsCollectionQuery);
 
     if (error) {
@@ -66,8 +69,6 @@ export default function AdminBlogPage() {
         return [...posts].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     }, [posts]);
     
-    const showLoading = isLoading || !areServicesAvailable;
-
     return (
         <div className="container mx-auto px-4 py-12 max-w-6xl">
             <header className="flex flex-col md:flex-row justify-between items-start mb-10">
@@ -102,7 +103,7 @@ export default function AdminBlogPage() {
                     </div>
                 </div>
                  <div className="p-6">
-                    {showLoading ? (
+                    {isLoading ? (
                         <div className="text-center py-16">
                             <Loader2 className="mx-auto h-12 w-12 animate-spin text-brand-bright-green" />
                             <p className="mt-4 text-slate-300">Načítavam články z databázy...</p>
