@@ -1,9 +1,8 @@
-
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useUser, useFirebase } from '@/firebase';
-import { doc, setDoc, getDoc, writeBatch } from 'firebase/firestore';
+import { doc, setDoc, getDoc, writeBatch, collection, query, where, onSnapshot, DocumentData, FirestoreError, QuerySnapshot, CollectionReference, Query, Firestore } from 'firebase/firestore';
 import { ChecklistCategory } from '@/lib/checklist-data';
 import { Check, Circle } from 'lucide-react';
 import { cn } from '@/lib/utils';
