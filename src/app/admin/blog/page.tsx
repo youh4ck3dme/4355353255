@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { Post } from '@/lib/types';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
-import { PlusCircle, Edit, Loader2, RefreshCw, Newspaper, Info } from 'lucide-react';
+import { PlusCircle, Edit, Loader2, Newspaper, Info } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
 import GlassCard from '@/components/GlassCard';
 import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
