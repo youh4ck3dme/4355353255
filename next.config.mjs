@@ -1,5 +1,4 @@
 
-import type {NextConfig} from 'next';
 import createNextPwa from 'next-pwa';
 
 const withPWA = createNextPwa({
@@ -9,7 +8,8 @@ const withPWA = createNextPwa({
   disable: process.env.NODE_ENV === 'development',
 });
 
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   reactStrictMode: true,
   images: {
     remotePatterns: [
