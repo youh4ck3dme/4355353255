@@ -41,12 +41,11 @@ export interface InternalQuery extends Query<DocumentData> {
 /**
  * React hook to subscribe to a Firestore collection or query in real-time.
  * Handles nullable references/queries.
- * 
  *
  * IMPORTANT! YOU MUST MEMOIZE the inputted memoizedTargetRefOrQuery or BAD THINGS WILL HAPPEN
  * use useMemo to memoize it per React guidence.  Also make sure that it's dependencies are stable
  * references
- *  
+ *
  * @template T Optional type for document data. Defaults to any.
  * @param {CollectionReference<DocumentData> | Query<DocumentData> | null | undefined} memoizedTargetRefOrQuery -
  * The Firestore CollectionReference or Query. Waits if null/undefined.
@@ -78,8 +77,8 @@ export function useCollection<T = any>(
       memoizedTargetRefOrQuery,
       (snapshot: QuerySnapshot<DocumentData>) => {
         const results: ResultItemType[] = snapshot.docs.map(doc => ({
-            ...(doc.data() as T), 
-            id: doc.id 
+            ...(doc.data() as T),
+            id: doc.id
         }));
         setData(results);
         setError(null);
@@ -87,7 +86,7 @@ export function useCollection<T = any>(
       },
       (error: FirestoreError) => {
         const path: string | null = (memoizedTargetRefOrQuery as any)?._query?.path?.canonicalString() ?? (memoizedTargetRefOrQuery as any)?.path ?? null;
-        
+
         if (path) {
             const contextualError = new FirestorePermissionError({
               operation: 'list',
@@ -99,7 +98,7 @@ export function useCollection<T = any>(
         } else {
              setError(error);
         }
-        
+
         setData(null)
         setIsLoading(false)
       }
@@ -107,6 +106,6 @@ export function useCollection<T = any>(
 
     return () => unsubscribe();
   }, [memoizedTargetRefOrQuery]);
-  
+
   return { data, isLoading, error };
 }

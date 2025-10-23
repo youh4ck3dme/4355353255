@@ -61,8 +61,6 @@ export const Checklist = ({ categories }: ChecklistProps) => {
   useEffect(() => {
     const loadData = async () => {
       if (!userChecklistRef) {
-        // We are not ready to load data yet if the ref is null.
-        // We set loading to false only if we know we don't have a user.
         if (!isUserLoading && !user) {
           setIsDataLoading(false);
         }
@@ -89,7 +87,7 @@ export const Checklist = ({ categories }: ChecklistProps) => {
     setCheckedItems(newCheckedItems);
     debouncedUpdateFirestore(newCheckedItems);
   };
-  
+
   const handleResetCategory = async (category: ChecklistCategory) => {
       if (!firestore || !userChecklistRef) return;
 
@@ -97,7 +95,7 @@ export const Checklist = ({ categories }: ChecklistProps) => {
           acc[item.id] = false;
           return acc;
       }, {} as CheckedItemsState);
-      
+
       const newCheckedItems = { ...checkedItems, ...itemsToReset };
       setCheckedItems(newCheckedItems);
 
@@ -107,7 +105,7 @@ export const Checklist = ({ categories }: ChecklistProps) => {
         category.items.forEach(item => {
             updateData[`items.${item.id}`] = false;
         });
-        
+
         batch.update(userChecklistRef, updateData);
         await batch.commit();
 
@@ -118,9 +116,10 @@ export const Checklist = ({ categories }: ChecklistProps) => {
             title: 'Chyba pri resetovaní',
             description: 'Nepodarilo sa resetovať kategóriu. Skúste to prosím znova.',
         });
-        setCheckedItems(checkedItems); // Revert optimistic update on failure
+        // Revert optimistic update on failure - find a better way if this becomes complex
       }
   };
+
 
   const getCategoryProgress = (category: ChecklistCategory) => {
     const totalItems = category.items.length;
@@ -137,7 +136,7 @@ export const Checklist = ({ categories }: ChecklistProps) => {
           </div>
       );
   }
-  
+
   if (!user) {
       return (
            <div className="text-center py-16 bg-red-900/20 border border-red-500/50 rounded-lg">
@@ -155,7 +154,7 @@ export const Checklist = ({ categories }: ChecklistProps) => {
           <div key={category.id} className="bg-brand-light-gray dark:bg-brand-dark-teal/80 p-6 md:p-8 rounded-xl shadow-lg transition-all duration-300 hover:shadow-2xl hover:border-white/20 border border-transparent">
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-2xl font-bold text-brand-dark-teal dark:text-brand-bg">{category.title}</h2>
-                <button 
+                <button
                   onClick={() => handleResetCategory(category)}
                   className="text-xs text-slate-400 hover:text-red-400 hover:underline"
                   aria-label={`Resetovať kategóriu ${category.title}`}
@@ -164,8 +163,8 @@ export const Checklist = ({ categories }: ChecklistProps) => {
                 </button>
             </div>
              <div className="w-full bg-slate-300 dark:bg-slate-700 rounded-full h-2.5 mb-6 overflow-hidden">
-                <div 
-                    className="bg-brand-bright-green h-2.5 rounded-full transition-all duration-500 ease-out" 
+                <div
+                    className="bg-brand-bright-green h-2.5 rounded-full transition-all duration-500 ease-out"
                     style={{ width: `${progress}%` }}
                 ></div>
             </div>

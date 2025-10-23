@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -8,7 +9,7 @@ import { PlusCircle, Edit, Loader2, Newspaper, Info } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
 import GlassCard from '@/components/GlassCard';
 import { useCollection, useFirebase } from '@/firebase';
-import { collection } from 'firebase/firestore';
+import { collection, Query } from 'firebase/firestore';
 import { useMemo } from 'react';
 
 const PostRow = ({ post }: { post: Post }) => {
@@ -42,12 +43,12 @@ export default function AdminBlogPage() {
     const { firestore, areServicesAvailable } = useFirebase();
     const { toast } = useToast();
 
-    const postsCollectionRef = useMemo(() => {
+    const postsCollectionQuery = useMemo((): Query | null => {
         if (!firestore) return null;
         return collection(firestore, 'blogPosts');
     }, [firestore]);
     
-    const { data: posts, isLoading, error } = useCollection<Post>(postsCollectionRef);
+    const { data: posts, isLoading, error } = useCollection<Post>(postsCollectionQuery);
 
     if (error) {
         console.error("Failed to fetch posts:", error);

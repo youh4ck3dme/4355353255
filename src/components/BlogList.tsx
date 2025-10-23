@@ -9,7 +9,7 @@ import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import GlassCard from './GlassCard';
 import { useCollection, useFirebase } from '@/firebase';
 import { Loader2 } from 'lucide-react';
-import { collection, query, where } from 'firebase/firestore';
+import { collection, query, where, Query } from 'firebase/firestore';
 
 
 const ALL_CATEGORIES = ['Tipy na sťahovanie', 'Upratovanie', 'Novinky', 'Vypratávanie'];
@@ -26,16 +26,15 @@ export const BlogList = ({ initialPosts, initialCategory }: { initialPosts: Post
     const postsCollectionQuery = useMemo(() => {
         if (!firestore) return null; // Wait for firestore to be available
         const postsCollectionRef = collection(firestore, 'blogPosts');
+        let q: Query = query(postsCollectionRef, where('status', '==', 'published'));
         if (selectedCategory) {
-             return query(postsCollectionRef, where('tags', 'array-contains', selectedCategory), where('status', '==', 'published'));
+             q = query(q, where('tags', 'array-contains', selectedCategory));
         }
-        return query(postsCollectionRef, where('status', '==', 'published'));
+        return q;
     }, [firestore, selectedCategory]);
-    
-    // We can use the initialPosts for the first render, and then update with live data.
-    // This improves SEO and initial load performance.
+
     const { data: livePosts, isLoading: areLivePostsLoading, error } = useCollection<Post>(postsCollectionQuery);
-    
+
     useEffect(() => {
         const categoryFromUrl = searchParams.get('category');
         setSelectedCategory(categoryFromUrl || null);
@@ -49,7 +48,7 @@ export const BlogList = ({ initialPosts, initialCategory }: { initialPosts: Post
         } else {
             current.delete('category');
         }
-        
+
         const search = current.toString();
         const query = search ? `?${search}` : "";
 
@@ -60,19 +59,19 @@ export const BlogList = ({ initialPosts, initialCategory }: { initialPosts: Post
 
     const filteredBySearch = useMemo(() => {
         if (!searchQuery) return postsToDisplay;
-        return postsToDisplay.filter(post => 
+        return postsToDisplay.filter(post =>
             post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
             (post.excerpt && post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()))
         );
     }, [postsToDisplay, searchQuery]);
-    
+
     const showLoading = areLivePostsLoading || !areServicesAvailable;
 
     return (
         <div>
             <div className="mb-8 max-w-2xl mx-auto flex flex-col items-center gap-4">
                  <div className="flex flex-wrap justify-center gap-2">
-                    <button 
+                    <button
                         onClick={() => handleCategoryClick(null)}
                         className={cn(
                             "px-4 py-2 text-sm font-bold rounded-full transition-colors glass-button-sm",
@@ -82,7 +81,7 @@ export const BlogList = ({ initialPosts, initialCategory }: { initialPosts: Post
                         Všetky
                     </button>
                     {ALL_CATEGORIES.map(category => (
-                        <button 
+                        <button
                             key={category}
                             onClick={() => handleCategoryClick(category)}
                             className={cn(
@@ -99,8 +98,8 @@ export const BlogList = ({ initialPosts, initialCategory }: { initialPosts: Post
                     placeholder="Hľadať v článkoch..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full max-w-lg p-3 border-2 border-white/20 rounded-lg focus:border-brand-bright-green 
-                               focus:ring focus:ring-brand-bright-green/50 outline-none transition-colors 
+                    className="w-full max-w-lg p-3 border-2 border-white/20 rounded-lg focus:border-brand-bright-green
+                               focus:ring focus:ring-brand-bright-green/50 outline-none transition-colors
                                bg-white/10 backdrop-blur-sm text-white placeholder-slate-400"
                     aria-label="Vyhľadávanie článkov"
                 />
