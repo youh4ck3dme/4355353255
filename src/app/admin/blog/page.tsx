@@ -8,8 +8,9 @@ import { cn } from '@/lib/utils';
 import { PlusCircle, Edit, Loader2, Newspaper, Info } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
 import GlassCard from '@/components/GlassCard';
-import { useFirestore, useCollection, useMemoFirebase, useFirebase } from '@/firebase';
+import { useCollection, useFirebase } from '@/firebase';
 import { collection } from 'firebase/firestore';
+import { useMemo } from 'react';
 
 const PostRow = ({ post }: { post: Post }) => {
     return (
@@ -39,11 +40,11 @@ const PostRow = ({ post }: { post: Post }) => {
 
 
 export default function AdminBlogPage() {
-    const { firestore, areServicesAvailable } = useFirebase();
+    const { firestore } = useFirebase();
     const { toast } = useToast();
 
-    const postsCollectionRef = useMemoFirebase(() => {
-        if (!firestore) return null; // Wait for firestore to be available
+    const postsCollectionRef = useMemo(() => {
+        if (!firestore) return null;
         return collection(firestore, 'blogPosts');
     }, [firestore]);
     
@@ -59,8 +60,6 @@ export default function AdminBlogPage() {
     }
 
     const sortedPosts = posts ? [...posts].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()) : [];
-
-    const showLoading = isLoading || !areServicesAvailable;
 
     return (
         <div className="container mx-auto px-4 py-12 max-w-6xl">
@@ -96,7 +95,7 @@ export default function AdminBlogPage() {
                     </div>
                 </div>
                  <div className="p-6">
-                    {showLoading ? (
+                    {isLoading ? (
                         <div className="text-center py-16">
                             <Loader2 className="mx-auto h-12 w-12 animate-spin text-brand-bright-green" />
                             <p className="mt-4 text-slate-300">Načítavam články z databázy...</p>

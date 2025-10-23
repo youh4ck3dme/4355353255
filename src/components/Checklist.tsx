@@ -1,8 +1,8 @@
 
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import { useUser, useFirestore, useMemoFirebase } from '@/firebase/client-provider';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useUser, useFirestore } from '@/firebase/client-provider';
 import { doc, setDoc, getDoc, writeBatch } from 'firebase/firestore';
 import debounce from 'lodash.debounce';
 import { ChecklistCategory } from '@/lib/checklist-data';
@@ -25,7 +25,7 @@ export const Checklist = ({ categories }: ChecklistProps) => {
   const [checkedItems, setCheckedItems] = useState<CheckedItemsState>({});
   const [isDataLoading, setIsDataLoading] = useState(true);
 
-  const userChecklistRef = useMemoFirebase(() => {
+  const userChecklistRef = useMemo(() => {
     if (!user || !firestore) return null;
     return doc(firestore, `checklists/${user.uid}`);
   }, [user, firestore]);
@@ -44,7 +44,7 @@ export const Checklist = ({ categories }: ChecklistProps) => {
             description: 'Nepodarilo sa uložiť váš postup. Skúste to prosím znova.',
         });
       }
-    }, 1000), // Increased debounce time to 1s
+    }, 1000),
     [userChecklistRef, toast]
   );
 
@@ -65,7 +65,6 @@ export const Checklist = ({ categories }: ChecklistProps) => {
           setIsDataLoading(false);
         }
       } else if (!isUserLoading) {
-          // User is not logged in or still loading, but we are done checking
           setIsDataLoading(false);
       }
     };
@@ -89,7 +88,6 @@ export const Checklist = ({ categories }: ChecklistProps) => {
       const newCheckedItems = { ...checkedItems, ...itemsToReset };
       setCheckedItems(newCheckedItems);
 
-      // Use a batched write for resetting a category for efficiency
       try {
         const batch = writeBatch(firestore);
         const updateData: { [key: string]: boolean } = {};
@@ -107,7 +105,6 @@ export const Checklist = ({ categories }: ChecklistProps) => {
             title: 'Chyba pri resetovaní',
             description: 'Nepodarilo sa resetovať kategóriu. Skúste to prosím znova.',
         });
-        // Revert UI change on failure
         setCheckedItems(checkedItems);
       }
   };
@@ -132,7 +129,7 @@ export const Checklist = ({ categories }: ChecklistProps) => {
       return (
            <div className="text-center py-16 bg-red-900/20 border border-red-500/50 rounded-lg">
                 <h3 className="text-2xl font-bold text-red-300">Personalizovaný Checklist</h3>
-                <p className="mt-2 text-slate-400">Pre ukladanie vášho postupu je potrebná anonymná relácia. Obnovte stránku pre jej vytvorenie.</p>
+                <p className="mt-2 text-slate-400">Pre ukladanie vášho postupu je potrebná anonymná relácia. Ak sa nenačítava, obnovte stránku.</p>
            </div>
       )
   }

@@ -7,7 +7,7 @@ import { BlogCard } from './BlogCard';
 import { cn } from '@/lib/utils';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import GlassCard from './GlassCard';
-import { useFirestore, useCollection, useMemoFirebase, useFirebase } from '@/firebase';
+import { useCollection, useFirebase } from '@/firebase';
 import { Loader2 } from 'lucide-react';
 import { collection, query, where } from 'firebase/firestore';
 
@@ -23,15 +23,15 @@ export const BlogList = ({ initialPosts, initialCategory }: { initialPosts: Post
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState<string | null>(initialCategory || null);
 
-    const postsCollectionRef = useMemoFirebase(() => {
-        if (!areServicesAvailable || !firestore) return null;
+    const postsCollectionRef = useMemo(() => {
+        if (!firestore) return null;
         return collection(firestore, 'blogPosts');
-    }, [firestore, areServicesAvailable]);
+    }, [firestore]);
     
     // We can use the initialPosts for the first render, and then update with live data.
     // This improves SEO and initial load performance.
     const { data: livePosts, isLoading: areLivePostsLoading } = useCollection<Post>(
-        useMemoFirebase(() => {
+        useMemo(() => {
             if (!postsCollectionRef) return null;
             if (selectedCategory) {
                  return query(postsCollectionRef, where('tags', 'array-contains', selectedCategory), where('status', '==', 'published'));

@@ -1,11 +1,12 @@
 
 'use client';
 
-import React, { DependencyList, createContext, useContext, ReactNode, useMemo, useState, useEffect } from 'react';
+import React, { createContext, useContext, ReactNode, useMemo, useState, useEffect } from 'react';
 import { FirebaseApp } from 'firebase/app';
 import { Firestore } from 'firebase/firestore';
 import { Auth, User, onAuthStateChanged, signInAnonymously } from 'firebase/auth';
-import { FirebaseErrorListener } from '@/components/FirebaseErrorListener'
+import { FirebaseErrorListener } from '@/components/FirebaseErrorListener';
+import { Loader2 } from 'lucide-react';
 
 interface UserAuthState {
   user: User | null;
@@ -52,7 +53,14 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
     userError: null,
   });
 
+  const areServicesAvailable = !!(firebaseApp && firestore && auth);
+
   useEffect(() => {
+    if (!areServicesAvailable) {
+      setUserAuthState({ user: null, isUserLoading: false, userError: new Error("Firebase services not fully initialized.") });
+      return;
+    }
+    
     if (!auth) {
       setUserAuthState({ user: null, isUserLoading: false, userError: new Error("Auth service not provided.") });
       return;
@@ -79,18 +87,26 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
       }
     );
     return () => unsubscribe();
-  }, [auth]);
+  }, [auth, areServicesAvailable]);
 
   const contextValue = useMemo((): FirebaseContextState => {
-    const servicesAvailable = !!(firebaseApp && firestore && auth);
     return {
-      areServicesAvailable: servicesAvailable,
-      firebaseApp: servicesAvailable ? firebaseApp : null,
-      firestore: servicesAvailable ? firestore : null,
-      auth: servicesAvailable ? auth : null,
+      areServicesAvailable,
+      firebaseApp: areServicesAvailable ? firebaseApp : null,
+      firestore: areServicesAvailable ? firestore : null,
+      auth: areServicesAvailable ? auth : null,
       ...userAuthState
     };
-  }, [firebaseApp, firestore, auth, userAuthState]);
+  }, [firebaseApp, firestore, auth, userAuthState, areServicesAvailable]);
+
+  if (!areServicesAvailable || userAuthState.isUserLoading) {
+    return (
+      <div className="w-full min-h-screen flex flex-col items-center justify-center text-center p-4">
+        <Loader2 className="h-12 w-12 text-brand-bright-green animate-spin mb-4" />
+        <p className="text-slate-300">Inicializujem služby...</p>
+      </div>
+    );
+  }
 
   return (
     <FirebaseContext.Provider value={contextValue}>
@@ -122,15 +138,6 @@ export const useFirebaseApp = (): FirebaseApp | null => {
   const { firebaseApp } = useFirebase();
   return firebaseApp;
 };
-
-type MemoFirebase <T> = T & {__memo?: boolean};
-
-export function useMemoFirebase<T>(factory: () => T, deps: DependencyList): T | (MemoFirebase<T>) {
-  const memoized = useMemo(factory, deps);
-  if(typeof memoized !== 'object' || memoized === null) return memoized;
-  (memoized as MemoFirebase<T>).__memo = true;
-  return memoized;
-}
 
 export const useUser = (): UserHookResult => {
   const { user, isUserLoading, userError } = useFirebase();
