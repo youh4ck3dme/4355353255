@@ -30,6 +30,7 @@ export const Header = () => {
     return () => document.body.classList.remove('overflow-hidden');
   }, [isMenuOpen]);
   
+  // Close menu on route change
   useEffect(() => {
     setIsMenuOpen(false);
   }, [pathname]);
@@ -55,7 +56,7 @@ export const Header = () => {
                 key={link.href}
                 href={link.href} 
                 className={cn(
-                  "relative text-lg text-white hover:text-brand-bright-green transition-colors pb-1",
+                  "relative text-sm font-medium text-white hover:text-brand-bright-green transition-colors pb-1",
                   { "text-brand-bright-green font-bold": pathname.startsWith(link.href) && link.href !== '/' || pathname === link.href }
                 )}
               >
@@ -66,9 +67,9 @@ export const Header = () => {
               </Link>
             ))}
              <Link href="/admin" aria-label="Admin Login" className={cn("relative text-white hover:text-brand-bright-green transition-colors pb-1 pl-4", { "text-brand-bright-green": pathname.startsWith('/admin') })}>
-                <KeyRound size={22} />
+                <KeyRound size={20} />
                 {pathname.startsWith('/admin') && (
-                  <span className="absolute bottom-0 left-4 w-[22px] h-0.5 bg-brand-bright-green animate-fade-in"></span>
+                  <span className="absolute bottom-0 left-4 w-5 h-0.5 bg-brand-bright-green animate-fade-in"></span>
                 )}
             </Link>
           </nav>
@@ -85,13 +86,18 @@ export const Header = () => {
         </div>
       </header>
 
+      {/* Mobile Menu Overlay */}
       <div
         className={cn(
-          "fixed inset-0 z-50 bg-brand-dark-teal/95 dark:bg-black/90 backdrop-blur-lg transition-opacity duration-500 sm:hidden",
-          isMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+          "fixed inset-0 z-[100] bg-brand-dark-teal/95 dark:bg-black/90 backdrop-blur-lg transition-all duration-300 sm:hidden",
+          isMenuOpen ? "opacity-100 visible" : "opacity-0 invisible"
         )}
+        onClick={() => setIsMenuOpen(false)}
       >
-        <div className="container mx-auto px-4 h-full flex flex-col">
+        <div
+          className="container mx-auto px-4 h-full flex flex-col"
+          onClick={(e) => e.stopPropagation()}
+        >
           <div className="h-16 flex items-center justify-between">
              <Link href="/" className="flex items-center">
               <Image 
@@ -132,7 +138,7 @@ export const Header = () => {
                   pathname.startsWith(link.href) ? "text-brand-bright-green" : "text-white hover:text-brand-bright-green",
                   isMenuOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4",
                 )}
-                style={{ transitionDelay: `${(index + 1) * 100}ms` }}
+                style={{ transitionDelay: `${(index + 1) * 50}ms` }}
               >
                 {link.label}
               </Link>
@@ -145,7 +151,7 @@ export const Header = () => {
                   pathname.startsWith('/admin') ? "text-brand-bright-green" : "text-white hover:text-brand-bright-green",
                   isMenuOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4",
                 )}
-                style={{ transitionDelay: `${(navLinks.length + 1) * 100}ms` }}
+                style={{ transitionDelay: `${(navLinks.length + 1) * 50}ms` }}
               >
                 <KeyRound size={28} /> Admin
               </Link>
