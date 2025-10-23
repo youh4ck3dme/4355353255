@@ -5,10 +5,10 @@
   "private": "true",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "clean": "rm -rf .next",
+    "build": "npm run clean && next build",
     "start": "next start",
-    "lint": "next lint",
-    "clean": "rm -rf .next"
+    "lint": "next lint"
   },
   "dependencies": {
     "react": "^18",
