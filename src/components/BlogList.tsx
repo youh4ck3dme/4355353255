@@ -29,25 +29,27 @@ export const BlogList = ({ initialPosts, initialCategory }: { initialPosts: Post
         setSelectedCategory(categoryFromUrl || null);
     }, [searchParams]);
 
-     useEffect(() => {
-        if (!firestore) return;
-
-        const postsCollectionRef = collection(firestore, 'blogPosts');
-        let q: Query;
+     const postsQuery = useMemo(() => {
+        if (!firestore) return null;
 
         const queryConstraints = [where('status', '==', 'published')];
-        
         if (selectedCategory) {
             queryConstraints.push(where('tags', 'array-contains', selectedCategory));
         }
-        
         queryConstraints.push(orderBy('date', 'desc'));
 
-        q = query(postsCollectionRef, ...queryConstraints);
+        return query(collection(firestore, 'blogPosts'), ...queryConstraints);
+    }, [firestore, selectedCategory]);
+
+     useEffect(() => {
+        if (!postsQuery) {
+            if(firestore) setIsLoading(false);
+            return;
+        };
         
         setIsLoading(true);
         const unsubscribe = onSnapshot(
-            q,
+            postsQuery,
             (snapshot) => {
                 const results: Post[] = snapshot.docs.map((doc) => ({
                     ...(doc.data() as Omit<Post, 'slug'>),
@@ -64,7 +66,7 @@ export const BlogList = ({ initialPosts, initialCategory }: { initialPosts: Post
         );
 
         return () => unsubscribe();
-    }, [firestore, selectedCategory]);
+    }, [postsQuery, firestore]);
     
     const handleCategoryClick = (category: string | null) => {
         const current = new URLSearchParams(Array.from(searchParams.entries()));
