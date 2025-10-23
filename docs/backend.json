@@ -1,3 +1,4 @@
+
 {
   "entities": {
     "Checklist": {
@@ -11,11 +12,14 @@
           "description": "Unique identifier for the user who owns this checklist. This is derived from Firebase Authentication UID.",
           "format": "uuid"
         },
-        "categories": {
-          "type": "array",
-          "description": "An array of checklist categories, each containing a list of items.",
-          "items": {
-            "type": "string"
+        "items": {
+          "type": "object",
+          "description": "A map of checklist item IDs to their checked status.",
+          "propertyNames": {
+            "pattern": "^[a-zA-Z0-9-]+$"
+          },
+          "additionalProperties": {
+            "type": "boolean"
           }
         },
         "lastUpdated": {
@@ -26,7 +30,7 @@
       },
       "required": [
         "userId",
-        "categories"
+        "items"
       ]
     }
   },

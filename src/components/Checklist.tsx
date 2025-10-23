@@ -1,9 +1,9 @@
 
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useUser, useFirestore, useMemoFirebase } from '@/firebase/client-provider';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, writeBatch } from 'firebase/firestore';
 import debounce from 'lodash.debounce';
 import { ChecklistCategory } from '@/lib/checklist-data';
 import { Check, Circle } from 'lucide-react';
@@ -30,13 +30,12 @@ export const Checklist = ({ categories }: ChecklistProps) => {
     return doc(firestore, `checklists/${user.uid}`);
   }, [user, firestore]);
 
-  // --- Debounced Firestore update ---
+  // --- Debounced Firestore update for single item toggles ---
   const debouncedUpdateFirestore = useCallback(
     debounce(async (itemsToUpdate: CheckedItemsState) => {
       if (!userChecklistRef) return;
       try {
-        // We use setDoc with merge: true which is equivalent to a batched update
-        await setDoc(userChecklistRef, { items: itemsToUpdate, lastUpdated: new Date() }, { merge: true });
+        await setDoc(userChecklistRef, { items: itemsToUpdate }, { merge: true });
       } catch (error) {
         console.error("Firestore update failed:", error);
         toast({
@@ -45,7 +44,7 @@ export const Checklist = ({ categories }: ChecklistProps) => {
             description: 'Nepodarilo sa uložiť váš postup. Skúste to prosím znova.',
         });
       }
-    }, 500),
+    }, 1000), // Increased debounce time to 1s
     [userChecklistRef, toast]
   );
 
@@ -73,13 +72,14 @@ export const Checklist = ({ categories }: ChecklistProps) => {
   }, [user, isUserLoading, userChecklistRef]);
 
   const handleToggle = (itemId: string) => {
-    const newCheckedState = !checkedItems[itemId];
-    const newCheckedItems = { ...checkedItems, [itemId]: newCheckedState };
+    const newCheckedItems = { ...checkedItems, [itemId]: !checkedItems[itemId] };
     setCheckedItems(newCheckedItems);
     debouncedUpdateFirestore(newCheckedItems);
   };
   
-  const handleResetCategory = (category: ChecklistCategory) => {
+  const handleResetCategory = async (category: ChecklistCategory) => {
+      if (!firestore || !userChecklistRef) return;
+
       const itemsToReset = category.items.reduce((acc, item) => {
           acc[item.id] = false;
           return acc;
@@ -87,16 +87,36 @@ export const Checklist = ({ categories }: ChecklistProps) => {
       
       const newCheckedItems = { ...checkedItems, ...itemsToReset };
       setCheckedItems(newCheckedItems);
-      debouncedUpdateFirestore(newCheckedItems);
+
+      // Use a batched write for resetting a category for efficiency
+      try {
+        const batch = writeBatch(firestore);
+        const updateData: { [key: string]: boolean } = {};
+        category.items.forEach(item => {
+            updateData[`items.${item.id}`] = false;
+        });
+        
+        batch.update(userChecklistRef, updateData);
+        await batch.commit();
+
+      } catch (error) {
+         console.error("Firestore batch update failed:", error);
+         toast({
+            variant: 'destructive',
+            title: 'Chyba pri resetovaní',
+            description: 'Nepodarilo sa resetovať kategóriu. Skúste to prosím znova.',
+        });
+        // Revert UI change on failure
+        setCheckedItems(checkedItems);
+      }
   };
 
-  const getCategoryProgress = useMemo(() => (category: ChecklistCategory) => {
+  const getCategoryProgress = (category: ChecklistCategory) => {
     const totalItems = category.items.length;
     if (totalItems === 0) return 0;
     const completedItems = category.items.filter(item => checkedItems[item.id]).length;
     return (completedItems / totalItems) * 100;
-  }, [checkedItems]);
-
+  };
 
   if (isUserLoading || isDataLoading) {
       return (
