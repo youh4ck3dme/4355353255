@@ -65,6 +65,7 @@ export const Checklist = ({ categories }: ChecklistProps) => {
           setIsDataLoading(false);
         }
       } else if (!isUserLoading) {
+          // User is not logged in or still loading, but we are done checking
           setIsDataLoading(false);
       }
     };
@@ -130,8 +131,8 @@ export const Checklist = ({ categories }: ChecklistProps) => {
   if (!user) {
       return (
            <div className="text-center py-16 bg-red-900/20 border border-red-500/50 rounded-lg">
-                <h3 className="text-2xl font-bold text-red-300">Chyba pri autentifikácii</h3>
-                <p className="mt-2 text-slate-400">Na používanie checklistu je potrebné prihlásenie. Skúste obnoviť stránku.</p>
+                <h3 className="text-2xl font-bold text-red-300">Personalizovaný Checklist</h3>
+                <p className="mt-2 text-slate-400">Pre ukladanie vášho postupu je potrebná anonymná relácia. Obnovte stránku pre jej vytvorenie.</p>
            </div>
       )
   }

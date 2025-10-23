@@ -47,6 +47,13 @@ export interface UserHookResult { // Renamed from UserAuthHookResult for consist
 // React Context
 export const FirebaseContext = createContext<FirebaseContextState | undefined>(undefined);
 
+interface FirebaseProviderProps {
+    children: ReactNode;
+    firebaseApp: FirebaseApp | null;
+    firestore: Firestore | null;
+    auth: Auth | null;
+}
+
 /**
  * FirebaseProvider manages and provides Firebase services and user authentication state.
  */
@@ -77,7 +84,7 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
         if (firebaseUser) {
            setUserAuthState({ user: firebaseUser, isUserLoading: false, userError: null });
         } else {
-            // If no user, sign in anonymously
+            // If no user, sign in anonymously for session-based features like checklist
             try {
                 const userCredential = await signInAnonymously(auth);
                 setUserAuthState({ user: userCredential.user, isUserLoading: false, userError: null });

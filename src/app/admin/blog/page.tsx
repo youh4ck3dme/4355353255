@@ -1,7 +1,6 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Post } from '@/lib/types';
 import { format } from 'date-fns';
@@ -44,22 +43,20 @@ export default function AdminBlogPage() {
     const { toast } = useToast();
 
     const postsCollectionRef = useMemoFirebase(() => {
-        if (!firestore || !areServicesAvailable) return null;
+        if (!firestore) return null; // Wait for firestore to be available
         return collection(firestore, 'blogPosts');
-    }, [firestore, areServicesAvailable]);
+    }, [firestore]);
     
     const { data: posts, isLoading, error } = useCollection<Post>(postsCollectionRef);
 
-    useEffect(() => {
-        if(error) {
-            console.error("Failed to fetch posts:", error);
-            toast({
-                variant: 'destructive',
-                title: 'Chyba pri načítaní článkov',
-                description: 'Nepodarilo sa načítať zoznam článkov z databázy.',
-            });
-        }
-    }, [error, toast]);
+    if (error) {
+        console.error("Failed to fetch posts:", error);
+        toast({
+            variant: 'destructive',
+            title: 'Chyba pri načítaní článkov',
+            description: 'Nepodarilo sa načítať zoznam článkov z databázy.',
+        });
+    }
 
     const sortedPosts = posts ? [...posts].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()) : [];
 

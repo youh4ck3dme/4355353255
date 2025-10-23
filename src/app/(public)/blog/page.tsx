@@ -71,26 +71,10 @@ export default async function BlogIndexPage({ searchParams }: { searchParams?: {
 
       {featuredPost && <FeaturedPostCard post={featuredPost} />}
 
-      {otherPosts.length > 0 && (
-        <>
-          <h2 className="text-2xl font-bold mt-12 mb-6 text-center text-brand-dark-teal dark:text-brand-bg text-shadow-3d-green">
-            Ďalšie články
-          </h2>
-          <BlogList initialPosts={otherPosts} initialCategory={initialCategory} />
-        </>
-      )}
-
-      {posts.length === 1 && featuredPost && (
-        <p className="text-center text-brand-secondary-grey py-16">
-          Zatiaľ tu máme len jeden článok. Ďalšie čoskoro pribudnú!
-        </p>
-      )}
-      
-      {posts.length === 0 && (
-         <p className="text-center text-brand-secondary-grey py-16">
-          Momentálne tu nie sú žiadne články.
-        </p>
-      )}
+      <h2 className="text-2xl font-bold mt-12 mb-6 text-center text-brand-dark-teal dark:text-brand-bg text-shadow-3d-green">
+        Ďalšie články
+      </h2>
+      <BlogList initialPosts={otherPosts} initialCategory={initialCategory} />
     </div>
   );
 }
