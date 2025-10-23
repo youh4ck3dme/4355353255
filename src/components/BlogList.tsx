@@ -23,22 +23,18 @@ export const BlogList = ({ initialPosts, initialCategory }: { initialPosts: Post
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState<string | null>(initialCategory || null);
 
-    const postsCollectionRef = useMemo(() => {
+    const postsCollectionQuery = useMemo(() => {
         if (!firestore) return null;
-        return collection(firestore, 'blogPosts');
-    }, [firestore]);
+        const postsCollectionRef = collection(firestore, 'blogPosts');
+        if (selectedCategory) {
+             return query(postsCollectionRef, where('tags', 'array-contains', selectedCategory), where('status', '==', 'published'));
+        }
+        return query(postsCollectionRef, where('status', '==', 'published'));
+    }, [firestore, selectedCategory]);
     
     // We can use the initialPosts for the first render, and then update with live data.
     // This improves SEO and initial load performance.
-    const { data: livePosts, isLoading: areLivePostsLoading } = useCollection<Post>(
-        useMemo(() => {
-            if (!postsCollectionRef) return null;
-            if (selectedCategory) {
-                 return query(postsCollectionRef, where('tags', 'array-contains', selectedCategory), where('status', '==', 'published'));
-            }
-            return query(postsCollectionRef, where('status', '==', 'published'));
-        }, [postsCollectionRef, selectedCategory])
-    );
+    const { data: livePosts, isLoading: areLivePostsLoading } = useCollection<Post>(postsCollectionQuery);
     
     useEffect(() => {
         const categoryFromUrl = searchParams.get('category');

@@ -40,7 +40,7 @@ const PostRow = ({ post }: { post: Post }) => {
 
 
 export default function AdminBlogPage() {
-    const { firestore } = useFirebase();
+    const { firestore, areServicesAvailable } = useFirebase();
     const { toast } = useToast();
 
     const postsCollectionRef = useMemo(() => {
@@ -60,6 +60,8 @@ export default function AdminBlogPage() {
     }
 
     const sortedPosts = posts ? [...posts].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()) : [];
+    
+    const showLoading = isLoading || !areServicesAvailable;
 
     return (
         <div className="container mx-auto px-4 py-12 max-w-6xl">
@@ -95,7 +97,7 @@ export default function AdminBlogPage() {
                     </div>
                 </div>
                  <div className="p-6">
-                    {isLoading ? (
+                    {showLoading ? (
                         <div className="text-center py-16">
                             <Loader2 className="mx-auto h-12 w-12 animate-spin text-brand-bright-green" />
                             <p className="mt-4 text-slate-300">Načítavam články z databázy...</p>

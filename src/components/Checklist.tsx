@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { useUser, useFirestore } from '@/firebase/client-provider';
+import { useUser, useFirebase } from '@/firebase/client-provider';
 import { doc, setDoc, getDoc, writeBatch } from 'firebase/firestore';
 import debounce from 'lodash.debounce';
 import { ChecklistCategory } from '@/lib/checklist-data';
@@ -19,7 +19,7 @@ type CheckedItemsState = Record<string, boolean>;
 
 export const Checklist = ({ categories }: ChecklistProps) => {
   const { user, isUserLoading } = useUser();
-  const firestore = useFirestore();
+  const { firestore, areServicesAvailable } = useFirebase();
   const { toast } = useToast();
 
   const [checkedItems, setCheckedItems] = useState<CheckedItemsState>({});
@@ -64,12 +64,12 @@ export const Checklist = ({ categories }: ChecklistProps) => {
         } finally {
           setIsDataLoading(false);
         }
-      } else if (!isUserLoading) {
+      } else if (!isUserLoading && areServicesAvailable) {
           setIsDataLoading(false);
       }
     };
     loadData();
-  }, [user, isUserLoading, userChecklistRef]);
+  }, [user, isUserLoading, userChecklistRef, areServicesAvailable]);
 
   const handleToggle = (itemId: string) => {
     const newCheckedItems = { ...checkedItems, [itemId]: !checkedItems[itemId] };
@@ -116,7 +116,7 @@ export const Checklist = ({ categories }: ChecklistProps) => {
     return (completedItems / totalItems) * 100;
   };
 
-  if (isUserLoading || isDataLoading) {
+  if (isUserLoading || !areServicesAvailable || isDataLoading) {
       return (
           <div className="text-center py-16 flex flex-col items-center justify-center min-h-[50vh]">
               <Loader2 className="mx-auto h-12 w-12 animate-spin text-brand-bright-green" />
