@@ -1,4 +1,3 @@
-
 # VI&MO Blog Frontend (Next.js)
 
 Toto je frontendová časť pre VI&MO Blog, postavená na Next.js, Tailwind CSS a Firebase. Aplikácia slúži na zobrazovanie obsahu (blogových príspevkov), ktorý je spravovaný cez administrátorský panel a ukladaný vo Firestore.
@@ -20,13 +19,10 @@ Toto je frontendová časť pre VI&MO Blog, postavená na Next.js, Tailwind CSS 
     ```
 
 2.  **Nastavte environmentálne premenné:**
-    Vytvorte súbor `.env.local` v koreňovom adresári a pridajte do neho potrebné premenné.
+    Skopírujte súbor `.env.example` (ak existuje) alebo vytvorte nový súbor s názvom `.env` v koreňovom adresári a vložte do neho nasledujúci obsah. Nahraďte `vasetajneheslo` bezpečným heslom.
     ```env
-    # Základná URL adresa pre lokálne prostredie (používa sa pre sitemapu a meta dáta)
-    NEXT_PUBLIC_BASE_URL=http://localhost:3000
-
     # Heslo pre prístup do administrátorskej sekcie
-    NEXT_PUBLIC_ADMIN_PASSWORD=vasetajneheslo
+    NEXT_PUBLIC_ADMIN_PASSWORD="vasetajneheslo"
     ```
 
 3.  **Spustite vývojový server:**
@@ -39,10 +35,7 @@ Toto je frontendová časť pre VI&MO Blog, postavená na Next.js, Tailwind CSS 
 ## Build a Nasadenie na Produkciu
 
 1.  **Nastavte produkčné environment premenné:**
-    Pred nasadením je **nevyhnutné** nastaviť environmentálne premenné priamo v nastaveniach vášho hostingového providera (napr. Vercel, Netlify, Firebase Hosting).
-    
-    - `NEXT_PUBLIC_BASE_URL`: Nastavte na vašu finálnu produkčnú doménu (napr. `https://app.viandmo.com`).
-    - `NEXT_PUBLIC_ADMIN_PASSWORD`: Nastavte na silné a unikátne heslo.
+    Pred nasadením je **nevyhnutné** nastaviť environmentálnu premennú `NEXT_PUBLIC_ADMIN_PASSWORD` priamo v nastaveniach vášho hostingového providera (napr. Vercel, Netlify, Firebase Hosting). **Nikdy nenechávajte v produkcii predvolené heslo!**
 
 2.  **Vytvorenie produkčného buildu:**
     Tento príkaz najprv vyčistí staré buildy (`npm run clean`) a potom vytvorí novú optimalizovanú verziu aplikácie pripravenú na nasadenie.
