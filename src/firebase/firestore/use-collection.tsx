@@ -85,6 +85,13 @@ export function useCollection<T = any>(
         setIsLoading(false);
       },
       (error: FirestoreError) => {
+        // This check is defensive. memoizedTargetRefOrQuery should not be null here.
+        if (!memoizedTargetRefOrQuery) {
+          setError(new Error("Firestore query reference became null unexpectedly."));
+          setIsLoading(false);
+          return;
+        }
+
         const path: string =
           memoizedTargetRefOrQuery.type === 'collection'
             ? (memoizedTargetRefOrQuery as CollectionReference).path
