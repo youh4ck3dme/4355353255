@@ -24,7 +24,7 @@ export const BlogList = ({ initialPosts, initialCategory }: { initialPosts: Post
     const [selectedCategory, setSelectedCategory] = useState<string | null>(initialCategory || null);
 
     const postsCollectionQuery = useMemo(() => {
-        if (!firestore) return null;
+        if (!firestore) return null; // Wait for firestore to be available
         const postsCollectionRef = collection(firestore, 'blogPosts');
         if (selectedCategory) {
              return query(postsCollectionRef, where('tags', 'array-contains', selectedCategory), where('status', '==', 'published'));
@@ -34,7 +34,7 @@ export const BlogList = ({ initialPosts, initialCategory }: { initialPosts: Post
     
     // We can use the initialPosts for the first render, and then update with live data.
     // This improves SEO and initial load performance.
-    const { data: livePosts, isLoading: areLivePostsLoading } = useCollection<Post>(postsCollectionQuery);
+    const { data: livePosts, isLoading: areLivePostsLoading, error } = useCollection<Post>(postsCollectionQuery);
     
     useEffect(() => {
         const categoryFromUrl = searchParams.get('category');

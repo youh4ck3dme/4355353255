@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -85,22 +86,22 @@ export function useCollection<T = any>(
         setIsLoading(false);
       },
       (error: FirestoreError) => {
-        const path: string =
-          memoizedTargetRefOrQuery.type === 'collection'
-            ? (memoizedTargetRefOrQuery as CollectionReference).path
-            : (memoizedTargetRefOrQuery as unknown as InternalQuery)._query.path.canonicalString()
-
-        const contextualError = new FirestorePermissionError({
-          operation: 'list',
-          path,
-        })
-
-        setError(contextualError)
+        const path: string | null = (memoizedTargetRefOrQuery as any)?._query?.path?.canonicalString() ?? (memoizedTargetRefOrQuery as any)?.path ?? null;
+        
+        if (path) {
+            const contextualError = new FirestorePermissionError({
+              operation: 'list',
+              path,
+            })
+            setError(contextualError);
+            // trigger global error propagation
+            errorEmitter.emit('permission-error', contextualError);
+        } else {
+             setError(error);
+        }
+        
         setData(null)
         setIsLoading(false)
-
-        // trigger global error propagation
-        errorEmitter.emit('permission-error', contextualError);
       }
     );
 

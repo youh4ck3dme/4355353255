@@ -84,6 +84,8 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
     userError: null,
   });
 
+  const areServicesAvailable = !!(firebaseApp && firestore && auth);
+
   // Effect to subscribe to Firebase auth state changes
   useEffect(() => {
     if (!auth) { 
@@ -114,19 +116,18 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
 
   // Memoize the context value
   const contextValue = useMemo((): FirebaseContextState => {
-    const servicesAvailable = !!(firebaseApp && firestore && auth);
     return {
-      areServicesAvailable: servicesAvailable, // Services are available if passed as props
-      firebaseApp: servicesAvailable ? firebaseApp : null,
-      firestore: servicesAvailable ? firestore : null,
-      auth: servicesAvailable ? auth : null,
+      areServicesAvailable: areServicesAvailable,
+      firebaseApp: firebaseApp,
+      firestore: firestore,
+      auth: auth,
       user: userAuthState.user,
       isUserLoading: userAuthState.isUserLoading,
       userError: userAuthState.userError,
     };
   }, [firebaseApp, firestore, auth, userAuthState]);
   
-  if (userAuthState.isUserLoading) {
+  if (userAuthState.isUserLoading || !areServicesAvailable) {
       return <FullscreenLoader message="Pripájam sa k službám..." />;
   }
 

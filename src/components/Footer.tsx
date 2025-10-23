@@ -26,6 +26,7 @@ export const Footer = () => {
                     alt="VI&MO Logo"
                     width={160}
                     height={45}
+                    style={{ width: '160px', height: 'auto' }}
                     className="object-contain"
                 />
             </Link>

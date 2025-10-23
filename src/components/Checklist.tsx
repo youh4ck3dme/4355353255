@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
@@ -15,6 +16,18 @@ interface ChecklistProps {
 
 type CheckedItemsState = Record<string, boolean>;
 
+// Debounce function
+function debounce<F extends (...args: any[]) => any>(func: F, waitFor: number) {
+  let timeout: ReturnType<typeof setTimeout> | null = null;
+
+  return (...args: Parameters<F>): void => {
+    if (timeout) {
+      clearTimeout(timeout);
+    }
+    timeout = setTimeout(() => func(...args), waitFor);
+  };
+}
+
 export const Checklist = ({ categories }: ChecklistProps) => {
   const { user, isUserLoading } = useUser();
   const { firestore, areServicesAvailable } = useFirebase();
@@ -24,12 +37,10 @@ export const Checklist = ({ categories }: ChecklistProps) => {
   const [isDataLoading, setIsDataLoading] = useState(true);
 
   const userChecklistRef = useMemo(() => {
-    // Wait until firestore and user are both available
     if (!firestore || !user) return null;
     return doc(firestore, `checklists/${user.uid}`);
   }, [user, firestore]);
 
-  // --- Debounced Firestore update for single item toggles ---
   const debouncedUpdateFirestore = useCallback(
     debounce(async (itemsToUpdate: CheckedItemsState) => {
       if (!userChecklistRef) return;
@@ -47,33 +58,31 @@ export const Checklist = ({ categories }: ChecklistProps) => {
     [userChecklistRef, toast]
   );
 
-  // --- Load data from Firestore on user login ---
   useEffect(() => {
     const loadData = async () => {
-      // Ensure services are available and we have a valid reference
-      if (areServicesAvailable && userChecklistRef) {
-        setIsDataLoading(true);
-        try {
-          const docSnap = await getDoc(userChecklistRef);
-          if (docSnap.exists()) {
-            const data = docSnap.data();
-            setCheckedItems(data.items || {});
-          }
-        } catch (error) {
-          console.error("Failed to load checklist state from Firestore", error);
-        } finally {
+      if (!userChecklistRef) {
+        // We are not ready to load data yet if the ref is null.
+        // We set loading to false only if we know we don't have a user.
+        if (!isUserLoading && !user) {
           setIsDataLoading(false);
         }
-      } else if (areServicesAvailable && user && !userChecklistRef) {
-         // This case can happen briefly while userChecklistRef is being created
-         setIsDataLoading(true);
-      } else if (areServicesAvailable && !user) {
-        // Services are ready but user is not yet (or anonymous sign-in is in progress)
-        setIsDataLoading(false); // No data to load without a user
+        return;
+      }
+      setIsDataLoading(true);
+      try {
+        const docSnap = await getDoc(userChecklistRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setCheckedItems(data.items || {});
+        }
+      } catch (error) {
+        console.error("Failed to load checklist state from Firestore", error);
+      } finally {
+        setIsDataLoading(false);
       }
     };
     loadData();
-  }, [user, userChecklistRef, areServicesAvailable]);
+  }, [user, userChecklistRef, isUserLoading]);
 
   const handleToggle = (itemId: string) => {
     const newCheckedItems = { ...checkedItems, [itemId]: !checkedItems[itemId] };
@@ -120,7 +129,7 @@ export const Checklist = ({ categories }: ChecklistProps) => {
     return (completedItems / totalItems) * 100;
   };
 
-  if (!areServicesAvailable || isUserLoading || isDataLoading) {
+  if (isUserLoading || isDataLoading || !areServicesAvailable) {
       return (
           <div className="text-center py-16 flex flex-col items-center justify-center min-h-[50vh]">
               <Loader2 className="mx-auto h-12 w-12 animate-spin text-brand-bright-green" />
