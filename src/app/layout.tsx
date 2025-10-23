@@ -1,3 +1,4 @@
+
 import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
@@ -16,6 +17,7 @@ const APP_DESCRIPTION = "Spoľahlivé sťahovacie a upratovacie služby v Bratis
 const DynamicInstallPrompt = dynamic(() => import('@/components/InstallPrompt'), { ssr: false });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'),
   applicationName: APP_NAME,
   title: {
     default: APP_DEFAULT_TITLE,

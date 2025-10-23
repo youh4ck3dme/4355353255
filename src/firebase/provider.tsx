@@ -1,11 +1,11 @@
+
 'use client';
 
 import React, { createContext, useContext, ReactNode, useState, useEffect } from 'react';
-import { FirebaseApp, getApps, initializeApp } from 'firebase/app';
-import { Firestore, getFirestore } from 'firebase/firestore';
+import { FirebaseApp } from 'firebase/app';
+import { Firestore } from 'firebase/firestore';
 import { Auth, User, onAuthStateChanged, signInAnonymously } from 'firebase/auth';
-import { getAuth } from 'firebase/auth';
-import { firebaseConfig } from '@/lib/firebase-config';
+import { app, auth as authInstance, firestore as firestoreInstance } from '@/lib/firebase';
 import { Loader2 } from 'lucide-react';
 
 // Define the shape of the context
@@ -36,22 +36,10 @@ const FullscreenLoader = () => (
 
 // The provider component
 export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
-  const [app, setApp] = useState<FirebaseApp | null>(null);
-  const [firestore, setFirestore] = useState<Firestore | null>(null);
-  const [auth, setAuth] = useState<Auth | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Initialize Firebase only once
-    const appInstance = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
-    const authInstance = getAuth(appInstance);
-    const firestoreInstance = getFirestore(appInstance);
-
-    setApp(appInstance);
-    setAuth(authInstance);
-    setFirestore(firestoreInstance);
-
     // Set up the auth state listener
     const unsubscribe = onAuthStateChanged(authInstance, async (currentUser) => {
       // If user is already signed in, we are good
@@ -76,7 +64,7 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
     return () => unsubscribe();
   }, []);
 
-  const value = { app, firestore, auth, user, isLoading };
+  const value = { app, firestore: firestoreInstance, auth: authInstance, user, isLoading };
 
   return (
     <FirebaseContext.Provider value={value}>
