@@ -4,7 +4,7 @@ import { useState, useEffect, FormEvent, ReactNode } from 'react';
 import { ShieldCheck, LogIn, Loader2 } from 'lucide-react';
 import GlassCard from '@/components/GlassCard';
 import { useFirebase } from '@/firebase/provider';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 
@@ -74,7 +74,10 @@ function AuthGuard({ children }: { children: ReactNode }) {
     if (isFirebaseLoading) return;
 
     const isAdminSessionActive = typeof window !== 'undefined' && sessionStorage.getItem(SESSION_STORAGE_KEY) === 'true';
-    setIsAuthenticated(!!user && user.email === ADMIN_EMAIL && isAdminSessionActive);
+    const isUserAdmin = user && user.email === ADMIN_EMAIL && !user.isAnonymous;
+    
+    setIsAuthenticated(isUserAdmin && isAdminSessionActive);
+
   }, [user, isFirebaseLoading]);
 
   const handleLogin = async (password: string) => {
@@ -91,21 +94,26 @@ function AuthGuard({ children }: { children: ReactNode }) {
     setIsLoggingIn(true);
 
     try {
-        if (password === PASSWORD) {
-             try {
-                await signInWithEmailAndPassword(auth, ADMIN_EMAIL, password);
-                sessionStorage.setItem(SESSION_STORAGE_KEY, 'true');
-                setIsAuthenticated(true);
-            } catch (e) {
-                console.error("Failed to set sessionStorage or sign in:", e);
-                throw new Error("Firebase prihlásenie zlyhalo.");
-            }
-            setError('');
-        } else {
-            throw new Error("Nesprávne heslo.");
+        if (password !== PASSWORD) {
+             throw new Error("Nesprávne heslo.");
         }
+        
+        // If there's an anonymous user, sign them out first.
+        if (auth.currentUser && auth.currentUser.isAnonymous) {
+            await signOut(auth);
+        }
+
+        // Now, sign in with email and password.
+        await signInWithEmailAndPassword(auth, ADMIN_EMAIL, password);
+        
+        // This will be picked up by the useEffect and grant access.
+        sessionStorage.setItem(SESSION_STORAGE_KEY, 'true');
+        setIsAuthenticated(true);
+        setError('');
+
     } catch (e) {
-        setError((e as Error).message || 'Nesprávne heslo. Prístup zamietnutý.');
+        const errorMessage = (e as Error).message || 'Neznáma chyba pri prihlasovaní.';
+        setError(errorMessage);
         console.error("Authentication failed:", e);
         try {
           sessionStorage.removeItem(SESSION_STORAGE_KEY);
@@ -163,11 +171,13 @@ export default function AdminLayout({
 }) {
   return (
       <AuthGuard>
-        <Header />
-        <main id="main-content" className="flex-grow bg-brand-bg dark:bg-brand-dark-teal">
-          {children}
-        </main>
-        <Footer />
+        <div className="flex flex-col min-h-screen">
+          <Header />
+          <main id="main-content" className="flex-grow bg-brand-bg dark:bg-brand-dark-teal">
+            {children}
+          </main>
+          <Footer />
+        </div>
       </AuthGuard>
   );
 }
