@@ -1,15 +1,16 @@
-# VI&MO Blog Frontend (Next.js)
+# VI&MO - Sťahovací a upratovací servis (Next.js & Firebase)
 
-Toto je frontendová časť pre VI&MO Blog, postavená na Next.js, Tailwind CSS a Firebase. Aplikácia slúži na zobrazovanie obsahu (blogových príspevkov), ktorý je spravovaný cez administrátorský panel a ukladaný vo Firestore.
+Toto je frontendová aplikácia pre VI&MO, postavená na Next.js (App Router), Tailwind CSS a Firebase. Aplikácia slúži ako hlavná webová prezentácia firmy, vrátane dynamického blogu, cenníka, a interaktívneho checklistu, ktorých dáta sú spravované cez Firebase Firestore.
 
 ## Kľúčové vlastnosti
 
-- **Server-Side Rendering (SSR) & Static Site Generation (SSG):** Rýchle načítanie a vynikajúce SEO vďaka Next.js App Router.
-- **Responzívny dizajn:** Plne optimalizované pre desktopy, tablety aj mobilné zariadenia.
-- **Dynamický blogový systém:** Články sú načítavané priamo z Firestore databázy.
-- **Admin Panel:** Jednoduchá správa článkov cez zabezpečený admin panel.
-- **Progresívna Webová Aplikácia (PWA):** Možnosť inštalácie a základná offline funkcionalita.
-- **Interaktívne prvky:** Checklist pre sťahovanie, online kalkulačka, interaktívna mapa.
+- **Moderný Tech Stack:** Next.js 14 (App Router), React, TypeScript, Tailwind CSS.
+- **Dynamický Backend:** Blogové príspevky, checklist a kontaktné formuláre sú plne napojené na Firebase (Firestore a Authentication).
+- **Responzívny Dizajn:** Plne optimalizované pre desktopy, tablety aj mobilné zariadenia.
+- **Admin Panel:** Jednoduchá správa článkov cez zabezpečenú administrátorskú sekciu (`/admin`).
+- **Progresívna Webová Aplikácia (PWA):** Možnosť inštalácie na domovskú obrazovku a offline prístup.
+- **SEO Optimalizácia:** Dynamicky generované metadáta, sitemaps a JSON-LD štruktúrované dáta pre lepšiu viditeľnosť vo vyhľadávačoch.
+- **Interaktívne Prvky:** Online kalkulačka, sťahovací checklist s ukladaním postupu, interaktívna mapa pôsobnosti.
 
 ## Spustenie lokálne
 
@@ -19,10 +20,10 @@ Toto je frontendová časť pre VI&MO Blog, postavená na Next.js, Tailwind CSS 
     ```
 
 2.  **Nastavte environmentálne premenné:**
-    Skopírujte súbor `.env.example` (ak existuje) alebo vytvorte nový súbor s názvom `.env` v koreňovom adresári a vložte do neho nasledujúci obsah. Nahraďte `vasetajneheslo` bezpečným heslom.
+    Vytvorte súbor `.env.local` v koreňovom adresári a vložte doň heslo pre prístup do admin sekcie.
     ```env
     # Heslo pre prístup do administrátorskej sekcie
-    NEXT_PUBLIC_ADMIN_PASSWORD="vasetajneheslo"
+    NEXT_PUBLIC_ADMIN_PASSWORD="sem_vlozte_bezpecne_heslo"
     ```
 
 3.  **Spustite vývojový server:**
@@ -32,25 +33,14 @@ Toto je frontendová časť pre VI&MO Blog, postavená na Next.js, Tailwind CSS 
 
     Aplikácia bude dostupná na adrese [http://localhost:3000](http://localhost:3000).
 
-## Build a Nasadenie na Produkciu
+## Štruktúra Projektu
 
-1.  **Nastavte produkčné environment premenné:**
-    Pred nasadením je **nevyhnutné** nastaviť environmentálnu premennú `NEXT_PUBLIC_ADMIN_PASSWORD` priamo v nastaveniach vášho hostingového providera (napr. Vercel, Netlify, Firebase Hosting). **Nikdy nenechávajte v produkcii predvolené heslo!**
-
-2.  **Vytvorenie produkčného buildu:**
-    Tento príkaz najprv vyčistí staré buildy (`npm run clean`) a potom vytvorí novú optimalizovanú verziu aplikácie pripravenú na nasadenie.
-    ```bash
-    npm run build
-    ```
-
-3.  **Spustenie produkčnej verzie:**
-    Po úspešnom builde môžete spustiť produkčnú verziu aplikácie.
-    ```bash
-    npm run start
-    ```
-    Aplikácia bude bežať v produkčnom móde, optimalizovaná pre výkon.
-
-4.  **Nasadenie (napr. na Vercel/Netlify):**
-    - Pripojte tento Git repozitár k vášmu účtu na hostingovej platforme.
-    - V nastaveniach projektu na danej platforme nastavte produkčné environmentálne premenné.
-    - Platforma by mala automaticky detegovať Next.js projekt a postarať sa o build (`npm run build`) a nasadenie (`npm run start`) po každom `git push` do hlavnej vetvy.
+- **`src/app`**: Hlavná adresárová štruktúra Next.js 14 s App Routerom.
+  - **`(public)`**: Verejne dostupné stránky (Domov, Blog, Cenník, atď.).
+  - **`admin`**: Zabezpečená administrátorská sekcia.
+  - **`api`**: Serverless funkcie pre komunikáciu s backendom (napr. ukladanie článkov).
+- **`src/components`**: Znovupoužiteľné React komponenty.
+- **`src/firebase`**: Konfigurácia, inicializácia a custom hooky pre Firebase.
+- **`src/lib`**: Pomocné funkcie, typové definície a statické dáta.
+- **`public`**: Statické súbory (obrázky, ikony).
+- **`firestore.rules`**: Bezpečnostné pravidlá pre databázu Firestore.
