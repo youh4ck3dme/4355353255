@@ -1,15 +1,12 @@
-
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { doc, setDoc, getDoc, writeBatch } from 'firebase/firestore';
 import { ChecklistCategory } from '@/lib/checklist-data';
-import { Check, Circle } from 'lucide-react';
+import { Check, Circle, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from './ui/use-toast';
-import { Loader2 } from 'lucide-react';
-import { useFirebase } from './PublicLayout'; // Updated import
-import { onAuthStateChanged, User, signInAnonymously } from 'firebase/auth';
+import { useFirebase } from '@/firebase/provider';
 
 interface ChecklistProps {
   categories: ChecklistCategory[];
@@ -30,38 +27,15 @@ function debounce<F extends (...args: any[]) => any>(func: F, waitFor: number) {
 
 export const Checklist = ({ categories }: ChecklistProps) => {
   const { toast } = useToast();
-  const { firestore, auth } = useFirebase(); // Use context
-
+  const { firestore, user } = useFirebase();
+  
   const [checkedItems, setCheckedItems] = useState<CheckedItemsState>({});
   const [isLoading, setIsLoading] = useState(true);
-  const [user, setUser] = useState<User | null>(null);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      if (currentUser) {
-        setUser(currentUser);
-      } else {
-        try {
-          const userCredential = await signInAnonymously(auth);
-          setUser(userCredential.user);
-        } catch (error) {
-          console.error("Anonymous sign-in failed:", error);
-          setIsLoading(false);
-          toast({
-            variant: "destructive",
-            title: "Chyba pripojenia",
-            description: "Nepodarilo sa vytvoriť anonymnú reláciu na ukladanie postupu."
-          });
-        }
-      }
-    });
-    return () => unsubscribe();
-  }, [auth, toast]);
 
   const userChecklistRef = useMemo(() => {
     if (!firestore || !user) return null;
     return doc(firestore, `checklists/${user.uid}`);
-  }, [user, firestore]);
+  }, [firestore, user]);
 
   const debouncedUpdateFirestore = useCallback(
     debounce(async (itemsToUpdate: CheckedItemsState) => {
@@ -86,8 +60,8 @@ export const Checklist = ({ categories }: ChecklistProps) => {
         return;
     }
     
-    setIsLoading(true);
     const loadData = async () => {
+      setIsLoading(true);
       try {
         const docSnap = await getDoc(userChecklistRef);
         if (docSnap.exists()) {
@@ -115,7 +89,7 @@ export const Checklist = ({ categories }: ChecklistProps) => {
   };
 
   const handleResetCategory = async (category: ChecklistCategory) => {
-      if (!firestore || !userChecklistRef) return;
+      if (!userChecklistRef || !firestore) return;
 
       const itemsToReset = category.items.reduce((acc, item) => {
           acc[item.id] = false;
@@ -152,7 +126,7 @@ export const Checklist = ({ categories }: ChecklistProps) => {
     return (completedItems / totalItems) * 100;
   };
 
-  if (isLoading || !user) {
+  if (isLoading) {
       return (
           <div className="text-center py-16 flex flex-col items-center justify-center min-h-[50vh]">
               <Loader2 className="mx-auto h-12 w-12 animate-spin text-brand-bright-green" />

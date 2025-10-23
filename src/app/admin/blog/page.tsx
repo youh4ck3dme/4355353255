@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -9,8 +8,8 @@ import { PlusCircle, Edit, Loader2, Newspaper, Info } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
 import GlassCard from '@/components/GlassCard';
 import { useState, useEffect, useMemo } from 'react';
-import { collection, onSnapshot, query, orderBy, Query } from 'firebase/firestore';
-import { useFirebase } from '@/components/PublicLayout';
+import { useFirebase } from '@/firebase/provider';
+import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
 
 
 const PostRow = ({ post }: { post: Post }) => {
@@ -43,7 +42,7 @@ const PostRow = ({ post }: { post: Post }) => {
 export default function AdminBlogPage() {
     const { toast } = useToast();
     const { firestore } = useFirebase();
-    const [livePosts, setLivePosts] = useState<Post[] | null>(null);
+    const [livePosts, setLivePosts] = useState<Post[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
 
@@ -54,31 +53,31 @@ export default function AdminBlogPage() {
 
     useEffect(() => {
         if (!postsQuery) {
+            // Firestore is not ready yet
             if(firestore) setIsLoading(false);
             return;
         }
 
-        setIsLoading(true);
         const unsubscribe = onSnapshot(
-          postsQuery,
-          (snapshot) => {
-            const results: Post[] = snapshot.docs.map(doc => ({
-                ...(doc.data() as Post),
-                slug: doc.id,
-            }));
-            setLivePosts(results);
-            setIsLoading(false);
-          },
-          (err) => {
-            console.error("Error fetching live blog posts:", err);
-            setError(err);
-            setIsLoading(false);
-             toast({
-                variant: 'destructive',
-                title: 'Chyba pri načítaní článkov',
-                description: 'Nepodarilo sa načítať zoznam článkov z databázy.',
-            });
-          }
+            postsQuery,
+            (snapshot) => {
+                const results: Post[] = snapshot.docs.map((doc) => ({
+                    ...(doc.data() as Omit<Post, 'slug'>),
+                    slug: doc.id,
+                }));
+                setLivePosts(results);
+                setIsLoading(false);
+            },
+            (err) => {
+                console.error("Error fetching live blog posts:", err);
+                setError(err);
+                setIsLoading(false);
+                toast({
+                    variant: 'destructive',
+                    title: 'Chyba pri načítaní článkov',
+                    description: 'Nepodarilo sa načítať zoznam článkov z databázy.',
+                });
+            }
         );
 
         return () => unsubscribe();

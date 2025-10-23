@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -11,7 +10,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { Loader2, Save } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import slugify from 'slugify';
-import { useFirebase } from '@/components/PublicLayout';
+import { useFirebase } from '@/firebase/provider';
 
 const postSchema = z.object({
   title: z.string().min(3, 'Titulok musí mať aspoň 3 znaky.'),
@@ -30,7 +29,7 @@ interface PostFormProps {
 export const PostForm = ({ post }: PostFormProps) => {
   const router = useRouter();
   const { toast } = useToast();
-  const { auth } = useFirebase();
+  const { user } = useFirebase();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitAction, setSubmitAction] = useState<'draft' | 'published'>(post?.status || 'draft');
 
@@ -55,8 +54,6 @@ export const PostForm = ({ post }: PostFormProps) => {
 
   const onSubmit: SubmitHandler<PostFormData> = async (data) => {
     setIsSubmitting(true);
-    
-    const user = auth.currentUser;
 
     if (!user) {
         toast({

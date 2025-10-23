@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -8,8 +7,9 @@ import { cn } from '@/lib/utils';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import GlassCard from './GlassCard';
 import { Loader2 } from 'lucide-react';
-import { collection, onSnapshot, query, where, orderBy, Query, DocumentData } from 'firebase/firestore';
-import { useFirebase } from './PublicLayout';
+import { useFirebase } from '@/firebase/provider';
+import { collection, query, where, orderBy, onSnapshot, Query } from 'firebase/firestore';
+
 
 const ALL_CATEGORIES = ['Tipy na sťahovanie', 'Upratovanie', 'Novinky', 'Vypratávanie'];
 
@@ -19,61 +19,53 @@ export const BlogList = ({ initialPosts, initialCategory }: { initialPosts: Post
     const pathname = usePathname();
     const { firestore } = useFirebase();
 
+    const [livePosts, setLivePosts] = useState<Post[] | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState<string | null>(initialCategory || null);
-
-    const [livePosts, setLivePosts] = useState<Post[] | null>(initialPosts);
-    const [areLivePostsLoading, setAreLivePostsLoading] = useState(true);
 
     useEffect(() => {
         const categoryFromUrl = searchParams.get('category');
         setSelectedCategory(categoryFromUrl || null);
     }, [searchParams]);
 
-    const postsQuery = useMemo(() => {
-        if (!firestore) return null;
-        
-        const postsCollectionRef = collection(firestore, 'blogPosts');
-        const queryConstraints = [
-            where('status', '==', 'published'),
-            orderBy('date', 'desc')
-        ];
+     useEffect(() => {
+        if (!firestore) return;
 
+        const postsCollectionRef = collection(firestore, 'blogPosts');
+        let q: Query;
+
+        const queryConstraints = [where('status', '==', 'published')];
+        
         if (selectedCategory) {
             queryConstraints.push(where('tags', 'array-contains', selectedCategory));
         }
-
-        return query(postsCollectionRef, ...queryConstraints as any);
-    }, [firestore, selectedCategory]);
-
-
-    useEffect(() => {
-        if (!postsQuery) {
-            if (firestore) setAreLivePostsLoading(false);
-            return;
-        }
-
-        setAreLivePostsLoading(true);
         
+        queryConstraints.push(orderBy('date', 'desc'));
+
+        q = query(postsCollectionRef, ...queryConstraints);
+        
+        setIsLoading(true);
         const unsubscribe = onSnapshot(
-          postsQuery,
-          (snapshot) => {
-            const results: Post[] = snapshot.docs.map(doc => ({
-                ...(doc.data() as Post),
-                slug: doc.id,
-            }));
-            setLivePosts(results);
-            setAreLivePostsLoading(false);
-          },
-          (err) => {
-            console.error("Error fetching live blog posts:", err);
-            setAreLivePostsLoading(false);
-          }
+            q,
+            (snapshot) => {
+                const results: Post[] = snapshot.docs.map((doc) => ({
+                    ...(doc.data() as Omit<Post, 'slug'>),
+                    slug: doc.id,
+                }));
+                setLivePosts(results);
+                setIsLoading(false);
+            },
+            (err) => {
+                console.error("Error fetching live blog posts:", err);
+                setIsLoading(false);
+                setLivePosts([]);
+            }
         );
 
         return () => unsubscribe();
-    }, [postsQuery, firestore]);
-
+    }, [firestore, selectedCategory]);
+    
     const handleCategoryClick = (category: string | null) => {
         const current = new URLSearchParams(Array.from(searchParams.entries()));
 
@@ -136,7 +128,7 @@ export const BlogList = ({ initialPosts, initialCategory }: { initialPosts: Post
                 />
             </div>
 
-            {areLivePostsLoading && (!livePosts || livePosts.length === 0) ? (
+            {isLoading ? (
                 <div className="text-center py-16">
                     <Loader2 className="mx-auto h-12 w-12 animate-spin text-brand-bright-green" />
                 </div>
@@ -147,9 +139,9 @@ export const BlogList = ({ initialPosts, initialCategory }: { initialPosts: Post
                     ))}
                 </div>
             ) : (
-                <GlassCard>
-                    <p className="text-xl text-center text-slate-300 py-16">
-                        Žiadne výsledky pre &apos;{searchQuery || selectedCategory}&apos;. Skúste iný filter alebo kľúčové slovo.
+                 <GlassCard>
+                     <p className="text-xl text-center text-slate-300 py-16 px-4">
+                        Nenašli sa žiadne články pre kategóriu &apos;{selectedCategory}&apos;.
                     </p>
                 </GlassCard>
             )}

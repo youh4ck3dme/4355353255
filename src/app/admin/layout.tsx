@@ -1,11 +1,11 @@
-
 'use client';
 
 import { useState, useEffect, FormEvent } from 'react';
 import { ShieldCheck, LogIn, Loader2 } from 'lucide-react';
 import GlassCard from '@/components/GlassCard';
-import { PublicLayout, useFirebase } from '@/components/PublicLayout';
+import { PublicLayout } from '@/components/PublicLayout';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import { useFirebase } from '@/firebase/provider';
 
 
 // Načítanie hesla z environment premenných.
@@ -84,24 +84,22 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const { auth, user } = useFirebase();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [error, setError] = useState('');
   const [isChecking, setIsChecking] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [isAuthLoading, setIsAuthLoading] = useState(true);
-  const { auth } = useFirebase();
 
   useEffect(() => {
     // Check session storage first for quick access
     try {
-      if (sessionStorage.getItem(SESSION_STORAGE_KEY) === 'true') {
+      if (sessionStorage.getItem(SESSION_STORAGE_KEY) === 'true' && user) {
         setIsAuthenticated(true);
       }
     } catch (e) {
       console.error("Failed to access sessionStorage:", e);
     }
-    setIsAuthLoading(false);
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -118,6 +116,10 @@ export default function AdminLayout({
         setError('Heslo pre administrátora nie je nastavené na serveri.');
         return;
     }
+    if (!auth) {
+        setError('Autentifikačná služba nie je pripravená.');
+        return;
+    }
     setError('');
     setIsChecking(true);
     setProgress(1);
@@ -126,9 +128,6 @@ export default function AdminLayout({
     await new Promise(resolve => setTimeout(resolve, 1500));
 
     try {
-        // We use a fake email but a real password for authentication.
-        // In a real app, you would use a proper login mechanism.
-        // This is a simplified approach for a private admin area.
         if (password === PASSWORD) {
              try {
                 // Also sign in to firebase to get a token for API calls
@@ -136,6 +135,8 @@ export default function AdminLayout({
                 sessionStorage.setItem(SESSION_STORAGE_KEY, 'true');
             } catch (e) {
                 console.error("Failed to set sessionStorage or sign in:", e);
+                // If firebase sign-in fails, don't authenticate the user
+                throw new Error("Firebase prihlásenie zlyhalo.");
             }
             setIsAuthenticated(true);
             setError('');
@@ -143,26 +144,13 @@ export default function AdminLayout({
             throw new Error("Nesprávne heslo.");
         }
     } catch (e) {
-        setError('Nesprávne heslo. Prístup zamietnutý.');
+        setError((e as Error).message || 'Nesprávne heslo. Prístup zamietnutý.');
         console.error("Authentication failed:", e);
     } finally {
         setIsChecking(false);
         setProgress(0);
     }
   };
-  
-  if (isAuthLoading) {
-      return (
-        <PublicLayout>
-            <div className="min-h-screen flex items-center justify-center p-4">
-                <div className="text-center">
-                    <Loader2 className="mx-auto h-12 w-12 animate-spin text-brand-bright-green" />
-                    <p className="mt-4 text-slate-300">Inicializujem autorizáciu...</p>
-                </div>
-            </div>
-        </PublicLayout>
-      )
-  }
 
   if (!isAuthenticated) {
     return (

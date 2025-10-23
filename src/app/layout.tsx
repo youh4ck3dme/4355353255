@@ -1,12 +1,12 @@
+import type { Metadata, Viewport } from 'next';
+import { Inter } from 'next/font/google';
+import './globals.css';
+import { Toaster } from '@/components/ui/toaster';
+import { Providers } from '@/components/Providers';
+import { PublicLayout } from '@/components/PublicLayout';
+import { FirebaseProvider } from '@/firebase/provider';
 
-import type { Metadata, Viewport } from 'next'
-import { Inter } from 'next/font/google'
-import './globals.css'
-import { Toaster } from '@/components/ui/toaster'
-import { Providers } from '@/components/Providers'
-import { PublicLayout } from '@/components/PublicLayout'
-
-const inter = Inter({ subsets: ['latin'], variable: '--font-sans' })
+const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
 const APP_NAME = "VI&MO - Sťahovanie Bratislava";
 const APP_DEFAULT_TITLE = "VI&MO - Profesionálne sťahovanie a upratovanie v Bratislave";
@@ -53,22 +53,23 @@ export const viewport: Viewport = {
   themeColor: '#0B4556',
 };
 
-
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="sk" suppressHydrationWarning>
       <body className={inter.className}>
         <Providers>
-           <PublicLayout>
+          <FirebaseProvider>
+            <PublicLayout>
               {children}
             </PublicLayout>
-            <Toaster />
+          </FirebaseProvider>
+          <Toaster />
         </Providers>
       </body>
     </html>
-  )
+  );
 }
