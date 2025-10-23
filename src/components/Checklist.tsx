@@ -36,7 +36,10 @@ export const Checklist = ({ categories }: ChecklistProps) => {
   const [checkedItems, setCheckedItems] = useState<CheckedItemsState>({});
   const [isDataLoading, setIsDataLoading] = useState(true);
 
-  const userChecklistRef = user && firestore ? doc(firestore, `checklists/${user.uid}`) : null;
+  const userChecklistRef = useMemo(() => {
+    if (!user || !firestore) return null;
+    return doc(firestore, `checklists/${user.uid}`);
+  }, [user, firestore]);
 
   // Data listener
   useEffect(() => {
@@ -64,7 +67,7 @@ export const Checklist = ({ categories }: ChecklistProps) => {
     );
     
     return () => unsubscribe();
-  }, [user, firestore, userChecklistRef, toast, isFirebaseLoading]);
+  }, [userChecklistRef, toast, isFirebaseLoading]);
 
 
   const debouncedUpdateFirestore = useCallback(
@@ -126,6 +129,15 @@ export const Checklist = ({ categories }: ChecklistProps) => {
               <p className="mt-4 text-slate-300">Načítavam váš osobný checklist...</p>
           </div>
       );
+  }
+
+  if (!user) {
+    return (
+       <div className="text-center py-16 flex flex-col items-center justify-center min-h-[50vh] bg-brand-light-gray dark:bg-brand-dark-teal/80 p-8 rounded-xl shadow-lg">
+            <h2 className="text-2xl font-bold text-brand-dark-teal dark:text-brand-bg mb-4">Prihláste sa pre ukladanie postupu</h2>
+            <p className="text-brand-secondary-grey dark:text-slate-300">Pre ukladanie vášho postupu v checklise je potrebné byť prihlásený. Prihlasovanie je anonymné a bezpečné.</p>
+        </div>
+    )
   }
 
   return (

@@ -39,9 +39,9 @@ const PostRow = ({ post }: { post: Post }) => {
 
 
 export default function AdminBlogPage() {
-    const { firestore } = useFirebase();
+    const { firestore, isLoading: isFirebaseLoading } = useFirebase();
     const [posts, setPosts] = useState<Post[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoadingPosts, setIsLoadingPosts] = useState(true);
     const [error, setError] = useState<Error | null>(null);
 
     const postsQuery = useMemo(() => {
@@ -51,8 +51,12 @@ export default function AdminBlogPage() {
 
 
     useEffect(() => {
-        if (!postsQuery) return;
+        if (!postsQuery) {
+            if(!isFirebaseLoading) setIsLoadingPosts(false);
+            return;
+        };
 
+        setIsLoadingPosts(true);
         const unsubscribe = onSnapshot(
             postsQuery,
             (snapshot) => {
@@ -61,18 +65,20 @@ export default function AdminBlogPage() {
                     slug: doc.id,
                 }));
                 setPosts(results);
-                setIsLoading(false);
+                setIsLoadingPosts(false);
             },
             (err) => {
                 console.error("Error fetching live blog posts:", err);
                 setError(err);
-                setIsLoading(false);
+                setIsLoadingPosts(false);
             }
         );
 
         return () => unsubscribe();
-    }, [postsQuery]);
+    }, [postsQuery, isFirebaseLoading]);
     
+    const isLoading = isFirebaseLoading || isLoadingPosts;
+
     return (
         <div className="container mx-auto px-4 py-12 max-w-6xl">
             <header className="flex flex-col md:flex-row justify-between items-start mb-10">
@@ -107,7 +113,7 @@ export default function AdminBlogPage() {
                     </div>
                 </div>
                  <div className="p-6">
-                    {(isLoading || !firestore) ? (
+                    {isLoading ? (
                         <div className="text-center py-16">
                             <Loader2 className="mx-auto h-12 w-12 animate-spin text-brand-bright-green" />
                             <p className="mt-4 text-slate-300">Načítavam články z databázy...</p>

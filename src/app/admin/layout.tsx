@@ -1,18 +1,15 @@
 'use client';
 
-import { useState, useEffect, FormEvent } from 'react';
+import { useState, useEffect, FormEvent, ReactNode } from 'react';
 import { ShieldCheck, LogIn, Loader2 } from 'lucide-react';
 import GlassCard from '@/components/GlassCard';
-import { PublicLayout } from '@/components/PublicLayout';
-import { signInWithEmailAndPassword, onAuthStateChanged, User } from 'firebase/auth';
+import { User } from 'firebase/auth';
 import { useFirebase } from '@/firebase/provider';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
-
-// Načítanie hesla z environment premenných.
-const ADMIN_EMAIL = "admin@vimo.com"; // Fiktívny email pre admina
+const ADMIN_EMAIL = "admin@vimo.com";
 const PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD;
 const SESSION_STORAGE_KEY = 'admin-authenticated';
-
 
 function LoginForm({ onLogin, isLoggingIn }: { onLogin: (password: string) => void, isLoggingIn: boolean }) {
   const [password, setPassword] = useState('');
@@ -65,11 +62,7 @@ function LoginForm({ onLogin, isLoggingIn }: { onLogin: (password: string) => vo
 }
 
 
-export default function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+function AuthGuard({ children }: { children: ReactNode }) {
   const { auth, user, isLoading: isFirebaseLoading } = useFirebase();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [error, setError] = useState('');
@@ -79,7 +72,6 @@ export default function AdminLayout({
   useEffect(() => {
     if (isFirebaseLoading) return;
 
-    // We determine authentication status based on the user object and our session flag
     const isAdminSessionActive = typeof window !== 'undefined' && sessionStorage.getItem(SESSION_STORAGE_KEY) === 'true';
     setIsAuthenticated(!!user && user.email === ADMIN_EMAIL && isAdminSessionActive);
   }, [user, isFirebaseLoading]);
@@ -125,48 +117,48 @@ export default function AdminLayout({
     }
   };
   
-  // Display a loader while we are determining the auth state
   if (isFirebaseLoading || isAuthenticated === null) {
       return (
-         <PublicLayout>
-            <div className="min-h-screen flex items-center justify-center p-4">
-                <Loader2 className="h-16 w-16 animate-spin text-brand-bright-green" />
-            </div>
-         </PublicLayout>
+        <div className="min-h-screen flex items-center justify-center p-4 bg-brand-dark-teal">
+            <Loader2 className="h-16 w-16 animate-spin text-brand-bright-green" />
+        </div>
       )
   }
 
   if (!isAuthenticated) {
     return (
-       <PublicLayout>
-          <div className="min-h-screen flex items-center justify-center p-4">
-            <div className="w-full max-w-sm mx-auto">
-                <GlassCard>
-                    <div className="p-8">
-                        <div className="text-center mb-8">
-                            <ShieldCheck className="mx-auto h-16 w-16 text-brand-bright-green mb-4" />
-                            <h1 className="text-3xl font-bold text-white text-shadow-3d">
-                            Zabezpečená oblasť
-                            </h1>
-                            <p className="text-slate-300 mt-2">
-                            Vyžaduje sa autorizácia
-                            </p>
-                        </div>
-                        
-                        {error && <p className="text-red-400 text-sm text-center font-bold mb-4">{error}</p>}
+        <div className="min-h-screen flex items-center justify-center p-4 bg-brand-dark-teal">
+          <div className="w-full max-w-sm mx-auto">
+              <GlassCard>
+                  <div className="p-8">
+                      <div className="text-center mb-8">
+                          <ShieldCheck className="mx-auto h-16 w-16 text-brand-bright-green mb-4" />
+                          <h1 className="text-3xl font-bold text-white text-shadow-3d">
+                          Zabezpečená oblasť
+                          </h1>
+                          <p className="text-slate-300 mt-2">
+                          Vyžaduje sa autorizácia
+                          </p>
+                      </div>
+                      
+                      {error && <p className="text-red-400 text-sm text-center font-bold mb-4">{error}</p>}
 
-                        <LoginForm onLogin={handleLogin} isLoggingIn={isLoggingIn} />
-                    </div>
-                </GlassCard>
-            </div>
+                      <LoginForm onLogin={handleLogin} isLoggingIn={isLoggingIn} />
+                  </div>
+              </GlassCard>
           </div>
-       </PublicLayout>
+        </div>
     );
   }
 
-  return (
-     <PublicLayout>
-        {children}
-      </PublicLayout>
-  );
+  return <>{children}</>;
+}
+
+
+export default function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return <AuthGuard>{children}</AuthGuard>;
 }

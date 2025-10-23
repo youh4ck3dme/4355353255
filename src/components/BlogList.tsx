@@ -17,10 +17,10 @@ export const BlogList = ({ initialCategory }: { initialCategory?: string }) => {
     const searchParams = useSearchParams();
     const router = useRouter();
     const pathname = usePathname();
-    const { firestore } = useFirebase();
+    const { firestore, isLoading: isFirebaseLoading } = useFirebase();
 
     const [posts, setPosts] = useState<Post[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoadingPosts, setIsLoadingPosts] = useState(true);
     
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState<string | null>(initialCategory || null);
@@ -47,12 +47,11 @@ export const BlogList = ({ initialCategory }: { initialCategory?: string }) => {
 
     useEffect(() => {
         if (!postsQuery) {
-            setIsLoading(!firestore); // Still loading if firestore is not ready
+            if(!isFirebaseLoading) setIsLoadingPosts(false);
             return;
         };
 
-        setIsLoading(true);
-
+        setIsLoadingPosts(true);
         const unsubscribe = onSnapshot(
           postsQuery,
           (snapshot) => {
@@ -61,16 +60,16 @@ export const BlogList = ({ initialCategory }: { initialCategory?: string }) => {
               slug: doc.id,
             }));
             setPosts(results);
-            setIsLoading(false);
+            setIsLoadingPosts(false);
           },
           (err) => {
             console.error("Error fetching live blog posts:", err);
-            setIsLoading(false);
+            setIsLoadingPosts(false);
           }
         );
 
         return () => unsubscribe();
-    }, [postsQuery, firestore]);
+    }, [postsQuery, isFirebaseLoading]);
     
     const handleCategoryClick = (category: string | null) => {
         const current = new URLSearchParams(Array.from(searchParams.entries()));
@@ -94,6 +93,8 @@ export const BlogList = ({ initialCategory }: { initialCategory?: string }) => {
             (post.excerpt && post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()))
         );
     }, [posts, searchQuery]);
+    
+    const isLoading = isFirebaseLoading || isLoadingPosts;
 
     return (
         <div>
@@ -135,6 +136,7 @@ export const BlogList = ({ initialCategory }: { initialCategory?: string }) => {
             {isLoading ? (
                 <div className="text-center py-16">
                     <Loader2 className="mx-auto h-12 w-12 animate-spin text-brand-bright-green" />
+                    <p className="mt-4 text-slate-300">Načítavam články...</p>
                 </div>
             ) : filteredBySearch.length > 0 ? (
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
