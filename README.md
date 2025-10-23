@@ -39,25 +39,25 @@ Toto je frontendová časť pre VI&MO Blog, postavená na Next.js, Tailwind CSS 
 ## Build a Nasadenie na Produkciu
 
 1.  **Nastavte produkčné environment premenné:**
-    Pred nasadením je **nevyhnutné** nastaviť environment premenné priamo v nastaveniach vášho hostingového providera (napr. Vercel, Netlify, Firebase Hosting).
+    Pred nasadením je **nevyhnutné** nastaviť environmentálne premenné priamo v nastaveniach vášho hostingového providera (napr. Vercel, Netlify, Firebase Hosting).
     
     - `NEXT_PUBLIC_BASE_URL`: Nastavte na vašu finálnu produkčnú doménu (napr. `https://app.viandmo.com`).
     - `NEXT_PUBLIC_ADMIN_PASSWORD`: Nastavte na silné a unikátne heslo.
 
 2.  **Vytvorenie produkčného buildu:**
-    Najprv vyčistite staré buildy a potom vytvorte nový.
+    Tento príkaz najprv vyčistí staré buildy a potom vytvorí novú optimalizovanú verziu aplikácie pripravenú na nasadenie.
     ```bash
-    npm run clean
     npm run build
     ```
-    Tento príkaz skontroluje kód, vygeneruje statické súbory a pripraví aplikáciu na nasadenie.
 
-3.  **Spustenie produkčnej verzie lokálne (na testovanie):**
+3.  **Spustenie produkčnej verzie:**
+    Po úspešnom builde môžete spustiť produkčnú verziu aplikácie.
     ```bash
     npm run start
     ```
+    Aplikácia bude bežať v produkčnom móde, optimalizovaná pre výkon.
 
 4.  **Nasadenie (napr. na Vercel/Netlify):**
     - Pripojte tento Git repozitár k vášmu účtu na hostingovej platforme.
     - V nastaveniach projektu na danej platforme nastavte produkčné environmentálne premenné.
-    - Platforma by mala automaticky detegovať Next.js projekt a postarať sa o build a nasadenie po každom `git push` do hlavnej vetvy.
+    - Platforma by mala automaticky detegovať Next.js projekt a postarať sa o build (`npm run build`) a nasadenie (`npm run start`) po každom `git push` do hlavnej vetvy.
