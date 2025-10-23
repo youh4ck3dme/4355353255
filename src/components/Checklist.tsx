@@ -30,7 +30,7 @@ function debounce<F extends (...args: any[]) => any>(func: F, waitFor: number) {
 
 export const Checklist = ({ categories }: ChecklistProps) => {
   // useFirebase provides all necessary state, including user and service availability
-  const { user, firestore, areServicesAvailable, isUserLoading } = useFirebase();
+  const { user, firestore, isUserLoading } = useFirebase();
   const { toast } = useToast();
 
   const [checkedItems, setCheckedItems] = useState<CheckedItemsState>({});
@@ -64,8 +64,8 @@ export const Checklist = ({ categories }: ChecklistProps) => {
   useEffect(() => {
     // Don't do anything if the ref isn't ready
     if (!userChecklistRef) {
-      // If services are ready but still no ref, it means we are logged out, so stop loading.
-      if(areServicesAvailable) {
+      // If user has loaded but there's no ref, we're not logged in, stop loading.
+      if(!isUserLoading) {
         setIsDataLoading(false);
       }
       return;
@@ -86,7 +86,7 @@ export const Checklist = ({ categories }: ChecklistProps) => {
     };
     
     loadData();
-  }, [userChecklistRef, areServicesAvailable]); // Depend on the memoized ref
+  }, [userChecklistRef, isUserLoading]); // Depend on the memoized ref
 
   const handleToggle = (itemId: string) => {
     const newCheckedItems = { ...checkedItems, [itemId]: !checkedItems[itemId] };

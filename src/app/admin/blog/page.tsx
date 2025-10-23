@@ -40,19 +40,14 @@ const PostRow = ({ post }: { post: Post }) => {
 
 
 export default function AdminBlogPage() {
-    // useFirebase now guarantees that firestore is available because the provider handles the loading state.
     const { firestore } = useFirebase();
     const { toast } = useToast();
 
-    // The query is only created when firestore is available. `useMemo` ensures it's not recreated on every render.
     const postsCollectionQuery = useMemo((): Query | null => {
-        // This check is now a safeguard, but the provider should prevent this component
-        // from rendering until firestore is ready.
         if (!firestore) return null;
         return collection(firestore, 'blogPosts');
     }, [firestore]);
     
-    // The useCollection hook is now robust enough to handle an initially null query.
     const { data: posts, isLoading, error } = useCollection<Post>(postsCollectionQuery);
 
     if (error) {

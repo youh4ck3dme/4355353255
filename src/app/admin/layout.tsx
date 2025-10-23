@@ -5,7 +5,7 @@ import { useState, useEffect, FormEvent } from 'react';
 import { ShieldCheck, LogIn, Loader2 } from 'lucide-react';
 import GlassCard from '@/components/GlassCard';
 import { PublicLayout } from '@/components/PublicLayout';
-import { useAuth, useFirebase } from '@/firebase';
+import { useFirebase } from '@/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 
 // Načítanie hesla z environment premenných.
@@ -83,9 +83,8 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { auth, areServicesAvailable } = useFirebase();
+  const { auth, isUserLoading } = useFirebase();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isAuthResolved, setIsAuthResolved] = useState(false);
   const [error, setError] = useState('');
   const [isChecking, setIsChecking] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -99,20 +98,7 @@ export default function AdminLayout({
     } catch (e) {
       console.error("Failed to access sessionStorage:", e);
     }
-    
-    // Then, listen for actual Firebase Auth state
-    if (auth) {
-        const unsubscribe = onAuthStateChanged(auth, user => {
-            if (!user) {
-                console.warn("No Firebase user found for admin section.");
-            }
-            setIsAuthResolved(true); // Firebase auth state is now known
-        });
-        return () => unsubscribe();
-    } else if (areServicesAvailable === false) { // Handle case where auth is not ready
-      setIsAuthResolved(true);
-    }
-  }, [auth, areServicesAvailable]);
+  }, []);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -150,7 +136,7 @@ export default function AdminLayout({
     }, 2200); 
   };
   
-  if (!isAuthResolved) {
+  if (isUserLoading) {
       return (
         <PublicLayout>
             <div className="min-h-screen flex items-center justify-center p-4">

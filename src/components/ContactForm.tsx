@@ -23,7 +23,7 @@ type ContactFormValues = z.infer<typeof contactFormSchema>;
 
 export const ContactForm = () => {
     const { toast } = useToast();
-    const { firestore, areServicesAvailable } = useFirebase();
+    const { firestore, isUserLoading } = useFirebase();
 
     const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm<ContactFormValues>({
         resolver: zodResolver(contactFormSchema),
@@ -64,7 +64,7 @@ export const ContactForm = () => {
         }
     };
     
-    if (!areServicesAvailable) {
+    if (isUserLoading) {
         return (
             <div className="min-h-[300px] flex flex-col items-center justify-center text-center">
                 <Loader2 className="mx-auto h-8 w-8 animate-spin text-brand-bright-green" />

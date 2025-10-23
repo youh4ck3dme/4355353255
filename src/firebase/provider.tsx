@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { createContext, useContext, ReactNode, useMemo, useState, useEffect } from 'react';
@@ -8,25 +7,17 @@ import { Auth, User, onAuthStateChanged } from 'firebase/auth';
 import { initiateAnonymousSignIn } from './non-blocking-login';
 import { Loader2 } from 'lucide-react';
 import { PublicLayout } from '@/components/PublicLayout';
-import { initializeFirebase } from '@/firebase'; // Import initialize function
+import { firebaseApp, auth, firestore } from '@/firebase'; // Import initialized services
 
 interface FirebaseProviderProps {
   children: ReactNode;
 }
 
-// Internal state for user authentication
-interface UserAuthState {
-  user: User | null;
-  isUserLoading: boolean; // True only during the very initial auth check
-  userError: Error | null;
-}
-
 // Combined state for the Firebase context
 export interface FirebaseContextState {
-  areServicesAvailable: boolean; // True if core services (app, firestore, auth instance) are provided
-  firebaseApp: FirebaseApp | null;
-  firestore: Firestore | null;
-  auth: Auth | null;
+  firebaseApp: FirebaseApp;
+  firestore: Firestore;
+  auth: Auth;
   // User authentication state
   user: User | null;
   isUserLoading: boolean;
@@ -35,7 +26,6 @@ export interface FirebaseContextState {
 
 // Return type for useFirebase() hook
 export interface FirebaseServicesAndUser {
-  areServicesAvailable: boolean;
   firebaseApp: FirebaseApp;
   firestore: Firestore;
   auth: Auth;
@@ -62,37 +52,24 @@ const FullscreenLoader = ({ message }: { message: string }) => (
 
 /**
  * FirebaseProvider manages and provides Firebase services and user authentication state.
- * It ensures that children components are only rendered after Firebase services are available
- * AND a user (anonymous or otherwise) is authenticated.
+ * It ensures that children components are only rendered after a user (anonymous or otherwise) is authenticated.
  */
 export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
   children,
 }) => {
-    const { firebaseApp, auth, firestore } = useMemo(() => {
-        try {
-            return initializeFirebase();
-        } catch (e) {
-            console.error("Firebase initialization failed in provider:", e);
-            return { firebaseApp: null, auth: null, firestore: null };
-        }
-    }, []);
-
-
-  const [userAuthState, setUserAuthState] = useState<UserAuthState>({
+  const [userAuthState, setUserAuthState] = useState<{
+    user: User | null;
+    isUserLoading: boolean;
+    userError: Error | null;
+  }>({
     user: null,
     isUserLoading: true, // Start in loading state
     userError: null,
   });
 
-  const areServicesAvailable = !!(firebaseApp && firestore && auth);
 
   // Effect to subscribe to Firebase auth state changes
   useEffect(() => {
-    if (!auth) {
-      setUserAuthState({ user: null, isUserLoading: false, userError: new Error("Auth service not available.") });
-      return;
-    }
-
     const unsubscribe = onAuthStateChanged(
       auth,
       (firebaseUser) => {
@@ -112,24 +89,22 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
     );
     // Cleanup subscription on unmount
     return () => unsubscribe();
-  }, [auth]);
+  }, []);
 
   // Memoize the context value to prevent unnecessary re-renders of consumers
   const contextValue = useMemo((): FirebaseContextState => ({
-      areServicesAvailable,
       firebaseApp,
       firestore,
       auth,
       user: userAuthState.user,
       isUserLoading: userAuthState.isUserLoading,
       userError: userAuthState.userError,
-  }), [firebaseApp, firestore, auth, userAuthState, areServicesAvailable]);
+  }), [userAuthState]);
 
   // This is the core of the fix:
-  // Render a loader if either the core Firebase services are not yet available
-  // OR the initial user authentication process (including anonymous sign-in) is not yet complete.
-  // This guarantees that any child component will have access to a valid `firestore` and `user` object.
-  if (!areServicesAvailable || userAuthState.isUserLoading) {
+  // Render a loader if the initial user authentication process (including anonymous sign-in) is not yet complete.
+  // This guarantees that any child component will have access to a valid `user` object.
+  if (userAuthState.isUserLoading) {
       return <FullscreenLoader message="Pripájam sa k službám..." />;
   }
   
@@ -144,7 +119,7 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
 
 /**
  * Hook to access core Firebase services and user authentication state.
- * Throws error if core services are not available or used outside provider.
+ * Throws error if used outside provider.
  */
 export const useFirebase = (): FirebaseServicesAndUser => {
   const context = useContext(FirebaseContext);
@@ -152,22 +127,8 @@ export const useFirebase = (): FirebaseServicesAndUser => {
   if (context === undefined) {
     throw new Error('useFirebase must be used within a FirebaseProvider.');
   }
-
-  // This check is now mostly for developer error, as the provider shouldn't render children
-  // without these services.
-  if (!context.firebaseApp || !context.firestore || !context.auth) {
-    throw new Error('Firebase core services not available. Check FirebaseProvider setup.');
-  }
-
-  return {
-    areServicesAvailable: context.areServicesAvailable,
-    firebaseApp: context.firebaseApp,
-    firestore: context.firestore,
-    auth: context.auth,
-    user: context.user,
-    isUserLoading: context.isUserLoading,
-    userError: context.userError,
-  };
+  
+  return context;
 };
 
 /** Hook to access Firebase Auth instance. */

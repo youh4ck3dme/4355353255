@@ -18,14 +18,12 @@ export const BlogList = ({ initialPosts, initialCategory }: { initialPosts: Post
     const searchParams = useSearchParams();
     const router = useRouter();
     const pathname = usePathname();
-    // useFirebase now guarantees that firestore is available
     const { firestore } = useFirebase();
 
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState<string | null>(initialCategory || null);
 
     const postsCollectionQuery = useMemo(() => {
-        // This check is a safeguard, but the provider should prevent rendering until firestore is ready.
         if (!firestore) return null; 
         
         const postsCollectionRef = collection(firestore, 'blogPosts');
