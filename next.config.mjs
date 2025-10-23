@@ -1,5 +1,5 @@
-
 /** @type {import('next').NextConfig} */
+
 import createNextPwa from 'next-pwa';
 
 const withPWA = createNextPwa({
@@ -16,14 +16,10 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'picsum.photos',
-        port: '',
-        pathname: '/**',
       },
       {
         protocol: 'https',
         hostname: 'viandmo.com',
-        port: '',
-        pathname: '/**',
       },
     ],
   },
