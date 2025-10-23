@@ -1,10 +1,8 @@
-
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { useUser, useFirebase } from '@/firebase/client-provider';
+import { useUser, useFirebase } from '@/firebase';
 import { doc, setDoc, getDoc, writeBatch } from 'firebase/firestore';
-import debounce from 'lodash.debounce';
 import { ChecklistCategory } from '@/lib/checklist-data';
 import { Check, Circle } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -26,7 +24,8 @@ export const Checklist = ({ categories }: ChecklistProps) => {
   const [isDataLoading, setIsDataLoading] = useState(true);
 
   const userChecklistRef = useMemo(() => {
-    if (!user || !firestore) return null;
+    // Wait until firestore and user are both available
+    if (!firestore || !user) return null;
     return doc(firestore, `checklists/${user.uid}`);
   }, [user, firestore]);
 
@@ -51,7 +50,8 @@ export const Checklist = ({ categories }: ChecklistProps) => {
   // --- Load data from Firestore on user login ---
   useEffect(() => {
     const loadData = async () => {
-      if (user && userChecklistRef) {
+      // Ensure services are available and we have a valid reference
+      if (areServicesAvailable && userChecklistRef) {
         setIsDataLoading(true);
         try {
           const docSnap = await getDoc(userChecklistRef);
@@ -64,12 +64,16 @@ export const Checklist = ({ categories }: ChecklistProps) => {
         } finally {
           setIsDataLoading(false);
         }
-      } else if (!isUserLoading && areServicesAvailable) {
-          setIsDataLoading(false);
+      } else if (areServicesAvailable && user && !userChecklistRef) {
+         // This case can happen briefly while userChecklistRef is being created
+         setIsDataLoading(true);
+      } else if (areServicesAvailable && !user) {
+        // Services are ready but user is not yet (or anonymous sign-in is in progress)
+        setIsDataLoading(false); // No data to load without a user
       }
     };
     loadData();
-  }, [user, isUserLoading, userChecklistRef, areServicesAvailable]);
+  }, [user, userChecklistRef, areServicesAvailable]);
 
   const handleToggle = (itemId: string) => {
     const newCheckedItems = { ...checkedItems, [itemId]: !checkedItems[itemId] };
@@ -105,7 +109,7 @@ export const Checklist = ({ categories }: ChecklistProps) => {
             title: 'Chyba pri resetovaní',
             description: 'Nepodarilo sa resetovať kategóriu. Skúste to prosím znova.',
         });
-        setCheckedItems(checkedItems);
+        setCheckedItems(checkedItems); // Revert optimistic update on failure
       }
   };
 
@@ -116,7 +120,7 @@ export const Checklist = ({ categories }: ChecklistProps) => {
     return (completedItems / totalItems) * 100;
   };
 
-  if (isUserLoading || !areServicesAvailable || isDataLoading) {
+  if (!areServicesAvailable || isUserLoading || isDataLoading) {
       return (
           <div className="text-center py-16 flex flex-col items-center justify-center min-h-[50vh]">
               <Loader2 className="mx-auto h-12 w-12 animate-spin text-brand-bright-green" />
