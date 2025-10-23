@@ -43,11 +43,13 @@ export default function AdminBlogPage() {
     const { firestore, areServicesAvailable } = useFirebase();
     const { toast } = useToast();
 
+    // The query is only created when firestore is available.
     const postsCollectionQuery = useMemo((): Query | null => {
         if (!firestore) return null;
         return collection(firestore, 'blogPosts');
     }, [firestore]);
     
+    // The hook will now safely handle the null query until firestore is ready.
     const { data: posts, isLoading, error } = useCollection<Post>(postsCollectionQuery);
 
     if (error) {
@@ -59,7 +61,10 @@ export default function AdminBlogPage() {
         });
     }
 
-    const sortedPosts = posts ? [...posts].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()) : [];
+    const sortedPosts = useMemo(() => {
+        if (!posts) return [];
+        return [...posts].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    }, [posts]);
     
     const showLoading = isLoading || !areServicesAvailable;
 
