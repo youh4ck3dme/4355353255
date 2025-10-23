@@ -45,7 +45,7 @@ Toto je frontendová časť pre VI&MO Blog, postavená na Next.js, Tailwind CSS 
     - `NEXT_PUBLIC_ADMIN_PASSWORD`: Nastavte na silné a unikátne heslo.
 
 2.  **Vytvorenie produkčného buildu:**
-    Tento príkaz najprv vyčistí staré buildy a potom vytvorí novú optimalizovanú verziu aplikácie pripravenú na nasadenie.
+    Tento príkaz najprv vyčistí staré buildy (`npm run clean`) a potom vytvorí novú optimalizovanú verziu aplikácie pripravenú na nasadenie.
     ```bash
     npm run build
     ```
