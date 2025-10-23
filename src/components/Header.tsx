@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -46,7 +45,7 @@ export const Header = () => {
               width={140} 
               height={40} 
               priority
-              style={{ width: '140px', height: 'auto' }}
+              style={{ width: 140, height: 'auto' }}
               className="object-contain"
             />
           </Link>
@@ -107,7 +106,7 @@ export const Header = () => {
                 width={140}
                 height={40}
                 priority
-                style={{ width: '140px', height: 'auto' }}
+                style={{ width: 140, height: 'auto' }}
                 className="object-contain"
               />
             </Link>

@@ -2,13 +2,14 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { useUser, useFirebase } from '@/firebase';
-import { doc, setDoc, getDoc, writeBatch, collection, query, where, onSnapshot, DocumentData, FirestoreError, QuerySnapshot, CollectionReference, Query, Firestore } from 'firebase/firestore';
+import { doc, setDoc, getDoc, writeBatch } from 'firebase/firestore';
 import { ChecklistCategory } from '@/lib/checklist-data';
 import { Check, Circle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from './ui/use-toast';
 import { Loader2 } from 'lucide-react';
+import { useFirebase } from './PublicLayout'; // Updated import
+import { onAuthStateChanged, User, signInAnonymously } from 'firebase/auth';
 
 interface ChecklistProps {
   categories: ChecklistCategory[];
@@ -16,7 +17,6 @@ interface ChecklistProps {
 
 type CheckedItemsState = Record<string, boolean>;
 
-// Debounce function
 function debounce<F extends (...args: any[]) => any>(func: F, waitFor: number) {
   let timeout: ReturnType<typeof setTimeout> | null = null;
 
@@ -29,24 +29,44 @@ function debounce<F extends (...args: any[]) => any>(func: F, waitFor: number) {
 }
 
 export const Checklist = ({ categories }: ChecklistProps) => {
-  // useFirebase provides all necessary state, including user and service availability
-  const { user, firestore, isUserLoading } = useFirebase();
   const { toast } = useToast();
+  const { firestore, auth } = useFirebase(); // Use context
 
   const [checkedItems, setCheckedItems] = useState<CheckedItemsState>({});
-  const [isDataLoading, setIsDataLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(null);
 
-  // Memoize the document reference. It will be created only when both firestore and user are available.
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+      } else {
+        try {
+          const userCredential = await signInAnonymously(auth);
+          setUser(userCredential.user);
+        } catch (error) {
+          console.error("Anonymous sign-in failed:", error);
+          setIsLoading(false);
+          toast({
+            variant: "destructive",
+            title: "Chyba pripojenia",
+            description: "Nepodarilo sa vytvoriť anonymnú reláciu na ukladanie postupu."
+          });
+        }
+      }
+    });
+    return () => unsubscribe();
+  }, [auth, toast]);
+
   const userChecklistRef = useMemo(() => {
     if (!firestore || !user) return null;
     return doc(firestore, `checklists/${user.uid}`);
-  }, [firestore, user]);
+  }, [user, firestore]);
 
   const debouncedUpdateFirestore = useCallback(
     debounce(async (itemsToUpdate: CheckedItemsState) => {
       if (!userChecklistRef) return;
       try {
-        // Use the memoized ref to update the document
         await setDoc(userChecklistRef, { items: itemsToUpdate }, { merge: true });
       } catch (error) {
         console.error("Firestore update failed:", error);
@@ -57,21 +77,16 @@ export const Checklist = ({ categories }: ChecklistProps) => {
         });
       }
     }, 1000),
-    [userChecklistRef, toast] // Dependency on the memoized ref
+    [userChecklistRef, toast]
   );
 
-  // Effect to load data from Firestore when the component mounts or user changes
   useEffect(() => {
-    // Don't do anything if the ref isn't ready
     if (!userChecklistRef) {
-      // If user has loaded but there's no ref, we're not logged in, stop loading.
-      if(!isUserLoading) {
-        setIsDataLoading(false);
-      }
-      return;
+        if(user && firestore) setIsLoading(false);
+        return;
     }
     
-    setIsDataLoading(true);
+    setIsLoading(true);
     const loadData = async () => {
       try {
         const docSnap = await getDoc(userChecklistRef);
@@ -80,13 +95,18 @@ export const Checklist = ({ categories }: ChecklistProps) => {
         }
       } catch (error) {
         console.error("Failed to load checklist state from Firestore", error);
+        toast({
+            variant: 'destructive',
+            title: 'Chyba pri načítaní',
+            description: 'Nepodarilo sa načítať váš uložený postup.',
+        });
       } finally {
-        setIsDataLoading(false);
+        setIsLoading(false);
       }
     };
     
     loadData();
-  }, [userChecklistRef, isUserLoading]); // Depend on the memoized ref
+  }, [userChecklistRef, toast, user, firestore]);
 
   const handleToggle = (itemId: string) => {
     const newCheckedItems = { ...checkedItems, [itemId]: !checkedItems[itemId] };
@@ -122,7 +142,6 @@ export const Checklist = ({ categories }: ChecklistProps) => {
             title: 'Chyba pri resetovaní',
             description: 'Nepodarilo sa resetovať kategóriu. Skúste to prosím znova.',
         });
-        // In a real-world app, you might want to revert the state change here
       }
   };
 
@@ -133,26 +152,13 @@ export const Checklist = ({ categories }: ChecklistProps) => {
     return (completedItems / totalItems) * 100;
   };
 
-  // The FirebaseProvider already handles the main loading state.
-  // This loader is for the specific data of this component.
-  if (isDataLoading) {
+  if (isLoading || !user) {
       return (
           <div className="text-center py-16 flex flex-col items-center justify-center min-h-[50vh]">
               <Loader2 className="mx-auto h-12 w-12 animate-spin text-brand-bright-green" />
               <p className="mt-4 text-slate-300">Načítavam váš osobný checklist...</p>
           </div>
       );
-  }
-
-  // This should theoretically not be shown because the provider handles user state,
-  // but it's a good fallback.
-  if (!user) {
-      return (
-           <div className="text-center py-16 bg-red-900/20 border border-red-500/50 rounded-lg">
-                <h3 className="text-2xl font-bold text-red-300">Personalizovaný Checklist</h3>
-                <p className="mt-2 text-slate-400">Pre ukladanie vášho postupu je potrebná anonymná relácia. Ak sa nenačítava, obnovte stránku.</p>
-           </div>
-      )
   }
 
   return (

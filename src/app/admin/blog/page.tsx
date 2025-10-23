@@ -8,9 +8,10 @@ import { cn } from '@/lib/utils';
 import { PlusCircle, Edit, Loader2, Newspaper, Info } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
 import GlassCard from '@/components/GlassCard';
-import { useCollection, useFirebase } from '@/firebase';
-import { collection, Query } from 'firebase/firestore';
-import { useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { collection, onSnapshot, query, orderBy, Query } from 'firebase/firestore';
+import { useFirebase } from '@/components/PublicLayout';
+
 
 const PostRow = ({ post }: { post: Post }) => {
     return (
@@ -40,29 +41,48 @@ const PostRow = ({ post }: { post: Post }) => {
 
 
 export default function AdminBlogPage() {
-    const { firestore } = useFirebase();
     const { toast } = useToast();
+    const { firestore } = useFirebase();
+    const [livePosts, setLivePosts] = useState<Post[] | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<Error | null>(null);
 
-    const postsCollectionQuery = useMemo((): Query | null => {
+    const postsQuery = useMemo(() => {
         if (!firestore) return null;
-        return collection(firestore, 'blogPosts');
+        return query(collection(firestore, 'blogPosts'), orderBy('date', 'desc'));
     }, [firestore]);
-    
-    const { data: posts, isLoading, error } = useCollection<Post>(postsCollectionQuery);
 
-    if (error) {
-        console.error("Failed to fetch posts:", error);
-        toast({
-            variant: 'destructive',
-            title: 'Chyba pri načítaní článkov',
-            description: 'Nepodarilo sa načítať zoznam článkov z databázy.',
-        });
-    }
+    useEffect(() => {
+        if (!postsQuery) {
+            if(firestore) setIsLoading(false);
+            return;
+        }
 
-    const sortedPosts = useMemo(() => {
-        if (!posts) return [];
-        return [...posts].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-    }, [posts]);
+        setIsLoading(true);
+        const unsubscribe = onSnapshot(
+          postsQuery,
+          (snapshot) => {
+            const results: Post[] = snapshot.docs.map(doc => ({
+                ...(doc.data() as Post),
+                slug: doc.id,
+            }));
+            setLivePosts(results);
+            setIsLoading(false);
+          },
+          (err) => {
+            console.error("Error fetching live blog posts:", err);
+            setError(err);
+            setIsLoading(false);
+             toast({
+                variant: 'destructive',
+                title: 'Chyba pri načítaní článkov',
+                description: 'Nepodarilo sa načítať zoznam článkov z databázy.',
+            });
+          }
+        );
+
+        return () => unsubscribe();
+    }, [postsQuery, toast, firestore]);
     
     return (
         <div className="container mx-auto px-4 py-12 max-w-6xl">
@@ -103,9 +123,9 @@ export default function AdminBlogPage() {
                             <Loader2 className="mx-auto h-12 w-12 animate-spin text-brand-bright-green" />
                             <p className="mt-4 text-slate-300">Načítavam články z databázy...</p>
                         </div>
-                    ) : sortedPosts.length > 0 ? (
+                    ) : livePosts && livePosts.length > 0 ? (
                         <div>
-                            {sortedPosts.map(post => (
+                            {livePosts.map(post => (
                                 <PostRow key={post.slug} post={post} />
                             ))}
                         </div>

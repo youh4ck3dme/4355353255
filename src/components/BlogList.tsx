@@ -7,10 +7,9 @@ import { BlogCard } from './BlogCard';
 import { cn } from '@/lib/utils';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import GlassCard from './GlassCard';
-import { useCollection, useFirebase } from '@/firebase';
 import { Loader2 } from 'lucide-react';
-import { collection, query, where, Query } from 'firebase/firestore';
-
+import { collection, onSnapshot, query, where, orderBy, Query, DocumentData } from 'firebase/firestore';
+import { useFirebase } from './PublicLayout';
 
 const ALL_CATEGORIES = ['Tipy na sťahovanie', 'Upratovanie', 'Novinky', 'Vypratávanie'];
 
@@ -23,24 +22,57 @@ export const BlogList = ({ initialPosts, initialCategory }: { initialPosts: Post
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState<string | null>(initialCategory || null);
 
-    const postsCollectionQuery = useMemo(() => {
-        if (!firestore) return null; 
-        
-        const postsCollectionRef = collection(firestore, 'blogPosts');
-        let q: Query = query(postsCollectionRef, where('status', '==', 'published'));
-        
-        if (selectedCategory) {
-             q = query(q, where('tags', 'array-contains', selectedCategory));
-        }
-        return q;
-    }, [firestore, selectedCategory]);
-
-    const { data: livePosts, isLoading: areLivePostsLoading, error } = useCollection<Post>(postsCollectionQuery);
+    const [livePosts, setLivePosts] = useState<Post[] | null>(initialPosts);
+    const [areLivePostsLoading, setAreLivePostsLoading] = useState(true);
 
     useEffect(() => {
         const categoryFromUrl = searchParams.get('category');
         setSelectedCategory(categoryFromUrl || null);
     }, [searchParams]);
+
+    const postsQuery = useMemo(() => {
+        if (!firestore) return null;
+        
+        const postsCollectionRef = collection(firestore, 'blogPosts');
+        const queryConstraints = [
+            where('status', '==', 'published'),
+            orderBy('date', 'desc')
+        ];
+
+        if (selectedCategory) {
+            queryConstraints.push(where('tags', 'array-contains', selectedCategory));
+        }
+
+        return query(postsCollectionRef, ...queryConstraints as any);
+    }, [firestore, selectedCategory]);
+
+
+    useEffect(() => {
+        if (!postsQuery) {
+            if (firestore) setAreLivePostsLoading(false);
+            return;
+        }
+
+        setAreLivePostsLoading(true);
+        
+        const unsubscribe = onSnapshot(
+          postsQuery,
+          (snapshot) => {
+            const results: Post[] = snapshot.docs.map(doc => ({
+                ...(doc.data() as Post),
+                slug: doc.id,
+            }));
+            setLivePosts(results);
+            setAreLivePostsLoading(false);
+          },
+          (err) => {
+            console.error("Error fetching live blog posts:", err);
+            setAreLivePostsLoading(false);
+          }
+        );
+
+        return () => unsubscribe();
+    }, [postsQuery, firestore]);
 
     const handleCategoryClick = (category: string | null) => {
         const current = new URLSearchParams(Array.from(searchParams.entries()));
@@ -57,16 +89,14 @@ export const BlogList = ({ initialPosts, initialCategory }: { initialPosts: Post
         router.push(`${pathname}${query}`, { scroll: false });
     };
 
-    // Use live posts if available, otherwise fall back to initial static posts
-    const postsToDisplay = livePosts ?? initialPosts;
-
     const filteredBySearch = useMemo(() => {
-        if (!searchQuery) return postsToDisplay;
-        return postsToDisplay.filter(post =>
+        const postsToFilter = livePosts || [];
+        if (!searchQuery) return postsToFilter;
+        return postsToFilter.filter(post =>
             post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
             (post.excerpt && post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()))
         );
-    }, [postsToDisplay, searchQuery]);
+    }, [livePosts, searchQuery]);
     
     return (
         <div>
@@ -106,7 +136,7 @@ export const BlogList = ({ initialPosts, initialCategory }: { initialPosts: Post
                 />
             </div>
 
-            {areLivePostsLoading ? (
+            {areLivePostsLoading && (!livePosts || livePosts.length === 0) ? (
                 <div className="text-center py-16">
                     <Loader2 className="mx-auto h-12 w-12 animate-spin text-brand-bright-green" />
                 </div>

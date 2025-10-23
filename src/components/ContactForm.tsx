@@ -3,12 +3,12 @@
 
 import { useToast } from '@/components/ui/use-toast';
 import { z } from 'zod';
-import { useFirebase } from '@/firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { cn } from '@/lib/utils';
+import { useFirebase } from './PublicLayout';
 
 
 const contactFormSchema = z.object({
@@ -23,7 +23,7 @@ type ContactFormValues = z.infer<typeof contactFormSchema>;
 
 export const ContactForm = () => {
     const { toast } = useToast();
-    const { firestore, isUserLoading } = useFirebase();
+    const { firestore } = useFirebase();
 
     const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm<ContactFormValues>({
         resolver: zodResolver(contactFormSchema),
@@ -32,9 +32,9 @@ export const ContactForm = () => {
     const onSubmit = async (data: ContactFormValues) => {
         if (!firestore) {
             toast({
-                variant: "destructive",
-                title: "Chyba pri inicializácii",
-                description: "Databáza nie je dostupná. Skúste to prosím neskôr.",
+              variant: "destructive",
+              title: "Chyba pripojenia",
+              description: "Databáza nie je k dispozícii. Skúste to prosím neskôr.",
             });
             return;
         }
@@ -63,15 +63,6 @@ export const ContactForm = () => {
             });
         }
     };
-    
-    if (isUserLoading) {
-        return (
-            <div className="min-h-[300px] flex flex-col items-center justify-center text-center">
-                <Loader2 className="mx-auto h-8 w-8 animate-spin text-brand-bright-green" />
-                <p className="mt-4 text-slate-300">Načítavam formulár...</p>
-            </div>
-        );
-    }
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

@@ -4,14 +4,15 @@
 import { useState, useEffect, FormEvent } from 'react';
 import { ShieldCheck, LogIn, Loader2 } from 'lucide-react';
 import GlassCard from '@/components/GlassCard';
-import { PublicLayout } from '@/components/PublicLayout';
-import { useFirebase } from '@/firebase';
-import { onAuthStateChanged } from 'firebase/auth';
+import { PublicLayout, useFirebase } from '@/components/PublicLayout';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+
 
 // Načítanie hesla z environment premenných.
-// V produkcii sa nastavuje na hostingovej platforme (napr. Vercel, Netlify).
+const ADMIN_EMAIL = "admin@vimo.com"; // Fiktívny email pre admina
 const PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD;
 const SESSION_STORAGE_KEY = 'admin-authenticated';
+
 
 function ProgressBar({ progress }: { progress: number }) {
     return (
@@ -83,11 +84,12 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { auth, isUserLoading } = useFirebase();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [error, setError] = useState('');
   const [isChecking, setIsChecking] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
+  const { auth } = useFirebase();
 
   useEffect(() => {
     // Check session storage first for quick access
@@ -98,6 +100,7 @@ export default function AdminLayout({
     } catch (e) {
       console.error("Failed to access sessionStorage:", e);
     }
+    setIsAuthLoading(false);
   }, []);
 
   useEffect(() => {
@@ -110,7 +113,7 @@ export default function AdminLayout({
     return () => clearTimeout(timer);
   }, [isChecking, progress]);
 
-  const handleLogin = (password: string) => {
+  const handleLogin = async (password: string) => {
     if (!PASSWORD) {
         setError('Heslo pre administrátora nie je nastavené na serveri.');
         return;
@@ -119,30 +122,42 @@ export default function AdminLayout({
     setIsChecking(true);
     setProgress(1);
 
-    setTimeout(() => {
-      if (password === PASSWORD) {
-        try {
-          sessionStorage.setItem(SESSION_STORAGE_KEY, 'true');
-        } catch (e) {
-         console.error("Failed to set sessionStorage:", e);
+    // Simulate network delay for better UX
+    await new Promise(resolve => setTimeout(resolve, 1500));
+
+    try {
+        // We use a fake email but a real password for authentication.
+        // In a real app, you would use a proper login mechanism.
+        // This is a simplified approach for a private admin area.
+        if (password === PASSWORD) {
+             try {
+                // Also sign in to firebase to get a token for API calls
+                await signInWithEmailAndPassword(auth, ADMIN_EMAIL, password);
+                sessionStorage.setItem(SESSION_STORAGE_KEY, 'true');
+            } catch (e) {
+                console.error("Failed to set sessionStorage or sign in:", e);
+            }
+            setIsAuthenticated(true);
+            setError('');
+        } else {
+            throw new Error("Nesprávne heslo.");
         }
-        setIsAuthenticated(true);
-        setError('');
-      } else {
+    } catch (e) {
         setError('Nesprávne heslo. Prístup zamietnutý.');
-      }
-      setIsChecking(false);
-      setProgress(0);
-    }, 2200); 
+        console.error("Authentication failed:", e);
+    } finally {
+        setIsChecking(false);
+        setProgress(0);
+    }
   };
   
-  if (isUserLoading) {
+  if (isAuthLoading) {
       return (
         <PublicLayout>
             <div className="min-h-screen flex items-center justify-center p-4">
                 <div className="text-center">
                     <Loader2 className="mx-auto h-12 w-12 animate-spin text-brand-bright-green" />
-                    <p className="mt-4 text-slate-300">Inicializujem Firebase...</p>
+                    <p className="mt-4 text-slate-300">Inicializujem autorizáciu...</p>
                 </div>
             </div>
         </PublicLayout>

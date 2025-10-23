@@ -1,17 +1,17 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Post } from '@/lib/types';
 import { useToast } from '@/components/ui/use-toast';
-import { Loader2, Save, Send } from 'lucide-react';
+import { Loader2, Save } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useAuth } from '@/firebase';
 import slugify from 'slugify';
+import { useFirebase } from '@/components/PublicLayout';
 
 const postSchema = z.object({
   title: z.string().min(3, 'Titulok musí mať aspoň 3 znaky.'),
@@ -29,8 +29,8 @@ interface PostFormProps {
 
 export const PostForm = ({ post }: PostFormProps) => {
   const router = useRouter();
-  const auth = useAuth();
   const { toast } = useToast();
+  const { auth } = useFirebase();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitAction, setSubmitAction] = useState<'draft' | 'published'>(post?.status || 'draft');
 
@@ -55,8 +55,9 @@ export const PostForm = ({ post }: PostFormProps) => {
 
   const onSubmit: SubmitHandler<PostFormData> = async (data) => {
     setIsSubmitting(true);
-
+    
     const user = auth.currentUser;
+
     if (!user) {
         toast({
             variant: 'destructive',
