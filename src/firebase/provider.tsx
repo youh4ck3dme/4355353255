@@ -8,12 +8,10 @@ import { Auth, User, onAuthStateChanged } from 'firebase/auth';
 import { initiateAnonymousSignIn } from './non-blocking-login';
 import { Loader2 } from 'lucide-react';
 import { PublicLayout } from '@/components/PublicLayout';
+import { initializeFirebase } from '@/firebase'; // Import initialize function
 
 interface FirebaseProviderProps {
   children: ReactNode;
-  firebaseApp: FirebaseApp | null;
-  firestore: Firestore | null;
-  auth: Auth | null;
 }
 
 // Internal state for user authentication
@@ -69,10 +67,17 @@ const FullscreenLoader = ({ message }: { message: string }) => (
  */
 export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
   children,
-  firebaseApp,
-  firestore,
-  auth,
 }) => {
+    const { firebaseApp, auth, firestore } = useMemo(() => {
+        try {
+            return initializeFirebase();
+        } catch (e) {
+            console.error("Firebase initialization failed in provider:", e);
+            return { firebaseApp: null, auth: null, firestore: null };
+        }
+    }, []);
+
+
   const [userAuthState, setUserAuthState] = useState<UserAuthState>({
     user: null,
     isUserLoading: true, // Start in loading state

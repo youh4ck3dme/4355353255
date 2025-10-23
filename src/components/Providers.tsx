@@ -1,17 +1,17 @@
 
 'use client';
 
-import { FirebaseClientProvider } from "@/firebase/client-provider";
+import { FirebaseProvider } from "@/firebase/provider";
 import { FirebaseErrorListener } from './FirebaseErrorListener';
 import { ThemeProvider } from 'next-themes'
 
 export function Providers({ children }: { children: React.ReactNode }) {
     return (
       <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
-        <FirebaseClientProvider>
+        <FirebaseProvider>
           <FirebaseErrorListener />
           {children}
-        </FirebaseClientProvider>
+        </FirebaseProvider>
       </ThemeProvider>
     );
 }
