@@ -112,7 +112,23 @@ function AuthGuard({ children }: { children: ReactNode }) {
         setError('');
 
     } catch (e) {
-        const errorMessage = (e as Error).message || 'Neznáma chyba pri prihlasovaní.';
+        const firebaseError = e as { code?: string, message: string };
+        let errorMessage = 'Neznáma chyba pri prihlasovaní.';
+        if (firebaseError.code) {
+          switch (firebaseError.code) {
+            case 'auth/wrong-password':
+              errorMessage = 'Nesprávne heslo.';
+              break;
+            case 'auth/user-not-found':
+              errorMessage = 'Používateľ neexistuje.';
+              break;
+            default:
+              errorMessage = firebaseError.message;
+          }
+        } else {
+            errorMessage = firebaseError.message;
+        }
+
         setError(`Firebase prihlásenie zlyhalo: ${errorMessage}`);
         console.error("Authentication failed:", e);
         try {
