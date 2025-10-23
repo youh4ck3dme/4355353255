@@ -113,7 +113,7 @@ function AuthGuard({ children }: { children: ReactNode }) {
 
     } catch (e) {
         const errorMessage = (e as Error).message || 'Neznáma chyba pri prihlasovaní.';
-        setError(errorMessage);
+        setError(`Firebase prihlásenie zlyhalo: ${errorMessage}`);
         console.error("Authentication failed:", e);
         try {
           sessionStorage.removeItem(SESSION_STORAGE_KEY);
@@ -160,7 +160,15 @@ function AuthGuard({ children }: { children: ReactNode }) {
     );
   }
 
-  return <>{children}</>;
+  return (
+    <div className="flex flex-col min-h-screen">
+      <Header />
+      <main id="main-content" className="flex-grow bg-brand-bg dark:bg-brand-dark-teal">
+        {children}
+      </main>
+      <Footer />
+    </div>
+  )
 }
 
 
@@ -171,13 +179,7 @@ export default function AdminLayout({
 }) {
   return (
       <AuthGuard>
-        <div className="flex flex-col min-h-screen">
-          <Header />
-          <main id="main-content" className="flex-grow bg-brand-bg dark:bg-brand-dark-teal">
-            {children}
-          </main>
-          <Footer />
-        </div>
+        {children}
       </AuthGuard>
   );
 }
