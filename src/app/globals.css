@@ -83,69 +83,6 @@
   h1, h2, h3, h4, h5, h6 {
     @apply tracking-tight;
   }
-  
-   .liquid-glass-background {
-      @apply bg-black min-h-screen w-full;
-      position: relative;
-  }
-
-  .bg-orbs {
-      @apply absolute inset-0 z-0;
-      filter: blur(80px);
-      overflow: hidden;
-  }
-
-  .orb {
-      @apply absolute rounded-full;
-      animation: move 25s infinite alternate;
-  }
-
-  .orb:nth-child(1) {
-      background-color: hsl(var(--brand-dark-teal-hsl) / 0.5);
-      width: 400px;
-      height: 400px;
-      top: 10%;
-      left: 10%;
-      animation-duration: 25s;
-  }
-
-  .orb:nth-child(2) {
-      background-color: hsl(var(--brand-bright-green-hsl) / 0.1);
-      width: 300px;
-      height: 300px;
-      top: 40%;
-      right: 5%;
-      animation-duration: 20s;
-      animation-delay: 5s;
-  }
-
-  .orb:nth-child(3) {
-      background-color: hsl(var(--brand-secondary-grey-hsl) / 0.2);
-      width: 250px;
-      height: 250px;
-      bottom: 15%;
-      left: 20%;
-      animation-duration: 30s;
-      animation-delay: 2s;
-  }
-
-  @keyframes move {
-    0% {
-      transform: translate(0, 0) scale(1);
-    }
-    25% {
-      transform: translate(20px, 40px) scale(1.1);
-    }
-    50% {
-      transform: translate(-30px, -10px) scale(0.9);
-    }
-    75% {
-        transform: translate(40px, -20px) scale(1.2);
-    }
-    100% {
-      transform: translate(0, 0) scale(1);
-    }
-  }
 
   .glass-card {
     @apply bg-black/20 backdrop-blur-lg border border-white/10 rounded-2xl transition-all duration-300;

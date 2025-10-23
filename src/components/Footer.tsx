@@ -1,3 +1,4 @@
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { Phone, Mail } from 'lucide-react';
@@ -13,9 +14,9 @@ const footerLinks = [
 
 export const Footer = () => {
   return (
-    <footer className="bg-black text-white/90 pt-16 pb-8">
+    <footer className="bg-brand-dark-teal/50 border-t border-white/10 text-white/90 pt-16 pb-8">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-12 mb-12 text-center md:text-left">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12 text-center md:text-left">
           
           {/* Column 1: Logo and About */}
           <div className="space-y-4 flex flex-col items-center md:items-start">
@@ -36,30 +37,24 @@ export const Footer = () => {
           {/* Column 2: Rýchly kontakt */}
           <div className="space-y-4">
             <h4 className="text-lg font-bold text-white uppercase tracking-wider">Rýchly kontakt</h4>
-            <div className="space-y-4">
-              <div>
-                <p className="font-semibold text-slate-300">Sťahovanie</p>
-                <p className="text-sm text-slate-400">Miroslav Danihel</p>
-                <a href="tel:+421911275755" className="liquid-glass-button inline-flex items-center justify-center md:justify-start space-x-2 text-slate-200 hover:text-brand-bright-green transition-colors group mt-1">
+            <div className="space-y-2">
+               <a href="tel:+421911275755" className="inline-flex items-center justify-center md:justify-start space-x-2 text-slate-200 hover:text-brand-bright-green transition-colors group">
                   <Phone size={16} className="text-brand-bright-green/80 group-hover:text-brand-bright-green" />
-                  <span>+421 911 275 755</span>
+                  <span>Sťahovanie: +421 911 275 755</span>
                 </a>
-              </div>
-              <div>
-                <p className="font-semibold text-slate-300">Upratovanie</p>
-                <p className="text-sm text-slate-400">Barbora Danihelová Huňková</p>
-                 <a href="tel:+421918895730" className="liquid-glass-button inline-flex items-center justify-center md:justify-start space-x-2 text-slate-200 hover:text-brand-bright-green transition-colors group mt-1">
+            </div>
+             <div className="space-y-2">
+                <a href="tel:+421918895730" className="inline-flex items-center justify-center md:justify-start space-x-2 text-slate-200 hover:text-brand-bright-green transition-colors group">
                   <Phone size={16} className="text-brand-bright-green/80 group-hover:text-brand-bright-green" />
-                  <span>+421 918 895 730</span>
+                  <span>Upratovanie: +421 918 895 730</span>
                 </a>
-              </div>
-              <div>
-                 <a href="mailto:info@viandmo.com" className="liquid-glass-button inline-flex items-center justify-center md:justify-start space-x-2 text-slate-200 hover:text-brand-bright-green transition-colors group mt-2">
+            </div>
+             <div className="space-y-2">
+                 <a href="mailto:info@viandmo.com" className="inline-flex items-center justify-center md:justify-start space-x-2 text-slate-200 hover:text-brand-bright-green transition-colors group mt-2">
                   <Mail size={16} className="text-brand-bright-green/80 group-hover:text-brand-bright-green" />
                   <span>info@viandmo.com</span>
                 </a>
               </div>
-            </div>
           </div>
           
           {/* Column 3: Navigácia */}
@@ -68,7 +63,7 @@ export const Footer = () => {
             <ul className="space-y-2">
               {footerLinks.map(link => (
                 <li key={link.label}>
-                  <Link href={link.href} className="liquid-glass-button inline-block text-slate-200 hover:text-brand-bright-green hover:underline underline-offset-4 transition-colors">
+                  <Link href={link.href} className="text-slate-300 hover:text-brand-bright-green hover:underline underline-offset-4 transition-colors">
                     {link.label}
                   </Link>
                 </li>
@@ -80,7 +75,7 @@ export const Footer = () => {
           <div className="space-y-4 flex flex-col items-center md:items-start">
             <h4 className="text-lg font-bold text-white uppercase tracking-wider">Fakturačné údaje</h4>
             <address className="not-italic text-sm text-slate-300 space-y-1">
-              <p className="font-bold">VI and MO s. r. o.</p>
+              <p className="font-bold text-white">VI and MO s. r. o.</p>
               <p>Karpatské námestie 7770/10A</p>
               <p>831 06 Bratislava - Rača</p>
               <p>Slovensko</p>
@@ -95,11 +90,11 @@ export const Footer = () => {
         <div className="border-t border-white/10 pt-6 mt-8 text-center text-sm text-slate-400">
           <p>&copy; {new Date().getFullYear()} VI&MO S.R.O. Všetky práva vyhradené.</p>
           <div className="mt-2 space-x-4">
-             <a href="https://viandmo.com" target="_blank" rel="noopener noreferrer" className="liquid-glass-button hover:text-brand-bright-green transition-colors">
+             <a href="https://viandmo.com" target="_blank" rel="noopener noreferrer" className="hover:text-brand-bright-green transition-colors">
               viandmo.com
             </a>
             <span className="text-slate-600">|</span>
-            <Link href="/ochrana-sukromia" className="liquid-glass-button hover:text-brand-bright-green transition-colors">
+            <Link href="/ochrana-sukromia" className="hover:text-brand-bright-green transition-colors">
               Ochrana osobných údajov
             </Link>
           </div>

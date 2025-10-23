@@ -11,22 +11,13 @@ const DynamicInstallPrompt = dynamic(() => import('@/components/InstallPrompt'),
 export function PublicLayout({ children }: { children: React.ReactNode }) {
   
   return (
-    <div className="bg-background text-foreground">
-        <div className="liquid-glass-background fixed inset-0 z-[-1]">
-            <div className="bg-orbs">
-                <div className="orb"></div>
-                <div className="orb"></div>
-                <div className="orb"></div>
-            </div>
-        </div>
-        <div className="relative z-10 flex flex-col min-h-screen">
-          <Header />
-          <main id="main-content" className="flex-grow">
-              {children}
-          </main>
-          <Footer />
-          <DynamicInstallPrompt />
-        </div>
+    <div className="bg-background text-foreground dark:bg-brand-dark-teal flex flex-col min-h-screen">
+      <Header />
+      <main id="main-content" className="flex-grow">
+          {children}
+      </main>
+      <Footer />
+      <DynamicInstallPrompt />
     </div>
   );
 }
