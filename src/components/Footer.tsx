@@ -21,8 +21,8 @@ export const Footer = () => {
           <div className="space-y-4 flex flex-col items-center md:items-start">
              <Link href="/" aria-label="Domov - VI&MO">
                 <Image 
-                    src="https://viandmo.com/wp-content/uploads/viandmo_logo_regular_land.svg"
-                    alt="VI&MO Logo"
+                    src="https://stahovanie.website/wp-content/uploads/viandmo_logo_regular_land.svg"
+                    alt="Stahovanie.Website Logo"
                     width={160}
                     height={45}
                     className="object-contain"
@@ -87,10 +87,10 @@ export const Footer = () => {
 
         {/* Sub-footer */}
         <div className="border-t border-white/10 pt-6 mt-8 text-center text-sm text-slate-400">
-          <p>&copy; {new Date().getFullYear()} VI&MO S.R.O. Všetky práva vyhradené.</p>
+          <p>&copy; {new Date().getFullYear()} Stahovanie.Website (VI&MO S.R.O.). Všetky práva vyhradené.</p>
           <div className="mt-2 space-x-4">
-             <a href="https://viandmo.com" target="_blank" rel="noopener noreferrer" className="hover:text-brand-bright-green transition-colors">
-              viandmo.com
+             <a href="https://stahovanie.website" target="_blank" rel="noopener noreferrer" className="hover:text-brand-bright-green transition-colors">
+              stahovanie.website
             </a>
             <span className="text-slate-600">|</span>
             <Link href="/ochrana-sukromia" className="hover:text-brand-bright-green transition-colors">

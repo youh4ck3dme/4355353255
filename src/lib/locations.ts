@@ -17,14 +17,15 @@ export const locations: Location[] = [
     { id: "dubravka", name: "Dúbravka", x: 160, y: 215, slug: 'stahovanie-dubravka-panelaky-rodinne-domy' },
     { id: "lamac", name: "Lamač", x: 180, y: 200, slug: 'stahovanie-lamac-komorna-cast-mesta' },
     { id: "devin", name: "Devín", x: 140, y: 250, slug: 'stahovanie-devin-malebna-lokalita' },
-    { id: "devinska", name: "Devínska N. Ves", x: 150, y: 190, slug: 'stahovanie-devinska-nova-ves-dunaj-a-priemysel' },
-    { id: "zahorska", name: "Záhorská Bystrica", x: 180, y: 170, slug: 'stahovanie-zahorska-bystrica-pod-karpatmi' },
+    { id: "devinska-nova-ves", name: "Devínska N. Ves", x: 150, y: 190, slug: 'stahovanie-devinska-nova-ves-dunaj-a-priemysel' },
+    { id: "zahorska-bystrica", name: "Záhorská Bystrica", x: 180, y: 170, slug: 'stahovanie-zahorska-bystrica-pod-karpatmi' },
     { id: "raca", name: "Rača", x: 250, y: 210, slug: 'stahovanie-raca-tipy-pre-rodiny' },
     { id: "vajnory", name: "Vajnory", x: 265, y: 230, slug: 'vypratavanie-vajnory-letiskovy-charakter' },
     { id: "vrakuna", name: "Vrakuňa", x: 245, y: 285, slug: 'stahovanie-vrakuna-nova-bratislava' },
-    { id: "biskupice", name: "Pod. Biskupice", x: 240, y: 310, slug: 'stahovanie-podunajske-biskupice-mesto-a-vidiek' },
+    { id: "podunajske-biskupice", name: "Pod. Biskupice", x: 240, y: 310, slug: 'stahovanie-podunajske-biskupice-mesto-a-vidiek' },
     { id: "jarovce", name: "Jarovce", x: 180, y: 310, slug: 'stahovanie-jarovce-juzna-cast-bratislavy' },
     { id: "rusovce", name: "Rusovce", x: 200, y: 330, slug: 'rychle-stahovanie-rusovce' },
+    { id: "cunovo", name: "Čunovo", x: 220, y: 355 },
     
     // Surrounding Towns
     { id: "senec", name: "Senec", x: 320, y: 240 },

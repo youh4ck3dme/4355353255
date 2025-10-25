@@ -38,10 +38,10 @@ export const Header = () => {
     <>
       <header className="sticky top-0 z-50 bg-brand-dark-teal/80 dark:bg-black/30 backdrop-blur-lg shadow-medium text-white border-b border-white/10">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center hover:opacity-90 transition-opacity" aria-label="Domov - VI&MO">
+          <Link href="/" className="flex items-center hover:opacity-90 transition-opacity" aria-label="Domov - Stahovanie.Website">
              <Image 
-              src="https://viandmo.com/wp-content/uploads/viandmo_logo_regular_land.svg" 
-              alt="VI&MO Logo" 
+              src="https://stahovanie.website/wp-content/uploads/viandmo_logo_regular_land.svg" 
+              alt="Stahovanie.Website Logo" 
               width={140} 
               height={40} 
               priority
@@ -100,8 +100,8 @@ export const Header = () => {
           <div className="h-16 flex items-center justify-between">
              <Link href="/" className="flex items-center">
               <Image 
-                src="https://viandmo.com/wp-content/uploads/viandmo_logo_regular_land.svg"
-                alt="VI&MO Logo" 
+                src="https://stahovanie.website/wp-content/uploads/viandmo_logo_regular_land.svg"
+                alt="Stahovanie.Website Logo" 
                 width={140}
                 height={40}
                 priority

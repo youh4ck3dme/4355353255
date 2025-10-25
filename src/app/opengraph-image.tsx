@@ -3,7 +3,7 @@ import { ImageResponse } from 'next/og';
 
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
-export const alt = 'VI&MO - Sťahovanie Bratislava';
+export const alt = 'Stahovanie.Website - Sťahovanie Bratislava';
 
 export default function OgImage() {
   return new ImageResponse(
@@ -24,8 +24,8 @@ export default function OgImage() {
         }}
       >
         <img 
-          src="https://viandmo.com/wp-content/uploads/viandmo_logo_regular_land.svg" 
-          alt="VI&MO Logo" 
+          src="https://stahovanie.website/wp-content/uploads/viandmo_logo_regular_land.svg" 
+          alt="Stahovanie.Website Logo" 
           width="400"
           height="114"
         />

@@ -44,7 +44,6 @@ export const InteractiveMap = () => {
           {/* Location Points */}
           <g>
             {locations.map((loc) => {
-              const isActive = activeLocation === loc.id;
               const pointContent = (
                 <g 
                   onMouseEnter={() => setActiveLocation(loc.id)}
@@ -99,7 +98,7 @@ export const InteractiveMap = () => {
               );
 
               return (
-                <Link key={loc.id} href={loc.slug ? `/blog/${loc.slug}`: '/lokality'} aria-label={`Článok o lokalite ${loc.name}`}>
+                <Link key={loc.id} href={`/lokality/${loc.id}`} aria-label={`Stránka pre lokalitu ${loc.name}`}>
                   {pointContent}
                 </Link>
               );
