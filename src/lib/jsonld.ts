@@ -1,3 +1,4 @@
+
 export function serviceJsonLd(serviceType: string) {
   return {
     '@context': 'https://schema.org',
@@ -7,7 +8,7 @@ export function serviceJsonLd(serviceType: string) {
     provider: {
       '@type': 'MovingCompany',
       name: 'VI&MO – Sťahovanie Bratislava',
-      url: 'https://app.viandmo.com'
+      url: 'https://stahovanie.website'
     }
   };
 }

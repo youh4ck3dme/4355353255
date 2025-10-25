@@ -3,9 +3,9 @@ import type { MetadataRoute } from 'next';
 import { getPublishedPosts } from '@/lib/mdx';
 import { services } from '@/lib/services';
 
-const base = process.env.NEXT_PUBLIC_BASE_URL || 'https://app.viandmo.com';
+const base = process.env.NEXT_PUBLIC_BASE_URL || 'https://stahovanie.website';
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
   
   // Static pages
@@ -34,7 +34,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }));
 
   // Dynamic blog posts
-  const posts = getPublishedPosts();
+  const posts = await getPublishedPosts();
   const postUrls = posts.map(post => ({
     url: `${base}/blog/${post.slug}`,
     lastModified: new Date(post.date),

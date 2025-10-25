@@ -45,13 +45,13 @@ const faqItems = [
 export default async function HomePage() {
   const latestPosts = (await getPublishedPosts()).slice(0, 3);
 
-  const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://app.viandmo.com';
+  const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://stahovanie.website';
   const organizationJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: 'VI&MO - Sťahovanie Bratislava',
     url: siteUrl,
-    logo: 'https://viandmo.com/wp-content/uploads/viandmo_logo_regular_land.svg',
+    logo: 'https://stahovanie.website/wp-content/uploads/viandmo_logo_regular_land.svg',
     contactPoint: {
       '@type': 'ContactPoint',
       telephone: '+421-911-275-755',

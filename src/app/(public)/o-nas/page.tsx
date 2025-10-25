@@ -12,12 +12,12 @@ export const metadata: Metadata = {
 };
 
 export default function AboutPage() {
-  const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+  const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://stahovanie.website';
   const localBusinessJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
     name: 'VI and MO s. r. o.',
-    image: 'https://viandmo.com/wp-content/uploads/viandmo_logo_regular_land.svg',
+    image: 'https://stahovanie.website/wp-content/uploads/viandmo_logo_regular_land.svg',
     '@id': siteUrl,
     url: siteUrl,
     telephone: '+421 911 275 755',

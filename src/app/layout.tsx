@@ -6,6 +6,8 @@ import { Toaster } from '@/components/ui/toaster';
 import { Providers } from '@/components/Providers';
 import { FirebaseProvider } from '@/firebase/provider';
 import dynamic from 'next/dynamic';
+import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -17,7 +19,7 @@ const APP_DESCRIPTION = "Spoľahlivé sťahovacie a upratovacie služby v Bratis
 const DynamicInstallPrompt = dynamic(() => import('@/components/InstallPrompt'), { ssr: false });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://stahovanie.website'),
   applicationName: APP_NAME,
   title: {
     default: APP_DEFAULT_TITLE,
@@ -41,7 +43,7 @@ export const metadata: Metadata = {
       template: APP_TITLE_TEMPLATE,
     },
     description: APP_DESCRIPTION,
-    url: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://app.viandmo.com'),
+    url: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://stahovanie.website'),
   },
   twitter: {
     card: "summary_large_image",
@@ -67,7 +69,13 @@ export default function RootLayout({
       <body className={inter.className}>
         <Providers>
           <FirebaseProvider>
-              {children}
+              <div className="flex flex-col min-h-screen">
+                  <Header />
+                  <main id="main-content" className="flex-grow bg-brand-bg dark:bg-brand-dark-teal">
+                      {children}
+                  </main>
+                  <Footer />
+              </div>
               <DynamicInstallPrompt />
           </FirebaseProvider>
           <Toaster />
