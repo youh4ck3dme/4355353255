@@ -1,3 +1,4 @@
+
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -12,6 +13,8 @@ service cloud.firestore {
     }
 
     function isAdmin() {
+      // Check if a document for the user's UID exists in the roles_admin collection.
+      // This is a secure way to check for admin privileges.
       return exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
     }
 
@@ -22,13 +25,19 @@ service cloud.firestore {
 
       // Anyone can list documents, but the query MUST include `where('status', '==', 'published')`
       // This rule is defensively written; the client query is the source of truth.
-      allow list: if true; 
+      allow list: if request.query.filters.size() == 1 &&
+                   request.query.filters[0].field.stringValue == 'status' &&
+                   request.query.filters[0].op.stringValue == '==' &&
+                   request.query.filters[0].value.stringValue == 'published';
 
       // Admins can write (create, update, delete) any post.
       allow write: if isAdmin();
 
       // Admins can read draft posts directly.
       allow get: if isAdmin();
+      
+      // Admins can list all posts (including drafts)
+      allow list: if isAdmin();
     }
 
     // USER CHECKLISTS: Only the owner can read or write their own checklist.
