@@ -9,7 +9,7 @@ import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import GlassCard from './GlassCard';
 import { Loader2 } from 'lucide-react';
 import { useFirebase } from '@/firebase/provider';
-import { collection, query, where, orderBy, onSnapshot, Query, DocumentData, limit } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, Query, DocumentData, limit } from 'firebase/firestore';
 
 
 const ALL_CATEGORIES = ['Tipy na sťahovanie', 'Upratovanie', 'Novinky', 'Vypratávanie'];
@@ -38,13 +38,10 @@ export const BlogList = ({ initialCategory, postLimit }: { initialCategory?: str
     const postsQuery: Query<DocumentData> | null = useMemo(() => {
         if (!firestore) return null;
         
-        const queryConstraints: any[] = [
-            where('status', '==', 'published'),
-            orderBy('date', 'desc')
-        ];
+        let queryConstraints: any[] = [where('status', '==', 'published')];
         
         if (selectedCategory) {
-          queryConstraints.unshift(where('tags', 'array-contains', selectedCategory));
+          queryConstraints.push(where('tags', 'array-contains', selectedCategory));
         }
 
         if (postLimit) {
