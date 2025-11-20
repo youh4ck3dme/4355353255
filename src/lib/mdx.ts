@@ -1,18 +1,24 @@
 
 import { Post } from './types';
-import { collection, getDocs, doc, getDoc, query, where, setDoc } from 'firebase/firestore';
-import { initializeFirebaseAdmin } from './firebase-admin';
+import { collection, getDocs, doc, getDoc, query, where, setDoc, getFirestore } from 'firebase/firestore';
+import { initializeApp, getApps, getApp } from 'firebase/app';
+import { firebaseConfig } from './firebase-config';
 import slugify from 'slugify';
 
 // --- SERVER-SIDE ONLY ---
 
-async function getFirestoreInstance() {
-    const { firestore } = await initializeFirebaseAdmin();
-    return firestore;
+// This function safely initializes Firebase on the server-side if it hasn't been already.
+// It's safe to call this multiple times.
+function getDb() {
+    if (getApps().length === 0) {
+        initializeApp(firebaseConfig);
+    }
+    return getFirestore(getApp());
 }
 
+
 export async function getPublishedPosts(): Promise<Post[]> {
-    const db = await getFirestoreInstance();
+    const db = getDb();
     const postsCollection = collection(db, 'blogPosts');
     const q = query(postsCollection, where('status', '==', 'published'));
     const postSnapshot = await getDocs(q);
@@ -26,7 +32,7 @@ export async function getPublishedPosts(): Promise<Post[]> {
 }
 
 export async function getAllPostsForAdmin(): Promise<Post[]> {
-    const db = await getFirestoreInstance();
+    const db = getDb();
     const postsCollection = collection(db, 'blogPosts');
     const postSnapshot = await getDocs(postsCollection);
 
@@ -39,7 +45,7 @@ export async function getAllPostsForAdmin(): Promise<Post[]> {
 }
 
 export async function getPostBySlug(slug: string): Promise<Post | null> {
-    const db = await getFirestoreInstance();
+    const db = getDb();
     const postDoc = doc(db, 'blogPosts', slug);
     const postSnapshot = await getDoc(postDoc);
 
@@ -57,7 +63,7 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
 type PostData = Omit<Post, 'date'>;
 
 export async function savePost(postData: PostData): Promise<void> {
-    const db = await getFirestoreInstance();
+    const db = getDb();
     const { slug, ...data } = postData;
     
     const finalSlug = slug || slugify(postData.title, { lower: true, strict: true });
