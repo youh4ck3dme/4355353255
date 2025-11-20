@@ -7,6 +7,7 @@ import { useFirebase } from '@/firebase/provider';
 import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
+import { FirebaseProvider } from '@/firebase/provider';
 
 const ADMIN_EMAIL = "admin@vimo.com";
 const PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD;
@@ -194,8 +195,10 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-      <AuthGuard>
-        {children}
-      </AuthGuard>
+      <FirebaseProvider>
+        <AuthGuard>
+            {children}
+        </AuthGuard>
+      </FirebaseProvider>
   );
 }

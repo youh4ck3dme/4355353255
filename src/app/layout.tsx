@@ -4,10 +4,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { Providers } from '@/components/Providers';
-import { FirebaseProvider } from '@/firebase/provider';
 import dynamic from 'next/dynamic';
-import { Header } from '@/components/Header';
-import { Footer } from '@/components/Footer';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -68,17 +65,9 @@ export default function RootLayout({
     <html lang="sk" suppressHydrationWarning>
       <body className={inter.className}>
         <Providers>
-          <FirebaseProvider>
-              <div className="flex flex-col min-h-screen">
-                  <Header />
-                  <main id="main-content" className="flex-grow bg-brand-bg dark:bg-brand-dark-teal">
-                      {children}
-                  </main>
-                  <Footer />
-              </div>
-              <DynamicInstallPrompt />
-          </FirebaseProvider>
-          <Toaster />
+            {children}
+            <DynamicInstallPrompt />
+            <Toaster />
         </Providers>
       </body>
     </html>
