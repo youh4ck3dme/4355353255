@@ -1,0 +1,91 @@
+
+{
+  "entities": {
+    "UserProfile": {
+      "title": "User Profile",
+      "description": "Represents a user's profile information.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "The user's unique ID."
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "The user's email address."
+        },
+        "displayName": {
+          "type": "string",
+          "description": "The user's display name."
+        }
+      },
+      "required": ["uid", "email"]
+    },
+    "BlogPost": {
+        "title": "Blog Post",
+        "description": "Represents a single blog post.",
+        "type": "object",
+        "properties": {
+            "title": { "type": "string" },
+            "date": { "type": "string", "format": "date-time" },
+            "status": { "type": "string", "enum": ["published", "draft"] },
+            "author": { "type": "string" },
+            "imageUrl": { "type": "string", "format": "uri" },
+            "tags": { "type": "array", "items": { "type": "string" } },
+            "content": { "type": "string" },
+            "updatedAt": { "type": "string", "format": "date-time" }
+        },
+        "required": ["title", "date", "status", "content"]
+    },
+    "Checklist": {
+        "title": "User Checklist",
+        "description": "Stores the state of a user's moving checklist.",
+        "type": "object",
+        "properties": {
+            "items": {
+                "type": "object",
+                "additionalProperties": { "type": "boolean" }
+            }
+        }
+    },
+    "ContactSubmission": {
+        "title": "Contact Form Submission",
+        "description": "Represents a submission from the contact form.",
+        "type": "object",
+        "properties": {
+            "name": { "type": "string" },
+            "phone": { "type": "string" },
+            "email": { "type": "string", "format": "email" },
+            "address": { "type": "string" },
+            "submittedAt": { "type": "string", "format": "date-time" }
+        },
+        "required": ["name", "phone", "email", "submittedAt"]
+    }
+  },
+  "auth": {
+    "providers": ["email"]
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Stores public profiles for users."
+    },
+    "/blogPosts/{postId}": {
+        "schema": { "$ref": "#/entities/BlogPost" },
+        "description": "Stores individual blog posts."
+    },
+    "/checklists/{userId}": {
+        "schema": { "$ref": "#/entities/Checklist" },
+        "description": "Stores a user's personal moving checklist state."
+    },
+    "/contact_submissions/{submissionId}": {
+        "schema": { "$ref": "#/entities/ContactSubmission" },
+        "description": "Stores submissions from the public contact form."
+    },
+    "/roles_admin/{userId}": {
+        "schema": {},
+        "description": "A collection where the existence of a document indicates a user has admin privileges."
+    }
+  }
+}
