@@ -45,7 +45,7 @@ const faqItems = [
 export default async function HomePage() {
   const latestPosts = (await getPublishedPosts()).slice(0, 3);
 
-  const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://stahovanie.website';
+  const siteUrl = 'https://stahovanie.website';
   const organizationJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Organization',

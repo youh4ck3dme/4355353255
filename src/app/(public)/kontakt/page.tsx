@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 };
 
 export default function ContactPage() {
-  const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://stahovanie.website';
+  const siteUrl = 'https://stahovanie.website';
   const localBusinessJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',

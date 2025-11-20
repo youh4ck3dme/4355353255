@@ -19,7 +19,7 @@ const APP_DESCRIPTION = "Spoľahlivé sťahovacie a upratovacie služby v Bratis
 const DynamicInstallPrompt = dynamic(() => import('@/components/InstallPrompt'), { ssr: false });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://stahovanie.website'),
+  metadataBase: new URL('https://stahovanie.website'),
   applicationName: APP_NAME,
   title: {
     default: APP_DEFAULT_TITLE,
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
       template: APP_TITLE_TEMPLATE,
     },
     description: APP_DESCRIPTION,
-    url: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://stahovanie.website'),
+    url: new URL('https://stahovanie.website'),
   },
   twitter: {
     card: "summary_large_image",

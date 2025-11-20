@@ -2,8 +2,9 @@
 import type { MetadataRoute } from 'next';
 import { getPublishedPosts } from '@/lib/mdx';
 import { services } from '@/lib/services';
+import { locations } from '@/lib/locations';
 
-const base = process.env.NEXT_PUBLIC_BASE_URL || 'https://stahovanie.website';
+const base = 'https://stahovanie.website';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
@@ -33,6 +34,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.9,
   }));
 
+  // Dynamic location pages
+  const locationUrls = locations.map(loc => ({
+      url: `${base}/lokality/${loc.id}`,
+      lastModified: now,
+      changeFrequency: 'monthly' as const,
+      priority: 0.9,
+  }));
+
   // Dynamic blog posts
   const posts = await getPublishedPosts();
   const postUrls = posts.map(post => ({
@@ -42,5 +51,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  return [...staticUrls, ...serviceUrls, ...postUrls];
+  return [...staticUrls, ...serviceUrls, ...locationUrls, ...postUrls];
 }

@@ -59,7 +59,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
     }
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://stahovanie.website';
+  const siteUrl = 'https://stahovanie.website';
   const postUrl = `${siteUrl}/blog/${post.slug}`;
   
   const description = post.metaDescription || `Prečítajte si viac o téme "${post.title}" a získajte cenné tipy od expertov z VI&MO. Váš spoľahlivý partner pre sťahovanie a upratovanie v Bratislave.`;
@@ -82,7 +82,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     
     const allPosts = await getPublishedPosts();
 
-    const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://stahovanie.website';
+    const siteUrl = 'https://stahovanie.website';
     const postUrl = `${siteUrl}/blog/${post.slug}`;
     
     const relatedPosts = allPosts
