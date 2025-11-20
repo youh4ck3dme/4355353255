@@ -1,48 +1,12 @@
 
 import { BlogList } from '@/components/BlogList';
-import { getPublishedPosts } from '@/lib/mdx';
 import { Post } from '@/lib/types';
 import Image from 'next/image';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { Metadata } from 'next';
+import { getPublishedPosts } from '@/lib/mdx';
 
-const FeaturedPostCard = ({ post }: { post: Post }) => (
-  <section className="mb-12">
-    <Link href={`/blog/${post.slug}`} className="block group">
-      <div className="relative bg-brand-dark-teal/90 rounded-xl overflow-hidden shadow-2xl p-6 md:p-8 grid md:grid-cols-2 gap-8 items-center">
-        {post.imageUrl && (
-          <div className="relative w-full h-64 md:h-80 rounded-lg overflow-hidden transition-transform duration-300 group-hover:scale-105">
-            <Image 
-              src={post.imageUrl} 
-              alt={post.title} 
-              fill
-              sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover"
-              priority
-            />
-          </div>
-        )}
-        <div className="flex flex-col text-center md:text-left">
-          <p className="text-sm font-semibold text-brand-bright-green mb-2">Najnovší článok</p>
-          <h2 className="text-2xl md:text-4xl font-extrabold text-brand-bg mb-4 line-clamp-3 group-hover:text-brand-bright-green transition-colors">
-            {post.title}
-          </h2>
-          {post.excerpt && (
-            <p className="text-slate-300 line-clamp-3 mb-4 hidden sm:block">
-              {post.excerpt}
-            </p>
-          )}
-          <div className="flex items-center text-xs text-slate-400 mt-auto pt-4 border-t border-slate-700 justify-center md:justify-start">
-            <span>{post.author || 'VI&MO Team'}</span>
-            <span className="mx-2">|</span>
-            <span>{format(new Date(post.date), 'd. M. yyyy')}</span>
-          </div>
-        </div>
-      </div>
-    </Link>
-  </section>
-);
 
 export const metadata: Metadata = {
   title: 'Blog o sťahovaní a upratovaní v Bratislave | Tipy a triky | VI&MO',
@@ -53,11 +17,7 @@ export const metadata: Metadata = {
 };
 
 
-export default async function BlogIndexPage({ searchParams }: { searchParams?: { [key: string]: string | string[] | undefined }}) {
-  // Although posts are loaded live, we can get the latest one for the featured card during build.
-  const posts = await getPublishedPosts();
-  const featuredPost = posts.length > 0 ? posts[0] : null;
-  
+export default function BlogIndexPage({ searchParams }: { searchParams?: { [key: string]: string | string[] | undefined }}) {
   const initialCategory = typeof searchParams?.category === 'string' ? searchParams.category : undefined;
 
   return (
@@ -68,8 +28,6 @@ export default async function BlogIndexPage({ searchParams }: { searchParams?: {
           Články zo sveta sťahovania, upratovania a logistiky.
         </p>
       </div>
-
-      {featuredPost && <FeaturedPostCard post={featuredPost} />}
 
       <h2 className="text-2xl font-bold mt-12 mb-6 text-center text-brand-dark-teal dark:text-brand-bg text-shadow-3d-green">
         Všetky články

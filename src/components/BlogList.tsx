@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -8,12 +9,12 @@ import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import GlassCard from './GlassCard';
 import { Loader2 } from 'lucide-react';
 import { useFirebase } from '@/firebase/provider';
-import { collection, query, where, orderBy, onSnapshot, Query, DocumentData } from 'firebase/firestore';
+import { collection, query, where, orderBy, onSnapshot, Query, DocumentData, limit } from 'firebase/firestore';
 
 
 const ALL_CATEGORIES = ['Tipy na sťahovanie', 'Upratovanie', 'Novinky', 'Vypratávanie'];
 
-export const BlogList = ({ initialCategory }: { initialCategory?: string }) => {
+export const BlogList = ({ initialCategory, postLimit }: { initialCategory?: string | null, postLimit?: number }) => {
     const searchParams = useSearchParams();
     const router = useRouter();
     const pathname = usePathname();
@@ -25,15 +26,19 @@ export const BlogList = ({ initialCategory }: { initialCategory?: string }) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState<string | null>(initialCategory || null);
     
+    const showControls = postLimit === undefined; // Only show controls on the main blog page
+
     useEffect(() => {
-        const categoryFromUrl = searchParams.get('category');
-        setSelectedCategory(categoryFromUrl || null);
-    }, [searchParams]);
+        if(showControls) {
+            const categoryFromUrl = searchParams.get('category');
+            setSelectedCategory(categoryFromUrl || null);
+        }
+    }, [searchParams, showControls]);
 
     const postsQuery: Query<DocumentData> | null = useMemo(() => {
         if (!firestore) return null;
         
-        const queryConstraints = [
+        const queryConstraints: any[] = [
             where('status', '==', 'published'),
             orderBy('date', 'desc')
         ];
@@ -42,8 +47,12 @@ export const BlogList = ({ initialCategory }: { initialCategory?: string }) => {
           queryConstraints.unshift(where('tags', 'array-contains', selectedCategory));
         }
 
+        if (postLimit) {
+            queryConstraints.push(limit(postLimit));
+        }
+
         return query(collection(firestore, 'blogPosts'), ...queryConstraints);
-    }, [firestore, selectedCategory]);
+    }, [firestore, selectedCategory, postLimit]);
 
     useEffect(() => {
         if (!postsQuery) {
@@ -98,40 +107,42 @@ export const BlogList = ({ initialCategory }: { initialCategory?: string }) => {
 
     return (
         <div>
-            <div className="mb-8 max-w-2xl mx-auto flex flex-col items-center gap-4">
-                 <div className="flex flex-wrap justify-center gap-2">
-                    <button
-                        onClick={() => handleCategoryClick(null)}
-                        className={cn(
-                            "px-4 py-2 text-sm font-bold rounded-full transition-colors glass-button-sm",
-                            !selectedCategory ? 'bg-brand-bright-green text-brand-dark-teal' : 'text-white'
-                        )}
-                    >
-                        Všetky
-                    </button>
-                    {ALL_CATEGORIES.map(category => (
+            {showControls && (
+                <div className="mb-8 max-w-2xl mx-auto flex flex-col items-center gap-4">
+                    <div className="flex flex-wrap justify-center gap-2">
                         <button
-                            key={category}
-                            onClick={() => handleCategoryClick(category)}
+                            onClick={() => handleCategoryClick(null)}
                             className={cn(
                                 "px-4 py-2 text-sm font-bold rounded-full transition-colors glass-button-sm",
-                                selectedCategory === category ? 'bg-brand-bright-green text-brand-dark-teal' : 'text-white'
+                                !selectedCategory ? 'bg-brand-bright-green text-brand-dark-teal' : 'text-white'
                             )}
                         >
-                            {category}
-                        </button>))}
+                            Všetky
+                        </button>
+                        {ALL_CATEGORIES.map(category => (
+                            <button
+                                key={category}
+                                onClick={() => handleCategoryClick(category)}
+                                className={cn(
+                                    "px-4 py-2 text-sm font-bold rounded-full transition-colors glass-button-sm",
+                                    selectedCategory === category ? 'bg-brand-bright-green text-brand-dark-teal' : 'text-white'
+                                )}
+                            >
+                                {category}
+                            </button>))}
+                    </div>
+                    <input
+                        type="text"
+                        placeholder="Hľadať v článkoch..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full max-w-lg p-3 border-2 border-white/20 rounded-lg focus:border-brand-bright-green
+                                focus:ring focus:ring-brand-bright-green/50 outline-none transition-colors
+                                bg-white/10 backdrop-blur-sm text-white placeholder-slate-400"
+                        aria-label="Vyhľadávanie článkov"
+                    />
                 </div>
-                <input
-                    type="text"
-                    placeholder="Hľadať v článkoch..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full max-w-lg p-3 border-2 border-white/20 rounded-lg focus:border-brand-bright-green
-                               focus:ring focus:ring-brand-bright-green/50 outline-none transition-colors
-                               bg-white/10 backdrop-blur-sm text-white placeholder-slate-400"
-                    aria-label="Vyhľadávanie článkov"
-                />
-            </div>
+            )}
 
             {isLoading ? (
                 <div className="text-center py-16">
@@ -139,7 +150,7 @@ export const BlogList = ({ initialCategory }: { initialCategory?: string }) => {
                     <p className="mt-4 text-slate-300">Načítavam články...</p>
                 </div>
             ) : filteredBySearch.length > 0 ? (
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className={cn("grid sm:grid-cols-2 lg:grid-cols-3 gap-8", !showControls && 'lg:grid-cols-3')}>
                     {filteredBySearch.map(post => (
                         <BlogCard key={post.slug} post={post} />
                     ))}

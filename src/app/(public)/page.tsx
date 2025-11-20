@@ -3,7 +3,6 @@ import FaqAccordion from '@/components/FaqAccordion';
 import dynamic from 'next/dynamic';
 import { services } from '@/lib/services';
 import Services from '@/components/Services';
-import { getPublishedPosts } from '@/lib/mdx';
 import Blog from '@/components/Blog';
 import Contact from '@/components/Contact';
 import Hero from '@/components/Hero';
@@ -42,9 +41,7 @@ const faqItems = [
 ];
 
 
-export default async function HomePage() {
-  const latestPosts = (await getPublishedPosts()).slice(0, 3);
-
+export default function HomePage() {
   const siteUrl = 'https://stahovanie.website';
   const organizationJsonLd = {
     '@context': 'https://schema.org',
@@ -106,7 +103,7 @@ export default async function HomePage() {
         <Hero />
         <Services services={services} />
         <DynamicTestimonials />
-        <Blog posts={latestPosts} />
+        <Blog />
         
         <section id="faq" className="py-16 md:py-24">
           <div className="container mx-auto px-4 max-w-4xl">
