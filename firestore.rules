@@ -17,25 +17,23 @@ service cloud.firestore {
     }
 
     match /users/{userId} {
+      // Only the owner of the profile can read or write to it.
       allow read, write: if isOwner(userId);
     }
     
     match /blogPosts/{postId} {
-      // Admins can create, update, and delete any post.
+      // Admins can perform any write operation (create, update, delete).
       allow write: if isAdmin();
       
-      // Admins can also read any post, regardless of status.
-      allow get: if isAdmin();
+      // Public can read a single post if it's published. Admins can read any.
+      allow get: if resource.data.status == 'published' || isAdmin();
 
-      // PUBLIC ACCESS RULES:
-      // Allow the public to GET a single document if it's published.
-      allow get: if resource.data.status == 'published';
-
-      // Allow the public to LIST documents only when querying for published posts.
-      allow list: if request.query.where.size() > 0 && request.query.where[0][0] == 'status' && request.query.where[0][2] == 'published';
+      // Public can list posts only when querying for published ones. Admins can list all.
+      allow list: if (request.query.where.size() > 0 && request.query.where[0][0] == 'status' && request.query.where[0][2] == 'published') || isAdmin();
     }
     
     match /checklists/{userId} {
+      // Only the owner of the checklist can read or write to it.
       allow read, write: if isOwner(userId);
     }
 
@@ -48,7 +46,7 @@ service cloud.firestore {
 
     // Admin role management. Only other admins can manage roles.
     match /roles_admin/{userId} {
-      allow get: if isSignedIn();
+      // Only admins can see who else is an admin or modify roles.
       allow read, write: if isAdmin();
     }
   }
