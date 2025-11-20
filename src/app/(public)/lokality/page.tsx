@@ -1,12 +1,7 @@
 
 import { Metadata } from 'next';
 import Link from 'next/link';
-import dynamic from 'next/dynamic';
-
-const DynamicInteractiveMap = dynamic(() => import('@/components/DynamicInteractiveMap'), { 
-  ssr: false,
-  loading: () => <div className="aspect-[4/5] w-full bg-white/10 animate-pulse rounded-lg flex items-center justify-center"><p className="text-white">Načítavam mapu...</p></div>
-});
+import DynamicInteractiveMap from '@/components/DynamicInteractiveMap';
 
 
 export const metadata: Metadata = {
