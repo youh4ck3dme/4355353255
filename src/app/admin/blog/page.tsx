@@ -8,7 +8,7 @@ import { PlusCircle, Edit, Loader2, Newspaper, Info, ShieldAlert } from 'lucide-
 import GlassCard from '@/components/GlassCard';
 import { useState, useEffect, useMemo } from 'react';
 import { useFirebase } from '@/firebase/provider';
-import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
+import { collection, query, orderBy, onSnapshot, Query, DocumentData } from 'firebase/firestore';
 
 
 const PostRow = ({ post }: { post: Post }) => {
@@ -44,7 +44,7 @@ export default function AdminBlogPage() {
     const [isLoadingPosts, setIsLoadingPosts] = useState(true);
     const [error, setError] = useState<Error | null>(null);
 
-    const postsQuery = useMemo(() => {
+    const postsQuery: Query<DocumentData> | null = useMemo(() => {
         if (!firestore) return null;
         return query(collection(firestore, 'blogPosts'), orderBy('date', 'desc'));
     }, [firestore]);

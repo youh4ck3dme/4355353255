@@ -8,7 +8,7 @@ import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import GlassCard from './GlassCard';
 import { Loader2 } from 'lucide-react';
 import { useFirebase } from '@/firebase/provider';
-import { collection, query, where, orderBy, onSnapshot, QueryConstraint } from 'firebase/firestore';
+import { collection, query, where, orderBy, onSnapshot, Query, DocumentData } from 'firebase/firestore';
 
 
 const ALL_CATEGORIES = ['Tipy na sťahovanie', 'Upratovanie', 'Novinky', 'Vypratávanie'];
@@ -30,17 +30,17 @@ export const BlogList = ({ initialCategory }: { initialCategory?: string }) => {
         setSelectedCategory(categoryFromUrl || null);
     }, [searchParams]);
 
-    const postsQuery = useMemo(() => {
+    const postsQuery: Query<DocumentData> | null = useMemo(() => {
         if (!firestore) return null;
         
-        const queryConstraints: QueryConstraint[] = [];
-        queryConstraints.push(where('status', '==', 'published'));
+        const queryConstraints = [
+            where('status', '==', 'published'),
+            orderBy('date', 'desc')
+        ];
         
         if (selectedCategory) {
-          queryConstraints.push(where('tags', 'array-contains', selectedCategory));
+          queryConstraints.unshift(where('tags', 'array-contains', selectedCategory));
         }
-        
-        queryConstraints.push(orderBy('date', 'desc'));
 
         return query(collection(firestore, 'blogPosts'), ...queryConstraints);
     }, [firestore, selectedCategory]);
