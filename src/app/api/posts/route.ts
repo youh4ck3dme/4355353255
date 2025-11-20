@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { getFirestore, doc, setDoc, getDoc, collection, getDocs, query } from 'firebase/firestore';
 import { initializeApp, getApps, getApp } from 'firebase/app';
+import { getAdminApp } from '@/lib/firebase-admin';
 import { firebaseConfig } from '@/lib/firebase-config';
 
 // Initialize Firebase app if not already initialized
@@ -41,9 +42,23 @@ const postSchema = z.object({
 
 export async function POST(request: Request) {
     try {
-        // Basic auth simulation, replace with real auth in production
-        // For now, we assume if you can call this endpoint, you are authorized.
-        // A real implementation would verify a JWT token.
+        const token = request.headers.get('Authorization')?.split('Bearer ')[1];
+        if (!token) {
+            return NextResponse.json({ message: 'Authentication required.' }, { status: 401 });
+        }
+
+        const adminApp = getAdminApp();
+        const auth = adminApp.auth();
+        const dbAdmin = adminApp.firestore();
+        
+        const decodedToken = await auth.verifyIdToken(token);
+        const uid = decodedToken.uid;
+
+        const adminRoleDoc = await dbAdmin.collection('roles_admin').doc(uid).get();
+
+        if (!adminRoleDoc.exists) {
+            return NextResponse.json({ message: 'Insufficient permissions. User is not an admin.' }, { status: 403 });
+        }
         
         const json = await request.json();
         const postData = postSchema.parse(json);
@@ -62,11 +77,15 @@ export async function POST(request: Request) {
 
         return NextResponse.json({ message: 'Post saved successfully' });
 
-    } catch (error) {
+    } catch (error: any) {
         console.error('Failed to save post:', error);
+
+        if (error.code === 'auth/id-token-expired') {
+            return NextResponse.json({ message: 'Token expired. Please log in again.' }, { status: 401 });
+        }
         if (error instanceof z.ZodError) {
              return NextResponse.json({ message: 'Invalid data', errors: error.errors }, { status: 400 });
         }
-        return NextResponse.json({ message: 'Internal Server Error', error: (error as Error).message }, { status: 500 });
+        return NextResponse.json({ message: 'Internal Server Error', error: error.message }, { status: 500 });
     }
 }

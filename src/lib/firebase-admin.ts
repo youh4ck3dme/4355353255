@@ -25,6 +25,7 @@ export const getAdminApp = () => {
   // Initialize the app with the credentials
   const app = admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
+    databaseURL: `https://${serviceAccount.projectId}.firebaseio.com`
   });
 
   return app;
