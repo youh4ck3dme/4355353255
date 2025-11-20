@@ -1,53 +1,9 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    function isSignedIn() {
-      return request.auth != null;
-    }
-
-    function isOwner(userId) {
-      return request.auth.uid == userId;
-    }
-    
-    function isAdmin() {
-      // Check if a user document exists in the roles_admin collection with the user's UID.
-      // This is a secure way to assign admin roles.
-      return exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
-    }
-
-    match /users/{userId} {
-      // Only the owner of the profile can read or write to it.
-      allow read, write: if isOwner(userId);
-    }
-    
-    match /blogPosts/{postId} {
-      // Admins can perform any write operation (create, update, delete).
-      allow write: if isAdmin();
-      
-      // Public can read a single post if it's published. Admins can read any.
-      allow get: if resource.data.status == 'published' || isAdmin();
-
-      // Public can list posts only when querying for published ones. Admins can list all.
-      allow list: if (request.query.where.size() > 0 && request.query.where[0][0] == 'status' && request.query.where[0][2] == 'published') || isAdmin();
-    }
-    
-    match /checklists/{userId} {
-      // Only the owner of the checklist can read or write to it.
-      allow read, write: if isOwner(userId);
-    }
-
-    match /contact_submissions/{submissionId} {
-      // Anyone can create a contact submission.
-      allow create: if true;
-      // Only admins can read, list, or delete submissions.
-      allow read, list, delete: if isAdmin();
-    }
-
-    // Admin role management. Only other admins can manage roles.
-    match /roles_admin/{userId} {
-      // Only admins can see who else is an admin or modify roles.
-      allow read, write: if isAdmin();
+    match /projects/{projectId} {
+      allow read: if true;   // čítať môže každý
+      allow write: if false; // zapisovať nikto z klienta
     }
   }
 }

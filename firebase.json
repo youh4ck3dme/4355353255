@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "source": ".next",
+    "source": ".",
     "ignore": [
       "firebase.json",
       "**/.*",
@@ -8,13 +8,7 @@
     ],
     "frameworksBackend": {
       "region": "us-central1"
-    },
-    "rewrites": [
-      {
-        "source": "**",
-        "function": "server"
-      }
-    ]
+    }
   },
   "apphosting": {
     "backendId": "studio",
