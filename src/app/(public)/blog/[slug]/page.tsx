@@ -86,24 +86,35 @@ export default function BlogPostPage() {
     }, [postRef, isFirebaseLoading]);
 
     useEffect(() => {
-        if (!post || !firestore || post.tags?.length === 0) {
+        if (!post || !firestore || !post.tags || post.tags.length === 0) {
             setRelatedPosts([]);
             return;
         }
 
         const fetchRelated = async () => {
+            // Firestore 'array-contains-any' requires a maximum of 10 values in the array.
+            // Let's take the first tag for simplicity and to ensure the query is valid.
+            const primaryTag = post.tags![0]; 
+            
             const q = query(
                 collection(firestore, "blogPosts"),
                 where('status', '==', 'published'),
-                where('tags', 'array-contains-any', post.tags),
-                limit(4) // Fetch 4, one might be the current post
+                where('tags', 'array-contains', primaryTag),
+                limit(4) // Fetch 4, as one might be the current post itself
             );
-            const snapshot = await getDocs(q);
-            const related = snapshot.docs
-                .map(doc => ({ slug: doc.id, ...doc.data() } as Post))
-                .filter(p => p.slug !== post.slug) // Exclude current post
-                .slice(0, 3); // Limit to 3
-            setRelatedPosts(related);
+            try {
+                const snapshot = await getDocs(q);
+                const related = snapshot.docs
+                    .map(doc => ({ slug: doc.id, ...doc.data() } as Post))
+                    .filter(p => p.slug !== post.slug) // Exclude current post
+                    .slice(0, 3); // Ensure we only have 3 related posts
+                setRelatedPosts(related);
+            } catch (error) {
+                console.error("Error fetching related posts:", error);
+                // This could be a permission error if the rules are not set up correctly.
+                // For now, we just log it and show no related posts.
+                setRelatedPosts([]);
+            }
         };
 
         fetchRelated();
