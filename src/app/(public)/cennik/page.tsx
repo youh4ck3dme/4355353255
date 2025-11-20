@@ -5,11 +5,14 @@ import { Metadata } from 'next';
 import { Users, Truck, Home } from 'lucide-react';
 import dynamic from 'next/dynamic';
 
-const DynamicPriceCalculator = dynamic(() => import('@/components/DynamicPriceCalculator'), { 
+const DynamicPriceCalculator = dynamic(() => import('@/components/PriceCalculator').then(mod => mod.PriceCalculator), { 
   ssr: false,
-  loading: () => <p>Načítavam kalkulačku...</p> 
+  loading: () => <p className="text-white">Načítavam kalkulačku...</p> 
 });
 
+/*
+// Metadata can't be exported from a client component. 
+// It should be defined in a parent layout or page.
 export const metadata: Metadata = {
   title: 'Cenník Služieb | Bratislava sťahovanie | VI&MO',
   description: 'Prehľadný cenník sťahovacích a upratovacích služieb v Bratislave. Vypočítajte si odhadovanú cenu pomocou našej online kalkulačky.',
@@ -17,6 +20,7 @@ export const metadata: Metadata = {
     canonical: '/cennik',
   }
 };
+*/
 
 const priceItems = [
     { id: 'garsonka', name: 'Garsónka', price: 'od 65 €', priceNumeric: 65 },

@@ -5,8 +5,11 @@ import { Metadata } from 'next';
 import dynamic from 'next/dynamic';
 import { checklistData } from '@/lib/checklist-data';
 
-const DynamicChecklist = dynamic(() => import('@/components/DynamicChecklist'), { ssr: false });
+const DynamicChecklist = dynamic(() => import('@/components/Checklist').then(mod => mod.Checklist), { ssr: false });
 
+/*
+// Metadata can't be exported from a client component.
+// It should be defined in a parent layout or page.
 export const metadata: Metadata = {
   title: 'Interaktívny Sťahovací Checklist | VI&MO',
   description: 'Naplánujte si sťahovanie krok za krokom s naším interaktívnym checklistom. Odškrtnite si úlohy a majte všetko pod kontrolou.',
@@ -14,6 +17,7 @@ export const metadata: Metadata = {
     canonical: '/checklist',
   }
 };
+*/
 
 export default function ChecklistPage() {
   return (
