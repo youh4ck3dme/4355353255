@@ -40,9 +40,9 @@ export const Header = () => {
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center hover:opacity-90 transition-opacity" aria-label="Domov - Stahovanie.Website">
              <Image 
-              src="https://stahovanie.website/wp-content/uploads/viandmo_logo_regular_land.svg" 
-              alt="Stahovanie.Website Logo" 
-              width={140} 
+              src="/logo.svg" 
+              alt="VI&MO Logo" 
+              width={120} 
               height={40} 
               priority
               className="object-contain"
@@ -100,9 +100,9 @@ export const Header = () => {
           <div className="h-16 flex items-center justify-between">
              <Link href="/" className="flex items-center">
               <Image 
-                src="https://stahovanie.website/wp-content/uploads/viandmo_logo_regular_land.svg"
-                alt="Stahovanie.Website Logo" 
-                width={140}
+                src="/logo.svg"
+                alt="VI&MO Logo" 
+                width={120}
                 height={40}
                 priority
                 className="object-contain"

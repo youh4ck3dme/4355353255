@@ -21,10 +21,10 @@ export const Footer = () => {
           <div className="space-y-4 flex flex-col items-center md:items-start">
              <Link href="/" aria-label="Domov - VI&MO">
                 <Image 
-                    src="https://stahovanie.website/wp-content/uploads/viandmo_logo_regular_land.svg"
-                    alt="Stahovanie.Website Logo"
-                    width={160}
-                    height={45}
+                    src="/logo.svg"
+                    alt="VI&MO Logo"
+                    width={120}
+                    height={40}
                     className="object-contain"
                 />
             </Link>
