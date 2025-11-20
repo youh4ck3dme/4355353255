@@ -21,11 +21,18 @@ service cloud.firestore {
     }
     
     match /blogPosts/{postId} {
-      // Admins can read, write, and list all posts regardless of status.
-      allow read, write: if isAdmin();
+      // Admins can create, update, and delete any post.
+      allow write: if isAdmin();
+      
+      // Admins can also read any post, regardless of status.
+      allow get: if isAdmin();
 
-      // Public users can only read/list posts that are explicitly filtered as 'published'.
-      allow read, list: if request.query.where.size() > 0 && request.query.where[0][0] == 'status' && request.query.where[0][2] == 'published';
+      // PUBLIC ACCESS RULES:
+      // Allow the public to GET a single document if it's published.
+      allow get: if resource.data.status == 'published';
+
+      // Allow the public to LIST documents only when querying for published posts.
+      allow list: if request.query.where.size() > 0 && request.query.where[0][0] == 'status' && request.query.where[0][2] == 'published';
     }
     
     match /checklists/{userId} {
