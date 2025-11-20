@@ -52,8 +52,8 @@ service cloud.firestore {
     match /users/{userId} {
       allow get: if isOwner(userId);
       allow list: if false;
-      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.id == userId;
-      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow create: if isSignedIn() && isOwner(userId);
+      allow update: if isExistingOwner(userId);
       allow delete: if isExistingOwner(userId);
     }
     
@@ -64,15 +64,15 @@ service cloud.firestore {
     match /blogPosts/{postId} {
         // Anyone can read a post if it's published. Admins can read any post.
         allow get: if resource.data.status == 'published' || isAdmin();
-        // Anyone can list (query) published posts.
-        allow list: if isAdmin() || (request.query.resource.data.status == 'published');
+        // Anyone can list (query) published posts. Admins can list all.
+        allow list: if isAdmin() || (request.query.get('where')[0][2] == 'published');
         // Only admins can create, update, or delete posts.
         allow write: if isAdmin();
     }
 
     /**
      * @description Rules for the /checklists/{userId} collection.
-     * @principle A user can only access their own checklist.
+     * @principle A user can only access their own checklist. This includes anonymous users.
      */
     match /checklists/{userId} {
         // A user can only get, create, update, or delete their own checklist document.
@@ -91,14 +91,12 @@ service cloud.firestore {
 
     /**
      * @description Rules for the /roles_admin/{userId} collection.
-     * @principle Restricts admin role creation and deletion to existing admins and the user themselves.
+     * @principle This is a private collection. Only admins can manage other admins.
      */
      match /roles_admin/{userId} {
-        allow get: if isSignedIn();
-        allow list: if false;
-        allow create: if isAdmin();
-        allow update: if false;
-        allow delete: if isAdmin() || isOwner(userId);
+        allow get: if isAdmin();
+        allow list: if isAdmin();
+        allow write: if isAdmin();
      }
   }
 }

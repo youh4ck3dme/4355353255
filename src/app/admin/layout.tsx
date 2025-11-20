@@ -93,19 +93,14 @@ function AuthGuard({ children }: { children: ReactNode }) {
     setIsLoggingIn(true);
 
     try {
-        if (password !== PASSWORD) {
-             throw new Error("Nesprávne heslo.");
-        }
-        
-        // If there's an anonymous user, sign them out first.
+        // Sign out any anonymous user first, to avoid context conflicts.
         if (auth.currentUser && auth.currentUser.isAnonymous) {
             await signOut(auth);
         }
 
-        // Now, sign in with email and password.
+        // Now, sign in with admin credentials.
         await signInWithEmailAndPassword(auth, ADMIN_EMAIL, password);
         
-        // This will be picked up by the useEffect and grant access.
         sessionStorage.setItem(SESSION_STORAGE_KEY, 'true');
         setIsAuthenticated(true);
         setError('');
@@ -116,7 +111,8 @@ function AuthGuard({ children }: { children: ReactNode }) {
         if (firebaseError.code) {
           switch (firebaseError.code) {
             case 'auth/wrong-password':
-              errorMessage = 'Nesprávne heslo.';
+            case 'auth/invalid-credential':
+              errorMessage = 'Nesprávne heslo alebo e-mail.';
               break;
             case 'auth/user-not-found':
               errorMessage = 'Používateľ neexistuje.';
@@ -128,7 +124,7 @@ function AuthGuard({ children }: { children: ReactNode }) {
             errorMessage = firebaseError.message;
         }
 
-        setError(`Firebase prihlásenie zlyhalo: ${errorMessage}`);
+        setError(`Prihlásenie zlyhalo: ${errorMessage}`);
         console.error("Authentication failed:", e);
         try {
           sessionStorage.removeItem(SESSION_STORAGE_KEY);
