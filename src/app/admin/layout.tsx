@@ -5,8 +5,6 @@ import { ShieldCheck, LogIn, Loader2 } from 'lucide-react';
 import GlassCard from '@/components/GlassCard';
 import { useFirebase } from '@/firebase/provider';
 import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import { Header } from '@/components/Header';
-import { Footer } from '@/components/Footer';
 import { FirebaseProvider } from '@/firebase/provider';
 
 const ADMIN_EMAIL = "admin@vimo.com";
@@ -177,15 +175,7 @@ function AuthGuard({ children }: { children: ReactNode }) {
     );
   }
 
-  return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
-      <main id="main-content" className="flex-grow bg-brand-bg dark:bg-brand-dark-teal">
-        {children}
-      </main>
-      <Footer />
-    </div>
-  )
+  return <>{children}</>;
 }
 
 
