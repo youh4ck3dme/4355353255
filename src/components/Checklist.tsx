@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { doc, setDoc, onSnapshot, DocumentReference } from 'firebase/firestore';
 import { ChecklistCategory } from '@/lib/checklist-data';
 import { Check, Circle, Loader2 } from 'lucide-react';
