@@ -1,9 +1,9 @@
+
 import { NextResponse } from 'next/server';
-import { getPublishedPosts, getAllPostsForAdmin, savePost } from '@/lib/mdx';
+import { getAllPostsForAdmin, savePost } from '@/lib/mdx';
 import { z } from 'zod';
-import { initializeApp, getApp, getApps } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { firebaseConfig } from '@/lib/firebase-config';
+import { initializeAdminApp } from '@/lib/firebase-admin';
+import { getAuth } from 'firebase-admin/auth';
 
 // This is a Route Handler, which is executed on the server.
 // It can safely use server-side modules.
@@ -29,16 +29,20 @@ const postSchema = z.object({
 });
 
 
-// This function is a placeholder for real admin SDK verification
-// For this project, we rely on the frontend password protection and a valid Firebase user token
 async function verifyAdminToken(idToken: string) {
-    if (getApps().length === 0) {
-      initializeApp(firebaseConfig);
+    const adminApp = await initializeAdminApp();
+    const auth = getAuth(adminApp);
+    
+    // This verifies the token and decodes it.
+    const decodedToken = await auth.verifyIdToken(idToken);
+    
+    // For this app, we'll just check if the email is the admin email.
+    // In a more complex app, you might check for custom claims.
+    if (decodedToken.email !== 'admin@vimo.com') {
+      throw new Error('User is not authorized to perform this action.');
     }
-    // In a real app, you'd use the Admin SDK to verify the token and check for admin claims.
-    // For now, we'll just check if the token is valid. This is not secure for production.
-    // This part is simplified and doesn't use the Admin SDK to avoid its complexities in this environment.
-    return true; 
+
+    return decodedToken;
 }
 
 
@@ -47,10 +51,9 @@ export async function POST(request: Request) {
         const idToken = request.headers.get('Authorization')?.split('Bearer ')[1];
 
         if (!idToken) {
-            return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+            return NextResponse.json({ message: 'Unauthorized: No token provided' }, { status: 401 });
         }
     
-        // Simplified auth check. See function comment.
         await verifyAdminToken(idToken);
         
         const json = await request.json();
@@ -66,8 +69,8 @@ export async function POST(request: Request) {
              return NextResponse.json({ message: 'Invalid data', errors: error.errors }, { status: 400 });
         }
         if ((error as any).code?.startsWith('auth/')) {
-            return NextResponse.json({ message: 'Authentication error: ' + (error as any).code }, { status: 401 });
+            return NextResponse.json({ message: 'Authentication error: ' + (error as any).message }, { status: 401 });
         }
-        return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+        return NextResponse.json({ message: 'Internal Server Error', error: (error as Error).message }, { status: 500 });
     }
 }

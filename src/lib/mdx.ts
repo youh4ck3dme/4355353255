@@ -1,27 +1,24 @@
 
 import { Post } from './types';
-import { collection, getDocs, doc, getDoc, query, where, setDoc, getFirestore } from 'firebase/firestore';
-import { initializeApp, getApps, getApp } from 'firebase/app';
-import { firebaseConfig } from './firebase-config';
+import { getFirestore } from 'firebase-admin/firestore';
+import { initializeAdminApp } from '@/lib/firebase-admin';
 import slugify from 'slugify';
 
 // --- SERVER-SIDE ONLY ---
 
 // This function safely initializes Firebase on the server-side if it hasn't been already.
 // It's safe to call this multiple times.
-function getDb() {
-    if (getApps().length === 0) {
-        initializeApp(firebaseConfig);
-    }
-    return getFirestore(getApp());
+async function getDb() {
+    const adminApp = await initializeAdminApp();
+    return getFirestore(adminApp);
 }
 
 
 export async function getPublishedPosts(): Promise<Post[]> {
-    const db = getDb();
-    const postsCollection = collection(db, 'blogPosts');
-    const q = query(postsCollection, where('status', '==', 'published'));
-    const postSnapshot = await getDocs(q);
+    const db = await getDb();
+    const postsCollection = db.collection('blogPosts');
+    const q = postsCollection.where('status', '==', 'published');
+    const postSnapshot = await q.get();
     
     const posts = postSnapshot.docs.map(doc => ({
         slug: doc.id,
@@ -32,9 +29,9 @@ export async function getPublishedPosts(): Promise<Post[]> {
 }
 
 export async function getAllPostsForAdmin(): Promise<Post[]> {
-    const db = getDb();
-    const postsCollection = collection(db, 'blogPosts');
-    const postSnapshot = await getDocs(postsCollection);
+    const db = await getDb();
+    const postsCollection = db.collection('blogPosts');
+    const postSnapshot = await postsCollection.get();
 
     const posts = postSnapshot.docs.map(doc => ({
         slug: doc.id,
@@ -45,11 +42,11 @@ export async function getAllPostsForAdmin(): Promise<Post[]> {
 }
 
 export async function getPostBySlug(slug: string): Promise<Post | null> {
-    const db = getDb();
-    const postDoc = doc(db, 'blogPosts', slug);
-    const postSnapshot = await getDoc(postDoc);
+    const db = await getDb();
+    const postDoc = db.collection('blogPosts').doc(slug);
+    const postSnapshot = await postDoc.get();
 
-    if (!postSnapshot.exists()) {
+    if (!postSnapshot.exists) {
         return null;
     }
 
@@ -63,21 +60,21 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
 type PostData = Omit<Post, 'date'>;
 
 export async function savePost(postData: PostData): Promise<void> {
-    const db = getDb();
+    const db = await getDb();
     const { slug, ...data } = postData;
     
     const finalSlug = slug || slugify(postData.title, { lower: true, strict: true });
     
-    const postRef = doc(db, 'blogPosts', finalSlug);
+    const postRef = db.collection('blogPosts').doc(finalSlug);
 
-    const docSnapshot = await getDoc(postRef);
+    const docSnapshot = await postRef.get();
 
     const dataToSave = {
         ...data,
         updatedAt: new Date().toISOString(),
         // Set initial date only if it's a new post (document doesn't exist)
-        ...(!docSnapshot.exists() && { date: new Date().toISOString() }),
+        ...(!docSnapshot.exists && { date: new Date().toISOString() }),
     };
     
-    await setDoc(postRef, dataToSave, { merge: true });
+    await postRef.set(dataToSave, { merge: true });
 }
