@@ -1,3 +1,4 @@
+
 {
   "name": "vimo-blog-frontend",
   "version": "0.1.0",
@@ -18,6 +19,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
     "firebase": "^10.14.1",
+    "firebase-admin": "^12.2.0",
     "lucide-react": "^0.395.0",
     "next": "^16.0.3",
     "next-themes": "^0.3.0",

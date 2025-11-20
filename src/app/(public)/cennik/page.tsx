@@ -1,4 +1,6 @@
 
+'use client';
+
 import { Metadata } from 'next';
 import { Users, Truck, Home } from 'lucide-react';
 import dynamic from 'next/dynamic';
