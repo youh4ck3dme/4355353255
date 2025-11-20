@@ -11,6 +11,8 @@ service cloud.firestore {
     }
     
     function isAdmin() {
+      // Check if a user document exists in the roles_admin collection with the user's UID.
+      // This is a secure way to assign admin roles.
       return exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
     }
 
@@ -18,10 +20,16 @@ service cloud.firestore {
       allow read, write: if isOwner(userId);
     }
     
+    // Public users can only read/list published posts.
+    // Admins can write (create, update, delete).
     match /blogPosts/{postId} {
-      allow read: if resource.data.status == 'published';
-      allow list: if true; // Allows querying collections
-      allow write: if isAdmin();
+      // Allow public read access only to documents where status is 'published'
+      allow get: if resource.data.status == 'published';
+      // Allow public list access only for queries that filter by status == 'published'
+      allow list: if request.query.get('where')[0][2] == 'published';
+      
+      // Admins can read all posts regardless of status and can write.
+      allow read, write: if isAdmin();
     }
     
     match /checklists/{userId} {
@@ -29,10 +37,13 @@ service cloud.firestore {
     }
 
     match /contact_submissions/{submissionId} {
+      // Anyone can create a contact submission.
       allow create: if true;
+      // Only admins can read, list, or delete submissions.
       allow read, list, delete: if isAdmin();
     }
 
+    // Admin role management. Only other admins can manage roles.
     match /roles_admin/{userId} {
       allow get: if isSignedIn();
       allow read, write: if isAdmin();
