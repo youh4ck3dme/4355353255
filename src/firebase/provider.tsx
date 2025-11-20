@@ -2,11 +2,17 @@
 'use client';
 
 import React, { createContext, useContext, ReactNode, useState, useEffect } from 'react';
-import { FirebaseApp } from 'firebase/app';
-import { Firestore } from 'firebase/firestore';
-import { Auth, User, onAuthStateChanged, signInAnonymously } from 'firebase/auth';
-import { app, auth as authInstance, firestore as firestoreInstance } from '@/lib/firebase';
+import { FirebaseApp, getApp, getApps, initializeApp } from 'firebase/app';
+import { Firestore, getFirestore } from 'firebase/firestore';
+import { Auth, User, onAuthStateChanged, signInAnonymously, getAuth } from 'firebase/auth';
 import { Loader2 } from 'lucide-react';
+import { firebaseConfig } from '@/lib/firebase-config';
+
+// Initialize Firebase
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+const firestoreInstance = getFirestore(app);
+const authInstance = getAuth(app);
+
 
 // Define the shape of the context
 interface FirebaseContextType {
