@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 import dynamic from 'next/dynamic';
 import { checklistData } from '@/lib/checklist-data';
 
-const DynamicChecklist = dynamic(() => import('@/components/Checklist').then(mod => mod.Checklist), { ssr: false });
+const DynamicChecklist = dynamic(() => import('@/components/DynamicChecklist'), { ssr: false });
 
 export const metadata: Metadata = {
   title: 'Interaktívny Sťahovací Checklist | VI&MO',

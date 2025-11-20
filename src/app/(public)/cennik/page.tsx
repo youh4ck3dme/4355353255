@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 import { Users, Truck, Home } from 'lucide-react';
 import dynamic from 'next/dynamic';
 
-const DynamicPriceCalculator = dynamic(() => import('@/components/PriceCalculator').then(mod => mod.PriceCalculator), { 
+const DynamicPriceCalculator = dynamic(() => import('@/components/DynamicPriceCalculator'), { 
   ssr: false,
   loading: () => <p>Načítavam kalkulačku...</p> 
 });
