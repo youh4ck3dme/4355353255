@@ -1,227 +1,41 @@
-/**
- * @fileoverview Firestore Security Rules for the Fitness eShop application.
- *
- * Core Philosophy:
- * This ruleset enforces a strict user-ownership model for user-specific data,
- * while allowing public read access to product information. Administrative
- * privileges are granted based on document existence in the `/roles_admin` collection.
- *
- * Data Structure:
- * - /users/{userId}: Stores user profiles; access is restricted to the user themselves.
- * - /products/{productId}: Stores product information; publicly readable.
- * - /users/{userId}/orders/{orderId}: Stores orders placed by a user; access is restricted to the user.
- * - /users/{userId}/orders/{orderId}/orderItems/{orderItemId}: Stores order items within an order; access is restricted to the user.
- * - /users/{userId}/files/{fileId}: Stores files uploaded by a user; access is restricted to the user.
- * - /users/{userId}/tasks/{taskId}: Stores tasks for a user; access is restricted to the user.
- * - /roles_admin/{userId}: Indicates admin status; existence of a document grants admin privileges to the user.
- *
- * Key Security Decisions:
- * - User listing is disallowed.
- * - Public read access is granted to product information.
- * - Ownership is enforced at the path level (e.g., /users/{userId}/...).
- * - Admin role is determined by the existence of a document in the /roles_admin/{userId} collection.
- *
- * Denormalization for Authorization:
- *  - Ownership is enforced at the path level which avoids the need for complex `get()` calls.
- */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    /**
-     * @description Checks if the user is signed in.
-     * @path N/A
-     * @allow N/A
-     * @deny N/A
-     * @principle Authentication check.
-     */
     function isSignedIn() {
       return request.auth != null;
     }
 
-    /**
-     * @description Checks if the user is the owner of the document based on the userId.
-     * @path N/A
-     * @allow N/A
-     * @deny N/A
-     * @principle Ownership check.
-     */
     function isOwner(userId) {
       return request.auth.uid == userId;
     }
-
-    /**
-     * @description Checks if the user exists and is the owner of the document based on the userId.
-     * @path N/A
-     * @allow N/A
-     * @deny N/A
-     * @principle Ownership and existence check for update and delete operations.
-     */
-    function isExistingOwner(userId) {
-      return isOwner(userId) && resource != null;
+    
+    function isAdmin() {
+      return exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
     }
 
-    /**
-     * @description Checks if the user is an admin by verifying the existence of a document in the /roles_admin/{userId} collection.
-     * @path N/A
-     * @allow N/A
-     * @deny N/A
-     * @principle Admin role check.
-     */
-     function isAdmin() {
-        return exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
-     }
-
-    /**
-     * @description Rules for the /users/{userId} collection.
-     * @path /users/{userId}
-     * @allow (create) User with ID 'user123' creates their own profile.
-     *   - request.auth.uid: 'user123'
-     *   - request.resource.data.id: 'user123'
-     * @allow (get) User with ID 'user123' reads their own profile.
-     *   - request.auth.uid: 'user123'
-     * @allow (update) User with ID 'user123' updates their own profile.
-     *   - request.auth.uid: 'user123'
-     * @deny (create) User with ID 'user456' tries to create a profile for 'user123'.
-     *   - request.auth.uid: 'user456'
-     *   - request.resource.data.id: 'user123'
-     * @deny (get) User with ID 'user456' tries to read the profile of 'user123'.
-     *   - request.auth.uid: 'user456'
-     * @principle Enforces document ownership for reads and writes.
-     */
     match /users/{userId} {
-      allow get: if isOwner(userId);
-      allow list: if false;
-      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.id == userId;
-      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
-      allow delete: if isExistingOwner(userId);
+      allow read, write: if isOwner(userId);
+    }
+    
+    match /blogPosts/{postId} {
+      allow read: if resource.data.status == 'published';
+      allow list: if true; // Allows querying collections
+      allow write: if isAdmin();
+    }
+    
+    match /checklists/{userId} {
+      allow read, write: if isOwner(userId);
     }
 
-    /**
-     * @description Rules for the /products/{productId} collection.
-     * @path /products/{productId}
-     * @allow (get) Any user can read product information.
-     * @allow (list) Any user can list products.
-     * @deny (create) No user can create a product without specific authorization logic.
-     * @deny (update) No user can update a product without specific authorization logic.
-     * @deny (delete) No user can delete a product without specific authorization logic.
-     * @principle Public read access with restricted writes.
-     */
-    match /products/{productId} {
-      allow get: if true;
-      allow list: if true;
-      allow create: if isAdmin(); // Only admins can create products
-      allow update: if isAdmin(); // Only admins can update products
-      allow delete: if isAdmin(); // Only admins can delete products
+    match /contact_submissions/{submissionId} {
+      allow create: if true;
+      allow read, list, delete: if isAdmin();
     }
 
-    /**
-     * @description Rules for the /users/{userId}/orders/{orderId} collection.
-     * @path /users/{userId}/orders/{orderId}
-     * @allow (create) User with ID 'user123' creates an order for themselves.
-     *   - request.auth.uid: 'user123'
-     * @allow (get) User with ID 'user123' reads their own order.
-     *   - request.auth.uid: 'user123'
-     * @allow (update) User with ID 'user123' updates their own order.
-     *   - request.auth.uid: 'user123'
-     * @deny (create) User with ID 'user456' tries to create an order for 'user123'.
-     *   - request.auth.uid: 'user456'
-     * @deny (get) User with ID 'user456' tries to read the order of 'user123'.
-     *   - request.auth.uid: 'user456'
-     * @principle Enforces document ownership for reads and writes.
-     */
-    match /users/{userId}/orders/{orderId} {
-      allow get: if isOwner(userId);
-      allow list: if isOwner(userId);
-      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.userId == userId;
-      allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
-      allow delete: if isExistingOwner(userId);
+    match /roles_admin/{userId} {
+      allow get: if isSignedIn();
+      allow read, write: if isAdmin();
     }
-
-    /**
-     * @description Rules for the /users/{userId}/orders/{orderId}/orderItems/{orderItemId} collection.
-     * @path /users/{userId}/orders/{orderId}/orderItems/{orderItemId}
-     * @allow (create) User with ID 'user123' creates an order item for their order.
-     *   - request.auth.uid: 'user123'
-     * @allow (get) User with ID 'user123' reads their own order item.
-     *   - request.auth.uid: 'user123'
-     * @allow (update) User with ID 'user123' updates their own order item.
-     *   - request.auth.uid: 'user123'
-     * @deny (create) User with ID 'user456' tries to create an order item for 'user123'.
-     *   - request.auth.uid: 'user456'
-     * @deny (get) User with ID 'user456' tries to read the order item of 'user123'.
-     *   - request.auth.uid: 'user456'
-     * @principle Enforces document ownership for reads and writes.
-     */
-    match /users/{userId}/orders/{orderId}/orderItems/{orderItemId} {
-      allow get: if isOwner(userId);
-      allow list: if isOwner(userId);
-      allow create: if isSignedIn() && isOwner(userId);
-      allow update: if isExistingOwner(userId);
-      allow delete: if isExistingOwner(userId);
-    }
-
-    /**
-     * @description Rules for the /users/{userId}/files/{fileId} collection.
-     * @path /users/{userId}/files/{fileId}
-     * @allow (create) User with ID 'user123' creates a file for themselves.
-     *   - request.auth.uid: 'user123'
-     * @allow (get) User with ID 'user123' reads their own file.
-     *   - request.auth.uid: 'user123'
-     * @allow (update) User with ID 'user123' updates their own file.
-     *   - request.auth.uid: 'user123'
-     * @deny (create) User with ID 'user456' tries to create a file for 'user123'.
-     *   - request.auth.uid: 'user456'
-     * @deny (get) User with ID 'user456' tries to read the file of 'user123'.
-     *   - request.auth.uid: 'user456'
-     * @principle Enforces document ownership for reads and writes.
-     */
-    match /users/{userId}/files/{fileId} {
-      allow get: if isOwner(userId);
-      allow list: if isOwner(userId);
-      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.userId == userId;
-      allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
-      allow delete: if isExistingOwner(userId);
-    }
-
-    /**
-     * @description Rules for the /users/{userId}/tasks/{taskId} collection.
-     * @path /users/{userId}/tasks/{taskId}
-     * @allow (create) User with ID 'user123' creates a task for themselves.
-     *   - request.auth.uid: 'user123'
-     * @allow (get) User with ID 'user123' reads their own task.
-     *   - request.auth.uid: 'user123'
-     * @allow (update) User with ID 'user123' updates their own task.
-     *   - request.auth.uid: 'user123'
-     * @deny (create) User with ID 'user456' tries to create a task for 'user123'.
-     *   - request.auth.uid: 'user456'
-     * @deny (get) User with ID 'user456' tries to read the task of 'user123'.
-     *   - request.auth.uid: 'user456'
-     * @principle Enforces document ownership for reads and writes.
-     */
-    match /users/{userId}/tasks/{taskId} {
-      allow get: if isOwner(userId);
-      allow list: if isOwner(userId);
-      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.userId == userId;
-      allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
-      allow delete: if isExistingOwner(userId);
-    }
-
-    /**
-     * @description Rules for the /roles_admin/{userId} collection.
-     * @path /roles_admin/{userId}
-     * @allow (create) Only an existing admin can create a new admin role.
-     * @allow (get)  Any user can check for admin status.
-     * @allow (delete) Only the admin themselves or another admin can delete their admin role.
-     * @deny (create) A non-admin user attempts to create an admin role.
-     * @principle Restricts admin role creation and deletion to existing admins and the user themselves.
-     */
-     match /roles_admin/{userId} {
-        allow get: if isSignedIn(); // Anyone signed in can check for admin status by reading the doc.
-        allow list: if false;
-        allow create: if isAdmin();
-        allow update: if false; // Admin status should be granted by creating the document, not updating it.
-        allow delete: if isAdmin() || isOwner(userId);
-     }
   }
 }
