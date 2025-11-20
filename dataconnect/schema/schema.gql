@@ -1,0 +1,51 @@
+type User @table {
+  username: String!
+  email: String!
+  createdAt: Timestamp!
+  displayName: String
+  profilePictureUrl: String
+  bio: String
+}
+
+type Post @table {
+  title: String!
+  content: String!
+  postType: String!
+  createdAt: Timestamp!
+  author: User
+  imageUrls: [String]
+  tags: [String]
+  restaurantName: String
+  rating: Int
+  preparationTime: String
+}
+
+type Category @table {
+  name: String!
+  description: String
+}
+
+type PostCategory @table(key: ["post", "category"]) {
+  post: Post!
+  category: Category!
+}
+
+type Comment @table {
+  content: String!
+  createdAt: Timestamp!
+  author: User
+  post: Post
+  parentComment: Comment
+}
+
+type Like @table(key: ["user", "post"]) {
+  createdAt: Timestamp!
+  user: User!
+  post: Post!
+}
+
+type Follow @table(key: ["follower", "followee"]) {
+  createdAt: Timestamp!
+  follower: User!
+  followee: User!
+}

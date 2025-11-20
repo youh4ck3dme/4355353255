@@ -1,16 +1,11 @@
 
 import FaqAccordion from '@/components/FaqAccordion';
-import dynamic from 'next/dynamic';
 import { services } from '@/lib/services';
 import Services from '@/components/Services';
 import Blog from '@/components/Blog';
 import Contact from '@/components/Contact';
 import Hero from '@/components/Hero';
-
-const DynamicTestimonials = dynamic(() => import('@/components/Testimonials'), { 
-  loading: () => <div className="min-h-[300px]"></div>,
-  ssr: false 
-});
+import DynamicTestimonials from '@/components/DynamicTestimonials';
 
 const faqItems = [
     {

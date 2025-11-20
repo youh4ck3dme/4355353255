@@ -1,11 +1,15 @@
+'use client';
 
-import { getPostBySlug, getPublishedPosts } from '@/lib/mdx';
-import { notFound } from 'next/navigation';
+import { useState, useEffect, useMemo } from 'react';
+import { notFound, useParams } from 'next/navigation';
 import Image from 'next/image';
 import { format } from 'date-fns';
-import { Metadata } from 'next';
 import { BlogCard } from '@/components/BlogCard';
 import Link from 'next/link';
+import { useFirebase } from '@/firebase/provider';
+import { Post } from '@/lib/types';
+import { doc, onSnapshot, collection, query, where, getDocs, limit } from 'firebase/firestore';
+import { Loader2 } from 'lucide-react';
 
 // Helper function to extract FAQ schema data from post content using regex
 const getFaqSchema = (content: string): object | null => {
@@ -36,58 +40,91 @@ const getFaqSchema = (content: string): object | null => {
     };
 };
 
+export default function BlogPostPage() {
+    const params = useParams();
+    const slug = params.slug as string;
+    const { firestore, isLoading: isFirebaseLoading } = useFirebase();
 
-type BlogPostPageProps = {
-    params: {
-        slug: string;
-    };
-};
-
-export async function generateStaticParams() {
-    const posts = await getPublishedPosts();
-    return posts.map(post => ({
-        slug: post.slug,
-    }));
-}
-
-export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
-  const post = await getPostBySlug(params.slug);
-  
-  if (!post) {
-    return {
-      title: 'Článok nenájdený',
-    }
-  }
-
-  const siteUrl = 'https://stahovanie.website';
-  const postUrl = `${siteUrl}/blog/${post.slug}`;
-  
-  const description = post.metaDescription || `Prečítajte si viac o téme "${post.title}" a získajte cenné tipy od expertov z VI&MO. Váš spoľahlivý partner pre sťahovanie a upratovanie v Bratislave.`;
-  
-  return {
-    title: post.metaTitle || `${post.title} | VI&MO`,
-    description: description,
-    alternates: {
-        canonical: postUrl,
-    }
-  }
-}
-
-export default async function BlogPostPage({ params }: BlogPostPageProps) {
-    const post = await getPostBySlug(params.slug);
+    const [post, setPost] = useState<Post | null>(null);
+    const [relatedPosts, setRelatedPosts] = useState<Post[]>([]);
+    const [isLoadingPost, setIsLoadingPost] = useState(true);
     
-    if (!post || post.status !== 'published') {
+    const postRef = useMemo(() => {
+        if (!firestore || !slug) return null;
+        return doc(firestore, 'blogPosts', slug);
+    }, [firestore, slug]);
+
+    useEffect(() => {
+        if (!postRef) {
+            if(!isFirebaseLoading) setIsLoadingPost(false);
+            return;
+        };
+
+        setIsLoadingPost(true);
+        const unsubscribe = onSnapshot(postRef, (docSnap) => {
+            if (docSnap.exists()) {
+                const postData = {
+                    slug: docSnap.id,
+                    ...docSnap.data()
+                } as Post;
+                
+                if (postData.status === 'published') {
+                    setPost(postData);
+                } else {
+                    setPost(null); // Treat draft as not found for public
+                }
+            } else {
+                setPost(null);
+            }
+            setIsLoadingPost(false);
+        }, (error) => {
+            console.error("Error fetching post:", error);
+            setIsLoadingPost(false);
+        });
+
+        return () => unsubscribe();
+    }, [postRef, isFirebaseLoading]);
+
+    useEffect(() => {
+        if (!post || !firestore || post.tags?.length === 0) {
+            setRelatedPosts([]);
+            return;
+        }
+
+        const fetchRelated = async () => {
+            const q = query(
+                collection(firestore, "blogPosts"),
+                where('status', '==', 'published'),
+                where('tags', 'array-contains-any', post.tags),
+                limit(4) // Fetch 4, one might be the current post
+            );
+            const snapshot = await getDocs(q);
+            const related = snapshot.docs
+                .map(doc => ({ slug: doc.id, ...doc.data() } as Post))
+                .filter(p => p.slug !== post.slug) // Exclude current post
+                .slice(0, 3); // Limit to 3
+            setRelatedPosts(related);
+        };
+
+        fetchRelated();
+
+    }, [post, firestore]);
+
+    if (isLoadingPost || isFirebaseLoading) {
+        return (
+             <div className="container mx-auto px-4 py-20 text-center min-h-[70vh] flex flex-col justify-center items-center">
+                <Loader2 className="h-16 w-16 animate-spin text-brand-bright-green" />
+                <p className="mt-4 text-slate-300">Načítavam článok...</p>
+            </div>
+        );
+    }
+    
+    if (!post) {
         notFound();
     }
     
-    const allPosts = await getPublishedPosts();
-
     const siteUrl = 'https://stahovanie.website';
     const postUrl = `${siteUrl}/blog/${post.slug}`;
-    
-    const relatedPosts = allPosts
-        .filter(p => p.slug !== post.slug && (post.tags || []).some(tag => (p.tags || []).includes(tag)))
-        .slice(0, 3);
 
     const blogPostJsonLd = {
         '@context': 'https://schema.org',
@@ -140,7 +177,6 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         }
       ]
     };
-
 
     let finalContent = post.content || '';
     let faqSchema = getFaqSchema(finalContent);

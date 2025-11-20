@@ -4,7 +4,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { Providers } from '@/components/Providers';
-import dynamic from 'next/dynamic';
+import DynamicInstallPrompt from '@/components/DynamicInstallPrompt';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -12,8 +12,6 @@ const APP_NAME = "VI&MO - Sťahovanie Bratislava";
 const APP_DEFAULT_TITLE = "VI&MO - Profesionálne sťahovanie a upratovanie v Bratislave";
 const APP_TITLE_TEMPLATE = "%s | VI&MO";
 const APP_DESCRIPTION = "Spoľahlivé sťahovacie a upratovacie služby v Bratislave a okolí. Sťahovanie bytov, firiem, klavírov. Vypratávanie, montáž a doprava. Získajte cenovú ponuku.";
-
-const DynamicInstallPrompt = dynamic(() => import('@/components/InstallPrompt'), { ssr: false });
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://stahovanie.website'),
