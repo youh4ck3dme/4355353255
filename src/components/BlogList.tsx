@@ -9,7 +9,7 @@ import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import GlassCard from './GlassCard';
 import { Loader2 } from 'lucide-react';
 import { useFirebase } from '@/firebase/provider';
-import { collection, query, where, onSnapshot, Query, DocumentData, limit } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, Query, DocumentData, limit, orderBy } from 'firebase/firestore';
 
 
 const ALL_CATEGORIES = ['Tipy na sťahovanie', 'Upratovanie', 'Novinky', 'Vypratávanie'];
@@ -38,12 +38,18 @@ export const BlogList = ({ initialCategory, postLimit }: { initialCategory?: str
     const postsQuery: Query<DocumentData> | null = useMemo(() => {
         if (!firestore) return null;
         
-        let queryConstraints: any[] = [where('status', '==', 'published')];
+        // Base query that complies with security rules by always filtering for published status.
+        let queryConstraints: any[] = [
+            where('status', '==', 'published'),
+            orderBy('date', 'desc')
+        ];
         
+        // Add category filter if one is selected.
         if (selectedCategory) {
           queryConstraints.push(where('tags', 'array-contains', selectedCategory));
         }
 
+        // Add a limit if specified (e.g., for the homepage).
         if (postLimit) {
             queryConstraints.push(limit(postLimit));
         }
