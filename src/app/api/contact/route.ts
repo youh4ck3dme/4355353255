@@ -15,8 +15,15 @@ const contactSchema = z.object({
   token: z.string().min(1, { message: 'reCAPTCHA token je povinný.' }),
 });
 
-// Cache the reCAPTCHA client
-const recaptchaClient = new RecaptchaEnterpriseServiceClient();
+// Cache the reCAPTCHA client for better performance
+let recaptchaClient: RecaptchaEnterpriseServiceClient | null = null;
+function getRecaptchaClient() {
+  if (!recaptchaClient) {
+    recaptchaClient = new RecaptchaEnterpriseServiceClient();
+  }
+  return recaptchaClient;
+}
+
 
 async function createAssessment({
   projectID,
@@ -29,7 +36,8 @@ async function createAssessment({
   token: string,
   recaptchaAction: string
 }) {
-  const projectPath = recaptchaClient.projectPath(projectID);
+  const client = getRecaptchaClient();
+  const projectPath = client.projectPath(projectID);
 
   const request = {
     assessment: {
@@ -41,14 +49,16 @@ async function createAssessment({
     parent: projectPath,
   };
 
-  const [response] = await recaptchaClient.createAssessment(request);
+  const [response] = await client.createAssessment(request);
 
   if (!response.tokenProperties?.valid) {
+    console.error(`reCAPTCHA token is invalid: ${response.tokenProperties?.invalidReason}`);
     throw new Error(`The CreateAssessment call failed because the token was: ${response.tokenProperties?.invalidReason}`);
   }
 
   if (response.tokenProperties.action !== recaptchaAction) {
-    throw new Error(`The action attribute in your reCAPTCHA tag does not match the action you are expecting to score. Expected: ${recaptchaAction}, Got: ${response.tokenProperties.action}`);
+     console.error(`reCAPTCHA action mismatch. Expected: ${recaptchaAction}, Got: ${response.tokenProperties.action}`);
+    throw new Error(`The action attribute in your reCAPTCHA tag does not match the action you are expecting to score.`);
   }
   
   // Return the risk analysis
@@ -63,7 +73,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: 'Internal Server Error: Firestore not initialized.' }, { status: 500 });
   }
 
-  const projectID = process.env.FIREBASE_PROJECT_ID;
+  const projectID = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
   const recaptchaKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
 
   if (!projectID || !recaptchaKey) {
@@ -82,21 +92,22 @@ export async function POST(request: Request) {
       recaptchaAction: 'CONTACT_FORM_SUBMIT',
     });
 
-    // Check the score. A lower score indicates lower risk.
-    // We can be stricter here, e.g. score < 0.5
-    if (!riskAnalysis || (riskAnalysis.score ?? 0) < 0.7) {
-      console.warn(`reCAPTCHA verification failed or low score: ${riskAnalysis?.score}`);
+    // We can be stricter here, e.g., score < 0.5. For this use case, 0.7 is a good starting point.
+    const score = riskAnalysis?.score ?? 0;
+    if (!riskAnalysis || score < 0.7) {
+      console.warn(`reCAPTCHA verification failed or low score: ${score}`);
+      // Do not reveal the score to the client.
       return NextResponse.json({ message: 'reCAPTCHA verification failed. Please try again.' }, { status: 400 });
     }
 
-    console.log(`reCAPTCHA score: ${riskAnalysis.score}`);
+    console.log(`reCAPTCHA assessment passed with score: ${score}`);
 
     // If verification is successful, save data to Firestore
     const submissionsCollection = db.collection('contact_submissions');
     await submissionsCollection.add({
       ...formData,
       submittedAt: new Date().toISOString(),
-      recaptchaScore: riskAnalysis.score,
+      recaptchaScore: score,
     });
 
     return NextResponse.json({ message: 'Submission successful!' });
@@ -106,6 +117,7 @@ export async function POST(request: Request) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ message: 'Invalid data provided', errors: error.errors }, { status: 400 });
     }
-    return NextResponse.json({ message: error.message || 'An unknown error occurred.' }, { status: 500 });
+    // Return a generic error message to the client
+    return NextResponse.json({ message: 'An unexpected error occurred. Please try again later.' }, { status: 500 });
   }
 }

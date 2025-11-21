@@ -5,7 +5,6 @@ import Script from 'next/script';
 import './globals.css';
 import { Providers } from '@/components/Providers';
 import DynamicInstallPrompt from '@/components/DynamicInstallPrompt';
-import { FirebaseClientInitializer } from '@/components/FirebaseClientInitializer';
 import { FirebaseProvider } from '@/firebase/provider';
 import { ToastProvider } from '@/components/ui/use-toast';
 import PushNotificationManager from '@/components/PushNotificationManager';
@@ -70,17 +69,14 @@ export default function RootLayout({
         <Providers>
           <FirebaseProvider>
             <ToastProvider>
-              <FirebaseClientInitializer />
               <PushNotificationManager />
               {children}
               <DynamicInstallPrompt />
             </ToastProvider>
           </FirebaseProvider>
         </Providers>
-        <Script
-          src={`https://www.google.com/recaptcha/enterprise.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}
-          strategy="lazyOnload"
-        />
+        
+        {/* Google Analytics */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-TT4HP7501H"
           strategy="afterInteractive"
