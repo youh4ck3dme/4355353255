@@ -2,6 +2,7 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import DynamicInteractiveMap from '@/components/DynamicInteractiveMap';
+import GlassCard from '@/components/GlassCard';
 
 
 export const metadata: Metadata = {
@@ -30,15 +31,19 @@ export default function LocationsPage() {
           <DynamicInteractiveMap />
         </div>
         
-        <div className="mt-16 text-center bg-brand-dark-teal/90 text-white p-8 md:p-12 rounded-lg shadow-2xl">
-            <h2 className="text-2xl font-bold mb-4 text-brand-bg text-shadow-3d">Nenašli ste svoju lokalitu?</h2>
-            <p className="text-slate-300 mb-6 max-w-2xl mx-auto">Neváhajte nás kontaktovať. Po dohode realizujeme sťahovanie aj v ďalších mestách a obciach západného Slovenska.</p>
-            <Link 
-                href="/kontakt"
-                className="inline-block px-8 py-4 bg-brand-bright-green text-brand-dark-teal font-bold rounded-lg hover:bg-opacity-80 transition-colors duration-300 shadow-xl"
-            >
-                Získať cenovú ponuku
-            </Link>
+        <div className="mt-16 text-center">
+            <GlassCard isPadded={false}>
+                <div className="bg-brand-bright-green/10 p-8 md:p-12 rounded-2xl">
+                    <h2 className="text-2xl font-bold mb-4 text-white text-shadow-md">Nenašli ste svoju lokalitu?</h2>
+                    <p className="text-slate-300 mb-6 max-w-2xl mx-auto">Neváhajte nás kontaktovať. Po dohode realizujeme sťahovanie aj v ďalších mestách a obciach západného Slovenska.</p>
+                    <Link 
+                        href="/kontakt"
+                        className="glass-button inline-block px-8 py-4 font-bold rounded-full hover:bg-opacity-90 transition-colors duration-300 shadow-lg hover:shadow-xl"
+                    >
+                        Získať cenovú ponuku
+                    </Link>
+                </div>
+            </GlassCard>
         </div>
 
       </div>
