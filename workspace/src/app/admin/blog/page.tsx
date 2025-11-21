@@ -102,7 +102,7 @@ export default function AdminBlogPage() {
                 </div>
             </header>
             
-            <GlassCard isPadded={false}>
+            <GlassCard>
                 <div className="bg-blue-900/30 border-l-4 border-blue-400 text-blue-200 p-4 rounded-t-2xl flex gap-3">
                     <Info className="h-5 w-5 mt-1 flex-shrink-0" />
                     <div>

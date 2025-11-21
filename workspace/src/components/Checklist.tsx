@@ -5,7 +5,7 @@ import { doc, setDoc, onSnapshot, DocumentReference } from 'firebase/firestore';
 import { ChecklistCategory } from '@/lib/checklist-data';
 import { Check, Circle, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useToast } from './ui/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 import { useFirebase } from '@/firebase/provider';
 import GlassCard from './GlassCard';
 

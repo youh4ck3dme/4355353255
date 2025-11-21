@@ -61,7 +61,7 @@ export default function PricingPage() {
             <h2 className="text-3xl font-bold mb-8 text-center text-white text-shadow-3d">Základný cenník sťahovania</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {priceItems.map((item) => (
-                <GlassCard key={item.id} className="flex flex-col items-center text-center p-6">
+                <GlassCard key={item.id} className="p-6 flex flex-col items-center text-center">
                   <div className="bg-brand-bright-green/20 p-3 rounded-full mb-4">
                       <Home className="h-6 w-6 text-brand-bright-green" />
                   </div>

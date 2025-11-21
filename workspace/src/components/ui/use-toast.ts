@@ -8,7 +8,7 @@ import React, {
   useCallback,
 } from "react";
 
-type ToastVariant = "default" | "success" | "error";
+type ToastVariant = "default" | "success" | "error" | "destructive";
 
 export type ToastOptions = {
   title?: string;
@@ -57,7 +57,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
           <div
             key={t.id}
             className={`min-w-[220px] rounded-lg px-4 py-3 shadow-lg text-sm text-white ${
-              t.variant === "error"
+              t.variant === "error" || t.variant === "destructive"
                 ? "bg-red-600/90"
                 : t.variant === "success"
                 ? "bg-emerald-600/90"
@@ -78,7 +78,6 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 export function useToast() {
   const ctx = useContext(ToastContext);
 
-  // Ak nie je provider, nerobíme bordel – aspoň logneme
   if (!ctx) {
     return {
       toasts: [] as Toast[],

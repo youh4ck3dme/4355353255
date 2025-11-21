@@ -194,26 +194,24 @@ function AuthGuard({ children }: { children: ReactNode }) {
     return (
         <div className="min-h-screen flex items-center justify-center p-4 bg-brand-dark-teal">
           <div className="w-full max-w-sm mx-auto">
-              <GlassCard>
-                  <div className="p-8">
-                      <div className="text-center mb-8">
-                          <ShieldCheck className="mx-auto h-16 w-16 text-brand-bright-green mb-4" />
-                          <h1 className="text-3xl font-bold text-white text-shadow-3d">
-                          Zabezpečená oblasť
-                          </h1>
-                          <p className="text-slate-300 mt-2">
-                          Vyžaduje sa prihlásenie administrátora
-                          </p>
-                      </div>
-                      
-                      <LoginForm 
-                        onLogin={handleLogin} 
-                        onPasswordReset={handlePasswordReset}
-                        isLoggingIn={isLoggingIn}
-                        isSendingReset={isSendingReset}
-                        error={error}
-                      />
+              <GlassCard className="p-8">
+                  <div className="text-center mb-8">
+                      <ShieldCheck className="mx-auto h-16 w-16 text-brand-bright-green mb-4" />
+                      <h1 className="text-3xl font-bold text-white text-shadow-3d">
+                      Zabezpečená oblasť
+                      </h1>
+                      <p className="text-slate-300 mt-2">
+                      Vyžaduje sa prihlásenie administrátora
+                      </p>
                   </div>
+                  
+                  <LoginForm 
+                    onLogin={handleLogin} 
+                    onPasswordReset={handlePasswordReset}
+                    isLoggingIn={isLoggingIn}
+                    isSendingReset={isSendingReset}
+                    error={error}
+                  />
               </GlassCard>
           </div>
         </div>
@@ -224,17 +222,15 @@ function AuthGuard({ children }: { children: ReactNode }) {
     return (
         <div className="min-h-screen flex items-center justify-center p-4 bg-brand-dark-teal">
           <div className="w-full max-w-sm mx-auto">
-              <GlassCard>
-                  <div className="p-8 text-center">
-                      <UserX className="mx-auto h-16 w-16 text-red-400 mb-4" />
-                      <h1 className="text-3xl font-bold text-white text-shadow-3d">
-                        Prístup zamietnutý
-                      </h1>
-                      <p className="text-slate-300 mt-2">
-                        Táto sekcia je dostupná len pre administrátorov.
-                      </p>
-                      {auth && <button onClick={() => signOut(auth)} className="mt-6 text-sm text-brand-bright-green underline">Odhlásiť sa</button>}
-                  </div>
+              <GlassCard className="p-8 text-center">
+                  <UserX className="mx-auto h-16 w-16 text-red-400 mb-4" />
+                  <h1 className="text-3xl font-bold text-white text-shadow-3d">
+                    Prístup zamietnutý
+                  </h1>
+                  <p className="text-slate-300 mt-2">
+                    Táto sekcia je dostupná len pre administrátorov.
+                  </p>
+                  {auth && <button onClick={() => signOut(auth)} className="mt-6 text-sm text-brand-bright-green underline">Odhlásiť sa</button>}
               </GlassCard>
           </div>
         </div>

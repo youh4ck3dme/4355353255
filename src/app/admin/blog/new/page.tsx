@@ -25,10 +25,8 @@ export default function NewPostPage() {
               Vyplňte formulár a uložte článok ako koncept alebo ho rovno publikujte.
           </p>
       </header>
-      <GlassCard>
-        <div className="p-8">
-            <PostForm />
-        </div>
+      <GlassCard className="p-8">
+        <PostForm />
       </GlassCard>
     </div>
   );

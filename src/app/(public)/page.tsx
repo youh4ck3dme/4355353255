@@ -6,7 +6,12 @@ import Services from '@/components/Services';
 import Blog from '@/components/Blog';
 import Contact from '@/components/Contact';
 import Hero from '@/components/Hero';
-import DynamicTestimonials from '@/components/DynamicTestimonials';
+import dynamic from 'next/dynamic';
+
+const DynamicTestimonials = dynamic(() => import('@/components/Testimonials'), { 
+  loading: () => <div className="min-h-[300px]"></div>,
+  ssr: false 
+});
 
 const faqItems = [
     {

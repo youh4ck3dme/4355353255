@@ -160,7 +160,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                         </ol>
                     </nav>
 
-                    <GlassCard isPadded={false} className="overflow-hidden">
+                    <GlassCard className="overflow-hidden">
                         {post.imageUrl && (
                             <div className="relative w-full h-64 md:h-96">
                                 <Image 

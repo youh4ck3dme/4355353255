@@ -164,7 +164,7 @@ export const BlogList = ({ initialCategory, postLimit }: { initialCategory?: str
                     ))}
                 </div>
             ) : (
-                 <GlassCard>
+                 <GlassCard className="p-4 sm:p-6">
                      <p className="text-xl text-center text-slate-300 py-16 px-4">
                         { selectedCategory ? `Nenašli sa žiadne články pre kategóriu "${selectedCategory}".` : "Nenašli sa žiadne články."}
                     </p>

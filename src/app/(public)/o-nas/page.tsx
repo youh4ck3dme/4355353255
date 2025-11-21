@@ -73,7 +73,7 @@ export default function AboutPage() {
           </p>
         </header>
         
-        <GlassCard className="mb-16">
+        <GlassCard className="p-4 sm:p-6 mb-16">
           <div className="grid md:grid-cols-2 gap-8 items-center">
               <div className="relative w-full h-80 rounded-lg overflow-hidden shadow-2xl">
                   <Image

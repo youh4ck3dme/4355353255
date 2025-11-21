@@ -2,46 +2,49 @@
 import * as admin from 'firebase-admin';
 
 // A single instance of the app, to avoid re-initializing
-let app: admin.app.App;
-
-/**
- * Initializes the Firebase Admin SDK if it hasn't been already.
- * This function is safe to call multiple times.
- * @returns The initialized Firebase Admin App instance.
- */
-function initializeAdminApp(): admin.app.App {
-  // If an app is already initialized, return it.
-  if (admin.apps.length > 0 && admin.apps[0]) {
-    return admin.apps[0];
-  }
-
-  // Otherwise, initialize a new one.
-  const serviceAccount: admin.ServiceAccount = {
-    projectId: process.env.FIREBASE_PROJECT_ID!,
-    clientEmail: process.env.FIREBASE_CLIENT_EMAIL!,
-    // Replace escaped newlines with actual newlines for the private key
-    privateKey: (process.env.FIREBASE_PRIVATE_KEY! || '').replace(/\\n/g, '\n'),
-  };
-
-  return admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    databaseURL: `https://${serviceAccount.projectId}.firebaseio.com`
-  });
-}
+let app: admin.app.App | null = null;
 
 /**
  * Gets the singleton instance of the Firebase Admin App.
  * Initializes the app if it's not already initialized.
- * @returns The Firebase Admin App instance.
+ * @returns The Firebase Admin App instance or null if initialization fails.
  */
-export function getAdminApp(): admin.app.App {
-    if (!app) {
-        app = initializeAdminApp();
-    }
+export function getAdminApp(): admin.app.App | null {
+  if (app) {
     return app;
-}
+  }
 
-// Export pre-initialized services for convenience
-export const adminApp = getAdminApp();
-export const db = adminApp.firestore();
-export const auth = adminApp.auth();
+  // Check for existing initialized apps
+  if (admin.apps.length > 0 && admin.apps[0]) {
+    app = admin.apps[0];
+    return app;
+  }
+
+  // Validate environment variables
+  const projectId = process.env.FIREBASE_PROJECT_ID;
+  const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+  const privateKey = process.env.FIREBASE_PRIVATE_KEY;
+
+  if (!projectId || !clientEmail || !privateKey) {
+    console.error('Firebase Admin SDK ERROR: Missing environment variables (FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY). SDK will not be initialized.');
+    return null;
+  }
+
+  try {
+    const serviceAccount: admin.ServiceAccount = {
+      projectId,
+      clientEmail,
+      privateKey: privateKey.replace(/\\n/g, '\n'),
+    };
+
+    app = admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount),
+      databaseURL: `https://${serviceAccount.projectId}.firebaseio.com`
+    });
+
+    return app;
+  } catch (error) {
+    console.error('Firebase Admin SDK ERROR: Failed to initialize.', error);
+    return null;
+  }
+}

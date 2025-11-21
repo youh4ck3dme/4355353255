@@ -43,10 +43,8 @@ export default async function EditPostPage({ params }: EditPostPageProps) {
                     Aktualizujte obsah a nastavenia existujúceho článku.
                 </p>
             </header>
-             <GlassCard>
-                <div className="p-8">
-                    <PostForm post={post} />
-                </div>
+             <GlassCard className="p-8">
+                <PostForm post={post} />
             </GlassCard>
         </div>
     );

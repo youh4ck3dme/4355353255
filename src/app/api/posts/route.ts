@@ -1,49 +1,10 @@
+
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { getAdminApp } from '@/lib/firebase-admin';
 
 // Ensure this runs on the Node.js runtime, not the edge.
 export const runtime = 'nodejs';
-
-// Initialize Firebase Admin SDK
-const app = getAdminApp();
-const db = app.firestore();
-const auth = app.auth();
-
-// GET all blog posts (admin-style)
-export async function GET(request: Request) {
-  try {
-     // 1. Authenticate the request
-    const token = request.headers.get('Authorization')?.split('Bearer ')[1];
-    if (!token) {
-        return NextResponse.json({ message: 'Authentication required.' }, { status: 401 });
-    }
-    const decodedToken = await auth.verifyIdToken(token);
-    const uid = decodedToken.uid;
-
-    // 2. Authorize the user (check for admin role)
-    const adminRoleDoc = await db.collection('roles_admin').doc(uid).get();
-    if (!adminRoleDoc.exists) {
-        return NextResponse.json({ message: 'Insufficient permissions. User is not an admin.' }, { status: 403 });
-    }
-
-    // 3. Fetch data if authorized
-    const snapshot = await db.collection('blogPosts').get();
-    
-    const allPosts = snapshot.docs.map(doc => ({
-        slug: doc.id,
-        ...doc.data()
-    }));
-
-    return NextResponse.json(allPosts);
-  } catch (error: any) {
-    console.error('API GET Error: Failed to get posts:', error);
-    if (error.code === 'auth/id-token-expired') {
-        return NextResponse.json({ message: 'Session expired. Please log in again.' }, { status: 401 });
-    }
-    return NextResponse.json({ message: 'Internal Server Error', error: error.message }, { status: 500 });
-  }
-}
 
 // Zod schema for validation
 const postSchema = z.object({
@@ -59,6 +20,13 @@ const postSchema = z.object({
 
 // POST a new or updated blog post
 export async function POST(request: Request) {
+    const adminApp = getAdminApp();
+    if (!adminApp) {
+      return NextResponse.json({ message: 'Internal Server Error: Firebase Admin not initialized.' }, { status: 500 });
+    }
+    const auth = adminApp.auth();
+    const db = adminApp.firestore();
+
     try {
         // 1. Authenticate the request
         const token = request.headers.get('Authorization')?.split('Bearer ')[1];
