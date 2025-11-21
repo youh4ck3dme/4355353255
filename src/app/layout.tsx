@@ -78,6 +78,10 @@ export default function RootLayout({
           </FirebaseProvider>
         </Providers>
         <Script
+          src={`https://www.google.com/recaptcha/enterprise.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}
+          strategy="lazyOnload"
+        />
+        <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-TT4HP7501H"
           strategy="afterInteractive"
         />
