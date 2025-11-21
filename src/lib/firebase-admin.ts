@@ -18,7 +18,7 @@ export const getAdminApp = () => {
   };
 
   // Check if essential service account details are present
-  if (!serviceAccount.projectId || !service.Account.clientEmail || !serviceAccount.privateKey) {
+  if (!serviceAccount.projectId || !serviceAccount.clientEmail || !serviceAccount.privateKey) {
       throw new Error("Firebase Admin SDK environment variables are not set. Check PROJECT_ID, CLIENT_EMAIL, and PRIVATE_KEY.");
   }
 

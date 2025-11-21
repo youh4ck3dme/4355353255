@@ -20,7 +20,8 @@ service cloud.firestore {
 
     // A helper function to check if the query contains a specific where clause.
     function isQueryingPublished() {
-        return 'status' in request.query.filters && request.query.filters.status == 'published';
+        // Ensures the query filters for 'published' status.
+        return request.query.where.size() > 0 && request.query.where[0].field == 'status' && request.query.where[0].op == '==' && request.query.where[0].value == 'published';
     }
 
     // BLOG POSTS: Public can read published posts, admins can write anything.
