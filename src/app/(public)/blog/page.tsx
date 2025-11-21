@@ -1,11 +1,6 @@
 
 import { BlogList } from '@/components/BlogList';
-import { Post } from '@/lib/types';
-import Image from 'next/image';
-import Link from 'next/link';
-import { format } from 'date-fns';
 import { Metadata } from 'next';
-import { getPublishedPosts } from '@/lib/mdx';
 
 
 export const metadata: Metadata = {
@@ -21,17 +16,14 @@ export default function BlogIndexPage({ searchParams }: { searchParams?: { [key:
   const initialCategory = typeof searchParams?.category === 'string' ? searchParams.category : undefined;
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-7xl">
+    <div className="container mx-auto px-4 py-12 max-w-7xl">
        <div className="text-center mb-12">
-        <h1 className="text-4xl font-extrabold mb-4 text-brand-dark-teal dark:text-brand-bright-green text-shadow-3d-green">Tipy, triky a novinky</h1>
-        <p className="text-lg text-brand-secondary-grey dark:text-brand-light-gray max-w-3xl mx-auto">
+        <h1 className="text-4xl md:text-5xl font-extrabold mb-4 text-white text-shadow-3d">Tipy, triky a novinky</h1>
+        <p className="text-lg text-slate-300 max-w-3xl mx-auto">
           Články zo sveta sťahovania, upratovania a logistiky. Nájdite rady od profesionálov a uľahčite si prácu s našimi praktickými návodmi.
         </p>
       </div>
 
-      <h2 className="text-2xl font-bold mt-12 mb-6 text-center text-brand-dark-teal dark:text-brand-bg text-shadow-3d">
-        Všetky články
-      </h2>
       <BlogList initialCategory={initialCategory} />
     </div>
   );

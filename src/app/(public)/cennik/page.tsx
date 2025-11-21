@@ -49,16 +49,16 @@ export default function PricingPage() {
       <div className="bg-brand-bg text-brand-text dark:bg-brand-dark-teal dark:text-brand-bg">
         <div className="container mx-auto px-4 py-12 max-w-5xl">
           <header className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-extrabold mb-4 text-brand-dark-teal dark:text-brand-bright-green text-shadow-3d-green">
+            <h1 className="text-4xl md:text-5xl font-extrabold mb-4 text-white text-shadow-3d">
               Cenník našich služieb
             </h1>
-            <p className="text-lg text-brand-secondary-grey dark:text-brand-light-gray max-w-3xl mx-auto">
+            <p className="text-lg text-slate-300 max-w-3xl mx-auto">
               Transparentné a férové ceny pre vaše sťahovanie v Bratislave a okolí.
             </p>
           </header>
 
           <section className="mb-16">
-            <h2 className="text-3xl font-bold mb-8 text-center text-brand-dark-teal dark:text-brand-bg text-shadow-3d">Základný cenník sťahovania</h2>
+            <h2 className="text-3xl font-bold mb-8 text-center text-white text-shadow-3d">Základný cenník sťahovania</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {priceItems.map((item) => (
                 <GlassCard key={item.id} className="flex flex-col items-center text-center p-6">
@@ -74,7 +74,7 @@ export default function PricingPage() {
           </section>
 
           <section className="mb-16">
-            <h2 className="text-3xl font-bold mb-8 text-center text-brand-dark-teal dark:text-brand-bg text-shadow-3d">Ceny za pracovníkov a dopravu</h2>
+            <h2 className="text-3xl font-bold mb-8 text-center text-white text-shadow-3d">Ceny za pracovníkov a dopravu</h2>
             <div className="grid md:grid-cols-2 gap-8">
                 <GlassCard className="p-6 text-center md:text-left">
                     <div className="flex items-center justify-center md:justify-start mb-4">

@@ -1,4 +1,4 @@
-
+git init
 # VI&MO - Sťahovanie a Upratovanie (Next.js & Firebase)
 
 Tento projekt je moderná webová aplikácia vytvorená pre firmu VI&MO, ktorá poskytuje sťahovacie a upratovacie služby. Aplikácia je postavená na platforme Next.js a využíva Firebase pre backendové služby, ako sú autentifikácia a databáza Firestore.
