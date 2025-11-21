@@ -8,6 +8,7 @@ import { Post } from '@/lib/types';
 import { getPostBySlug, getPublishedPosts } from '@/lib/mdx';
 import { Metadata } from 'next';
 import { Loader2 } from 'lucide-react'; // Placeholder, loading is handled by Next.js
+import GlassCard from '@/components/GlassCard';
 
 type BlogPostPageProps = {
     params: {
@@ -148,7 +149,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
             {faqSchema && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />}
             
-            <div className="bg-brand-bg dark:bg-brand-dark-teal text-brand-text dark:text-brand-bg">
+            <div className="bg-brand-bg text-brand-text dark:bg-brand-dark-teal dark:text-brand-bg">
                 <div className="container mx-auto px-4 py-8 max-w-5xl">
                     <nav aria-label="Breadcrumb" className="mb-6 text-sm text-brand-secondary-grey dark:text-slate-400">
                         <ol className="flex items-center space-x-2">
@@ -160,7 +161,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                         </ol>
                     </nav>
 
-                    <article className="bg-brand-light-gray dark:bg-brand-dark-teal/80 shadow-xl rounded-lg overflow-hidden">
+                    <GlassCard isPadded={false} className="overflow-hidden">
                         {post.imageUrl && (
                             <div className="relative w-full h-64 md:h-96">
                                 <Image 
@@ -176,18 +177,18 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                         )}
 
                         <div className="p-6 lg:p-10">
-                            <h1 className="text-3xl md:text-5xl font-extrabold mb-4 text-brand-dark-teal dark:text-brand-bg">{post.title}</h1>
+                            <h1 className="text-3xl md:text-5xl font-extrabold mb-4 text-white">{post.title}</h1>
                             
-                            <div className="text-brand-secondary-grey dark:text-slate-300 text-sm mb-4 flex flex-wrap items-center gap-x-4 gap-y-2">
-                                <span>Autor: <span className="font-medium text-brand-dark-teal dark:text-slate-200">{post.author || 'VI&MO Team'}</span></span>
+                            <div className="text-slate-400 text-sm mb-4 flex flex-wrap items-center gap-x-4 gap-y-2">
+                                <span>Autor: <span className="font-medium text-slate-200">{post.author || 'VI&MO Team'}</span></span>
                                 <span className="hidden md:inline">|</span>
-                                <span>Publikované: <span className="font-medium text-brand-dark-teal dark:text-slate-200">{format(new Date(post.date), 'd. M. yyyy')}</span></span>
+                                <span>Publikované: <span className="font-medium text-slate-200">{format(new Date(post.date), 'd. M. yyyy')}</span></span>
                             </div>
 
                             {post.tags && post.tags.length > 0 && (
                                 <div className="flex flex-wrap gap-2 mb-8">
                                     {post.tags.map(tag => (
-                                        <Link key={tag} href={`/blog?category=${encodeURIComponent(tag)}`} className="bg-brand-bright-green/20 text-brand-dark-teal dark:bg-brand-bright-green dark:text-brand-dark-teal text-xs font-bold px-3 py-1 rounded-full hover:bg-brand-bright-green/40 transition-colors">
+                                        <Link key={tag} href={`/blog?category=${encodeURIComponent(tag)}`} className="bg-white/10 text-brand-bright-green text-xs font-bold px-3 py-1 rounded-full hover:bg-white/20 transition-colors">
                                             #{tag.replace(/\s+/g, '-').toLowerCase()}
                                         </Link>
                                     ))}
@@ -201,13 +202,13 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                                 />
                             )}
                         </div>
-                    </article>
+                    </GlassCard>
 
                     {relatedPosts.length > 0 && (
                         <section className="mt-16">
                             <div className="text-center mb-8">
-                                <h2 className="text-3xl font-bold text-center text-brand-dark-teal dark:text-brand-bg text-shadow-3d-green">Mohlo by vás zaujímať</h2>
-                                <p className="text-lg text-brand-secondary-grey dark:text-slate-300 mt-2">Podobné články na súvisiace témy.</p>
+                                <h2 className="text-3xl font-bold text-center text-white text-shadow-3d">Mohlo by vás zaujímať</h2>
+                                <p className="text-lg text-slate-300 mt-2">Podobné články na súvisiace témy.</p>
                             </div>
                             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
                                 {relatedPosts.map(relPost => (
@@ -221,5 +222,3 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         </>
     );
 }
-
-    
