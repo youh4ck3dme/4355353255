@@ -127,7 +127,7 @@ export const BlogList = ({ initialCategory, postLimit }: { initialCategory?: str
                         >
                             Všetky
                         </button>
-                        {availableTags.map(category => (
+                        {ALL_CATEGORIES.map(category => (
                             <button
                                 key={category}
                                 onClick={() => handleCategoryClick(category)}

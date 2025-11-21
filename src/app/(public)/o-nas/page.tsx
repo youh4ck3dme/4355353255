@@ -1,11 +1,11 @@
 
 import Image from 'next/image';
 import { Metadata } from 'next';
-import { Phone, Mail, Building, MapPin } from 'lucide-react';
+import { MapPin } from 'lucide-react';
 import placeholderImages from '@/lib/placeholder-images.json';
 import { services } from '@/lib/services';
-import Link from 'next/link';
 import Services from '@/components/Services';
+import GlassCard from '@/components/GlassCard';
 
 export const metadata: Metadata = {
   title: 'O nás - Profesionálne sťahovanie a upratovanie v Bratislave | VI&MO',
@@ -73,39 +73,43 @@ export default function AboutPage() {
           </p>
         </header>
         
-        <section className="mb-16 grid md:grid-cols-2 gap-12 items-center">
-            <div className="relative w-full h-80 rounded-lg overflow-hidden shadow-2xl">
-                <Image
-                  src={aboutTeamImage.src}
-                  alt={aboutTeamImage.alt}
-                  fill
-                  className="object-cover"
-                  data-ai-hint={aboutTeamImage.hint}
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                />
-            </div>
-            <div className="text-center md:text-left">
-              <h2 className="text-3xl font-bold mb-4 text-brand-dark-teal dark:text-brand-bg text-shadow-3d">Sme silná partia v oblasti „moving & logistic“ služieb</h2>
-              <p className="text-brand-secondary-grey dark:text-slate-300 mb-4">
-                Disponujeme viac než 7-ročnými skúsenosťami v oblasti profesionálneho sťahovania, odvozu ekologického odpadu a nadštandardných upratovacích služieb. Sťahujeme byty, domy, kancelárie aj celé firmy, odvezieme nepotrebné veci a postaráme sa o dokonalý poriadok.
-              </p>
-              <p className="text-brand-secondary-grey dark:text-slate-300">
-                 Pracujeme rýchlo, efektívne a s ľudským prístupom. Zakladáme si na férovom prístupe, spoľahlivosti a poctivej práci. Naše služby zahŕňajú aj balenie, sťahovanie klavíra či trezoru, a to aj počas víkendov a nocí.
-              </p>
-            </div>
-        </section>
+        <GlassCard className="mb-16">
+          <div className="grid md:grid-cols-2 gap-8 items-center">
+              <div className="relative w-full h-80 rounded-lg overflow-hidden shadow-2xl">
+                  <Image
+                    src={aboutTeamImage.src}
+                    alt={aboutTeamImage.alt}
+                    fill
+                    className="object-cover"
+                    data-ai-hint={aboutTeamImage.hint}
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
+              </div>
+              <div className="text-center md:text-left">
+                <h2 className="text-3xl font-bold mb-4 text-white text-shadow-md">Sme silná partia v oblasti „moving & logistic“ služieb</h2>
+                <div className="space-y-4 text-slate-300">
+                  <p>
+                    Disponujeme viac než 7-ročnými skúsenosťami v oblasti profesionálneho sťahovania, odvozu ekologického odpadu a nadštandardných upratovacích služieb. Sťahujeme byty, domy, kancelárie aj celé firmy, odvezieme nepotrebné veci a postaráme sa o dokonalý poriadok.
+                  </p>
+                  <p>
+                    Pracujeme rýchlo, efektívne a s ľudským prístupom. Zakladáme si na férovom prístupe, spoľahlivosti a poctivej práci. Naše služby zahŕňajú aj balenie, sťahovanie klavíra či trezoru, a to aj počas víkendov a nocí.
+                  </p>
+                </div>
+              </div>
+          </div>
+        </GlassCard>
 
-        <div className="bg-brand-dark-teal/90 rounded-lg py-16 mb-16 text-white">
+        <div className="mb-16">
           <Services services={services.slice(0, 4)} />
         </div>
 
-        <section className="bg-brand-dark-teal/90 rounded-lg p-8 md:p-12 mb-16 text-center text-white">
+        <GlassCard className="mb-16 text-center text-white">
           <MapPin className="h-12 w-12 mx-auto mb-4 text-brand-bright-green"/>
-          <h2 className="text-3xl font-bold mb-4 text-brand-bg text-shadow-3d">Pôsobíme v Bratislave a širokom okolí</h2>
+          <h2 className="text-3xl font-bold mb-4 text-white text-shadow-md">Pôsobíme v Bratislave a širokom okolí</h2>
           <p className="max-w-4xl mx-auto text-slate-300">
               Naše služby poskytujeme najmä v lokalitách Bratislava (Ružinov, Petržalka, Nové Mesto, Rača, Karlova Ves, Dúbravka) a v okolí miest ako Senec, Pezinok, Šamorín a Malacky.
           </p>
-        </section>
+        </GlassCard>
       </div>
     </>
   );

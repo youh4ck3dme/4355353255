@@ -30,7 +30,7 @@ export default function ServicesPage() {
             const Icon = service.icon;
             return (
               <Link key={service.id} href={`/sluzby/${service.id}`} className="block h-full group">
-                <GlassCard className="h-full flex flex-col text-center items-center p-6">
+                <GlassCard className="h-full flex flex-col text-center items-center p-6 hover:bg-white/5 hover:border-white/20 transform hover:-translate-y-1">
                   <div className="bg-brand-bright-green/20 dark:bg-brand-bright-green/20 p-4 rounded-full mb-4 transition-transform duration-300 group-hover:scale-110">
                       <Icon className="h-8 w-8 text-brand-bright-green" />
                   </div>
