@@ -1,11 +1,9 @@
-
 'use client';
 
 import React, { createContext, useContext, ReactNode, useState, useEffect } from 'react';
 import { FirebaseApp } from 'firebase/app';
 import { Firestore } from 'firebase/firestore';
 import { Auth, User, onAuthStateChanged } from 'firebase/auth';
-import { Loader2 } from 'lucide-react';
 import { app, auth, firestore } from '@/lib/firebase-client';
 
 // Define the shape of the context
@@ -26,13 +24,6 @@ const FirebaseContext = createContext<FirebaseContextType>({
   isLoading: true,
 });
 
-// Fullscreen loader component
-const FullscreenLoader = () => (
-  <div className="fixed inset-0 bg-brand-dark-teal flex flex-col items-center justify-center z-[200]">
-    <Loader2 className="h-16 w-16 animate-spin text-brand-bright-green mb-4" />
-    <p className="text-white text-lg">Pripájam sa k službám...</p>
-  </div>
-);
 
 // The provider component
 export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
@@ -57,7 +48,7 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <FirebaseContext.Provider value={value}>
-      {isLoading ? <FullscreenLoader /> : children}
+      {children}
     </FirebaseContext.Provider>
   );
 };

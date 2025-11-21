@@ -1,14 +1,12 @@
 'use client';
 
 import { useState, useEffect, FormEvent, ReactNode } from 'react';
-import { ShieldCheck, LogIn, Loader2 } from 'lucide-react';
+import { ShieldCheck, LogIn, Loader2, UserCheck, UserX } from 'lucide-react';
 import GlassCard from '@/components/GlassCard';
 import { useFirebase } from '@/firebase/provider';
 import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
 
 const ADMIN_EMAIL = "admin@vimo.com";
-const PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD;
-const SESSION_STORAGE_KEY = 'admin-authenticated';
 
 function LoginForm({ onLogin, isLoggingIn }: { onLogin: (password: string) => void, isLoggingIn: boolean }) {
   const [password, setPassword] = useState('');
@@ -39,7 +37,7 @@ function LoginForm({ onLogin, isLoggingIn }: { onLogin: (password: string) => vo
           <div>
               <button
                   type="submit"
-                  disabled={isLoggingIn || !PASSWORD}
+                  disabled={isLoggingIn}
                   className="w-full flex justify-center items-center gap-2 px-6 py-4 bg-brand-bright-green text-brand-dark-teal font-bold rounded-lg hover:bg-opacity-80 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-wait disabled:transform-none"
               >
                   {isLoggingIn ? (
@@ -54,7 +52,6 @@ function LoginForm({ onLogin, isLoggingIn }: { onLogin: (password: string) => vo
                       </>
                   )}
               </button>
-               {!PASSWORD && <p className="text-center text-red-400 text-xs mt-2">Admin heslo nie je nastavené v .env</p>}
           </div>
       </form>
   );
@@ -63,26 +60,10 @@ function LoginForm({ onLogin, isLoggingIn }: { onLogin: (password: string) => vo
 
 function AuthGuard({ children }: { children: ReactNode }) {
   const { auth, user, isLoading: isFirebaseLoading } = useFirebase();
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [error, setError] = useState('');
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
-
-  useEffect(() => {
-    if (isFirebaseLoading) return;
-
-    const isAdminSessionActive = typeof window !== 'undefined' && sessionStorage.getItem(SESSION_STORAGE_KEY) === 'true';
-    const isUserAdmin = user && user.email === ADMIN_EMAIL && !user.isAnonymous;
-    
-    setIsAuthenticated(isUserAdmin && isAdminSessionActive);
-
-  }, [user, isFirebaseLoading]);
-
   const handleLogin = async (password: string) => {
-    if (!PASSWORD) {
-        setError('Heslo pre administrátora nie je nastavené na serveri.');
-        return;
-    }
     if (!auth) {
         setError('Služba autentifikácie nie je pripravená. Skúste znova o chvíľu.');
         return;
@@ -92,16 +73,8 @@ function AuthGuard({ children }: { children: ReactNode }) {
     setIsLoggingIn(true);
 
     try {
-        if (auth.currentUser && auth.currentUser.isAnonymous) {
-            await signOut(auth);
-        }
-
         await signInWithEmailAndPassword(auth, ADMIN_EMAIL, password);
-        
-        sessionStorage.setItem(SESSION_STORAGE_KEY, 'true');
-        setIsAuthenticated(true);
         setError('');
-
     } catch (e) {
         const firebaseError = e as { code?: string; message: string };
         let errorMessage = 'Neznáma chyba pri prihlasovaní.';
@@ -123,20 +96,13 @@ function AuthGuard({ children }: { children: ReactNode }) {
         } else {
             errorMessage = firebaseError.message;
         }
-
         setError(`Prihlásenie zlyhalo: ${errorMessage}`);
-        try {
-          sessionStorage.removeItem(SESSION_STORAGE_KEY);
-        } catch (sessionError) {
-          console.error("Failed to clear sessionStorage:", sessionError);
-        }
-        setIsAuthenticated(false);
     } finally {
         setIsLoggingIn(false);
     }
   };
   
-  if (isFirebaseLoading || isAuthenticated === null) {
+  if (isFirebaseLoading) {
       return (
         <div className="min-h-screen flex items-center justify-center p-4 bg-brand-dark-teal">
             <Loader2 className="h-16 w-16 animate-spin text-brand-bright-green" />
@@ -144,7 +110,8 @@ function AuthGuard({ children }: { children: ReactNode }) {
       )
   }
 
-  if (!isAuthenticated) {
+  // User is not logged in at all
+  if (!user) {
     return (
         <div className="min-h-screen flex items-center justify-center p-4 bg-brand-dark-teal">
           <div className="w-full max-w-sm mx-auto">
@@ -156,7 +123,7 @@ function AuthGuard({ children }: { children: ReactNode }) {
                           Zabezpečená oblasť
                           </h1>
                           <p className="text-slate-300 mt-2">
-                          Vyžaduje sa autorizácia
+                          Vyžaduje sa prihlásenie administrátora
                           </p>
                       </div>
                       
@@ -170,7 +137,41 @@ function AuthGuard({ children }: { children: ReactNode }) {
     );
   }
 
-  return <>{children}</>;
+  // User is logged in, but is not the admin user
+  if (user.email !== ADMIN_EMAIL) {
+    return (
+        <div className="min-h-screen flex items-center justify-center p-4 bg-brand-dark-teal">
+          <div className="w-full max-w-sm mx-auto">
+              <GlassCard>
+                  <div className="p-8 text-center">
+                      <UserX className="mx-auto h-16 w-16 text-red-400 mb-4" />
+                      <h1 className="text-3xl font-bold text-white text-shadow-3d">
+                        Prístup zamietnutý
+                      </h1>
+                      <p className="text-slate-300 mt-2">
+                        Táto sekcia je dostupná len pre administrátorov.
+                      </p>
+                      {auth && <button onClick={() => signOut(auth)} className="mt-6 text-sm text-brand-bright-green underline">Odhlásiť sa</button>}
+                  </div>
+              </GlassCard>
+          </div>
+        </div>
+    );
+  }
+
+  // User is logged in and has the correct email, show admin content
+  return (
+    <>
+      {children}
+      <div className="fixed bottom-4 left-4 z-50">
+        <div className="flex items-center gap-2 text-xs bg-black/50 text-white p-2 rounded-lg backdrop-blur-sm">
+          <UserCheck className="h-4 w-4 text-green-400"/>
+          <span>Prihlásený ako admin</span>
+          <button onClick={() => auth && signOut(auth)} className="ml-2 font-bold hover:underline text-red-400">Odhlásiť</button>
+        </div>
+      </div>
+    </>
+  );
 }
 
 

@@ -1,4 +1,3 @@
-
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { getAdminApp } from '@/lib/firebase-admin';
@@ -12,8 +11,23 @@ const db = app.firestore();
 const auth = app.auth();
 
 // GET all blog posts (admin-style)
-export async function GET() {
+export async function GET(request: Request) {
   try {
+     // 1. Authenticate the request
+    const token = request.headers.get('Authorization')?.split('Bearer ')[1];
+    if (!token) {
+        return NextResponse.json({ message: 'Authentication required.' }, { status: 401 });
+    }
+    const decodedToken = await auth.verifyIdToken(token);
+    const uid = decodedToken.uid;
+
+    // 2. Authorize the user (check for admin role)
+    const adminRoleDoc = await db.collection('roles_admin').doc(uid).get();
+    if (!adminRoleDoc.exists) {
+        return NextResponse.json({ message: 'Insufficient permissions. User is not an admin.' }, { status: 403 });
+    }
+
+    // 3. Fetch data if authorized
     const snapshot = await db.collection('blogPosts').get();
     
     const allPosts = snapshot.docs.map(doc => ({
@@ -22,9 +36,12 @@ export async function GET() {
     }));
 
     return NextResponse.json(allPosts);
-  } catch (error) {
-    console.error('API Error: Failed to get posts:', error);
-    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+  } catch (error: any) {
+    console.error('API GET Error: Failed to get posts:', error);
+    if (error.code === 'auth/id-token-expired') {
+        return NextResponse.json({ message: 'Session expired. Please log in again.' }, { status: 401 });
+    }
+    return NextResponse.json({ message: 'Internal Server Error', error: error.message }, { status: 500 });
   }
 }
 
