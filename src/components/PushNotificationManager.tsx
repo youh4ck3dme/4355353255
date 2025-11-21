@@ -10,36 +10,36 @@ const PushNotificationManager = () => {
     const { user, isLoading } = useFirebase();
 
     useEffect(() => {
-        // Only run after user state is determined
-        if (isLoading) return;
-        
-        // Register the service worker
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker
-                .register('/firebase-messaging-sw.js')
-                .then((registration) => {
+        if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+            const registerServiceWorker = async () => {
+                try {
+                    const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
                     console.log('Service Worker registration successful, scope is:', registration.scope);
-                })
-                .catch((err) => {
-                    console.log('Service Worker registration failed, error:', err);
-                });
+                    
+                    // Now that SW is active, get the token if user is loaded and logged in
+                    if (!isLoading) {
+                        getMessagingToken();
+                    }
+
+                } catch (err) {
+                    console.error('Service Worker registration failed, error:', err);
+                }
+            };
+            
+            registerServiceWorker();
         }
     }, [isLoading]);
 
     useEffect(() => {
-        if (!isLoading) {
-             getMessagingToken();
-        }
-    }, [user, isLoading]);
-
-    useEffect(() => {
         const unsubscribe = onMessageListener().then((payload: any) => {
             console.log('Foreground message received:', payload);
-            toast({
-                variant: 'success',
-                title: payload.notification.title,
-                description: payload.notification.body,
-            });
+            if (payload.notification) {
+                toast({
+                    variant: 'success',
+                    title: payload.notification.title,
+                    description: payload.notification.body,
+                });
+            }
         });
         return () => {
             unsubscribe.catch(err => console.error('Failed to unsubscribe from onMessage listener', err));
