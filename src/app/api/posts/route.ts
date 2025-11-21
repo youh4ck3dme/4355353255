@@ -30,12 +30,12 @@ export async function GET() {
 
 // Zod schema for validation
 const postSchema = z.object({
-  slug: z.string(),
+  slug: z.string().min(1, 'Slug je povinný.'),
   title: z.string().min(3, 'Titulok musí mať aspoň 3 znaky.'),
-  content: z.string().optional(),
-  author: z.string().optional(),
+  content: z.string().optional().default(''),
+  author: z.string().optional().default('VI&MO Team'),
   imageUrl: z.string().url('Zadajte platnú URL adresu obrázka.').optional().or(z.literal('')),
-  tags: z.array(z.string()).optional(),
+  tags: z.array(z.string()).optional().default([]),
   status: z.enum(['draft', 'published']),
 });
 
@@ -71,23 +71,23 @@ export async function POST(request: Request) {
             ...data,
             updatedAt: new Date().toISOString(),
             // If the document doesn't exist, set the initial creation date
-            ...(!docSnapshot.exists && { date: new Date().toISOString() }),
+            ...(docSnapshot.exists ? {} : { date: new Date().toISOString() }),
         };
     
         // Use set with merge: true to create or update
         await postRef.set(dataToSave, { merge: true });
 
-        return NextResponse.json({ message: 'Post saved successfully' });
+        return NextResponse.json({ message: 'Post saved successfully', slug: slug });
 
     } catch (error: any) {
-        console.error('Failed to save post:', error);
+        console.error('API POST Error - Failed to save post:', error);
 
         if (error.code === 'auth/id-token-expired') {
-            return NextResponse.json({ message: 'Token expired. Please log in again.' }, { status: 401 });
+            return NextResponse.json({ message: 'Session expired. Please log in again.' }, { status: 401 });
         }
         if (error instanceof z.ZodError) {
-             return NextResponse.json({ message: 'Invalid data', errors: error.errors }, { status: 400 });
+             return NextResponse.json({ message: 'Invalid data provided', errors: error.errors }, { status: 400 });
         }
-        return NextResponse.json({ message: 'Internal Server Error', error: error.message }, { status: 500 });
+        return NextResponse.json({ message: 'Internal Server Error', error: error.message || 'An unknown error occurred.' }, { status: 500 });
     }
 }
