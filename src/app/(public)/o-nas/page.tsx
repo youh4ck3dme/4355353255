@@ -95,9 +95,9 @@ export default function AboutPage() {
             </div>
         </section>
 
-        <section className="bg-brand-dark-teal/90 rounded-lg py-16 mb-16 text-white">
+        <div className="bg-brand-dark-teal/90 rounded-lg py-16 mb-16 text-white">
           <Services services={services.slice(0, 4)} />
-        </section>
+        </div>
 
         <section className="bg-brand-dark-teal/90 rounded-lg p-8 md:p-12 mb-16 text-center text-white">
           <MapPin className="h-12 w-12 mx-auto mb-4 text-brand-bright-green"/>
