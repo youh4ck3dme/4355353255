@@ -4,11 +4,11 @@ import { z } from 'zod';
 import { getFirestore, doc, setDoc, getDoc, collection, getDocs, query } from 'firebase/firestore';
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAdminApp } from '@/lib/firebase-admin';
-import { firebaseConfig } from '@/lib/firebase-config';
 
 // Initialize Firebase app if not already initialized
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-const db = getFirestore(app);
+const app = getAdminApp();
+const db = app.firestore();
+
 
 // This is a Route Handler, which is executed on the server.
 export async function GET() {
@@ -46,18 +46,13 @@ export async function POST(request: Request) {
         if (!token) {
             return NextResponse.json({ message: 'Authentication required.' }, { status: 401 });
         }
-
-        const adminApp = getAdminApp();
-        if (!adminApp) {
-             throw new Error('Admin SDK not initialized');
-        }
-        const auth = adminApp.auth();
-        const dbAdmin = adminApp.firestore();
+        
+        const auth = app.auth();
         
         const decodedToken = await auth.verifyIdToken(token);
         const uid = decodedToken.uid;
 
-        const adminRoleDoc = await dbAdmin.collection('roles_admin').doc(uid).get();
+        const adminRoleDoc = await db.collection('roles_admin').doc(uid).get();
 
         if (!adminRoleDoc.exists) {
             return NextResponse.json({ message: 'Insufficient permissions. User is not an admin.' }, { status: 403 });
@@ -67,7 +62,7 @@ export async function POST(request: Request) {
         const postData = postSchema.parse(json);
         
         const { slug, ...data } = postData;
-        const postRef = doc(db, 'blogPosts', slug);
+        const postRef = db.collection('blogPosts').doc(slug);
         const docSnapshot = await getDoc(postRef);
 
         const dataToSave = {
@@ -76,7 +71,7 @@ export async function POST(request: Request) {
             ...(!docSnapshot.exists() && { date: new Date().toISOString() }),
         };
     
-        await setDoc(postRef, dataToSave, { merge: true });
+        await postRef.set(dataToSave, { merge: true });
 
         return NextResponse.json({ message: 'Post saved successfully' });
 

@@ -2,17 +2,11 @@
 'use client';
 
 import React, { createContext, useContext, ReactNode, useState, useEffect } from 'react';
-import { FirebaseApp, getApp, getApps, initializeApp } from 'firebase/app';
-import { Firestore, getFirestore } from 'firebase/firestore';
-import { Auth, User, onAuthStateChanged, signInAnonymously, getAuth } from 'firebase/auth';
+import { FirebaseApp } from 'firebase/app';
+import { Firestore } from 'firebase/firestore';
+import { Auth, User, onAuthStateChanged, signInAnonymously } from 'firebase/auth';
 import { Loader2 } from 'lucide-react';
-import { firebaseConfig } from '@/lib/firebase-config';
-
-// Initialize Firebase
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-const firestoreInstance = getFirestore(app);
-const authInstance = getAuth(app);
-
+import { app, auth, firestore } from '@/lib/firebase-client';
 
 // Define the shape of the context
 interface FirebaseContextType {
@@ -47,7 +41,7 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     // Set up the auth state listener
-    const unsubscribe = onAuthStateChanged(authInstance, async (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       // If user is already signed in, we are good
       if (currentUser) {
         setUser(currentUser);
@@ -55,7 +49,7 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
       } else {
         // If no user, try to sign in anonymously. Show loader until this is done.
         try {
-          const userCredential = await signInAnonymously(authInstance);
+          const userCredential = await signInAnonymously(auth);
           setUser(userCredential.user);
         } catch (error) {
           console.error("Anonymous sign-in failed:", error);
@@ -70,7 +64,7 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
     return () => unsubscribe();
   }, []);
 
-  const value = { app, firestore: firestoreInstance, auth: authInstance, user, isLoading };
+  const value = { app, firestore, auth, user, isLoading };
 
   return (
     <FirebaseContext.Provider value={value}>
