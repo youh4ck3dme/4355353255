@@ -7,7 +7,6 @@ import Link from 'next/link';
 import { Post } from '@/lib/types';
 import { getPostBySlug, getPublishedPosts } from '@/lib/mdx';
 import { Metadata } from 'next';
-import { Loader2 } from 'lucide-react'; // Placeholder, loading is handled by Next.js
 import GlassCard from '@/components/GlassCard';
 
 type BlogPostPageProps = {

@@ -117,10 +117,11 @@ export default function AdminBlogPage() {
                             <p className="mt-4 text-slate-300">Načítavam články z databázy...</p>
                         </div>
                     ) : error ? (
-                         <div className="text-center py-16 text-red-400 bg-red-900/20 rounded-lg">
+                         <div className="text-center py-16 text-red-400 bg-red-900/20 rounded-lg p-4">
                             <ShieldAlert className="mx-auto h-12 w-12 mb-4" />
                             <h2 className="text-2xl font-bold mb-2">Chyba pri načítaní</h2>
-                            <p className="font-mono text-xs">{error.message}</p>
+                            <p className="max-w-md mx-auto text-balance">Nepodarilo sa načítať dáta. Pravdepodobne nemáte oprávnenie na čítanie tejto kolekcie alebo nastala chyba v bezpečnostných pravidlách Firestore.</p>
+                            <p className="font-mono text-xs mt-4 bg-black/20 p-2 rounded">{error.message}</p>
                         </div>
                     ) : posts && posts.length > 0 ? (
                         <div>
