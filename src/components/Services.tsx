@@ -1,6 +1,6 @@
 
 import Link from 'next/link';
-import { Service } from '@/lib/services';
+import type { Service } from '@/lib/services';
 
 interface ServicesProps {
     services: Service[];

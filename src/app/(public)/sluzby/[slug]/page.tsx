@@ -2,6 +2,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { services } from '@/lib/services';
+import type { Service } from '@/lib/services';
 import { CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 
@@ -12,13 +13,13 @@ type ServicePageProps = {
 };
 
 export async function generateStaticParams() {
-    return services.map(service => ({
+    return services.map((service: Service) => ({
         slug: service.id,
     }));
 }
 
 export async function generateMetadata({ params }: ServicePageProps): Promise<Metadata> {
-  const service = services.find(s => s.id === params.slug);
+  const service = services.find((s: Service) => s.id === params.slug);
   
   if (!service) {
     return {
@@ -39,7 +40,7 @@ export async function generateMetadata({ params }: ServicePageProps): Promise<Me
 }
 
 export default function ServiceDetailPage({ params }: ServicePageProps) {
-    const service = services.find(s => s.id === params.slug);
+    const service = services.find((s: Service) => s.id === params.slug);
     
     if (!service) {
         notFound();

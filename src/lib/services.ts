@@ -1,7 +1,17 @@
 
-import { Home, Briefcase, Trash2, Sparkles, Box, Wrench, Truck, Piano } from 'lucide-react';
+import { LucideIcon, Home, Briefcase, Trash2, Sparkles, Box, Wrench, Truck, Piano } from 'lucide-react';
 
-export const services = [
+export type Service = {
+    id: string;
+    name: string;
+    icon: LucideIcon;
+    shortDescription: string;
+    description: string;
+    secondaryDescription: string;
+    included: string[];
+};
+
+export const services: Service[] = [
   {
     id: "stahovanie-bytov-domov",
     name: "Sťahovanie bytov a domov",
