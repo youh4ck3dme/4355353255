@@ -1,22 +1,16 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-    reactStrictMode: true,
-    images: {
-        remotePatterns: [
-            {
-                protocol: 'https',
-                hostname: 'picsum.photos',
-            },
-        ],
-    },
-    webpack: (config, { isServer }) => {
-        // Add a rule to handle the service worker file
-        if (!isServer) {
-            config.output.publicPath = '/';
-        }
 
-        return config;
-    },
+/** @type {import('next').NextConfig} */
+import withPWA from 'next-pwa';
+
+const pwaConfig = withPWA({
+  dest: 'public',
+  disable: process.env.NODE_ENV === 'development',
+  register: true,
+  skipWaiting: true,
+});
+
+const nextConfig = {
+  // Your existing Next.js config here
 };
 
-export default nextConfig;
+export default pwaConfig(nextConfig);

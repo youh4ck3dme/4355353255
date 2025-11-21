@@ -42,7 +42,6 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       const next: Toast = { id, ...options };
       setToasts((prev) => [...prev, next]);
 
-      // auto-dismiss po 4s
       setTimeout(() => dismiss(id), 4000);
     },
     [dismiss]
@@ -51,8 +50,6 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastContext.Provider value={{ toasts, toast, dismiss }}>
       {children}
-
-      {/* Simple toast renderer v pravom dolnom rohu */}
       <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2">
         {toasts.map((t) => (
           <div
