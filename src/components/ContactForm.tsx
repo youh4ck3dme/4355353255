@@ -1,13 +1,19 @@
+
 'use client';
 
 import { useToast } from '@/components/ui/use-toast';
 import { z } from 'zod';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { cn } from '@/lib/utils';
 import { useFirebase } from '@/firebase/provider';
+
+declare global {
+    interface Window {
+        grecaptcha: any;
+    }
+}
 
 const contactFormSchema = z.object({
   name: z.string().min(2, { message: 'Meno musí mať aspoň 2 znaky.' }),
@@ -21,29 +27,39 @@ type ContactFormValues = z.infer<typeof contactFormSchema>;
 
 export const ContactForm = () => {
     const { toast } = useToast();
-    const { firestore } = useFirebase();
+    const { firestore } = useFirebase(); // Firestore might not be needed but keep for context
 
     const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm<ContactFormValues>({
         resolver: zodResolver(contactFormSchema),
     });
 
     const onSubmit = async (data: ContactFormValues) => {
-        if (!firestore) {
-            toast({
-              variant: "destructive",
-              title: "Chyba pripojenia",
-              description: "Databáza nie je pripravená. Skúste to prosím neskôr.",
+        if (!process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY) {
+             toast({
+                variant: "destructive",
+                title: "Chyba konfigurácie",
+                description: "Chýba kľúč pre reCAPTCHA. Kontaktujte administrátora.",
             });
             return;
         }
 
         try {
-            const submissionsCollection = collection(firestore, 'contact_submissions');
-            await addDoc(submissionsCollection, {
-                ...data,
-                submittedAt: serverTimestamp(),
+            const token = await window.grecaptcha.enterprise.execute(process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY, {action: 'CONTACT_FORM_SUBMIT'});
+
+            const response = await fetch('/api/contact', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ ...data, token }),
             });
 
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.message || 'Nastala neznáma chyba na serveri.');
+            }
+            
             toast({
                 variant: 'success',
                 title: 'Požiadavka odoslaná!',
@@ -52,11 +68,11 @@ export const ContactForm = () => {
             reset();
 
         } catch (serverError) {
-            console.error("Firestore error:", serverError);
+            console.error("Submission error:", serverError);
             toast({
               variant: "destructive",
               title: "Chyba pri odosielaní",
-              description: "Vyskytla sa chyba. Skúste to prosím znova, alebo nás kontaktujte telefonicky.",
+              description: (serverError as Error).message || "Vyskytla sa chyba. Skúste to prosím znova, alebo nás kontaktujte telefonicky.",
             });
         }
     };
@@ -107,7 +123,7 @@ export const ContactForm = () => {
             <div>
                 <button
                     type="submit"
-                    disabled={isSubmitting || !firestore}
+                    disabled={isSubmitting}
                     className="w-full px-8 py-4 bg-brand-bright-green text-brand-dark-teal font-bold rounded-lg hover:bg-opacity-80 transition-colors duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 disabled:bg-opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                 >
                     {isSubmitting ? (
