@@ -6,6 +6,7 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { Providers } from '@/components/Providers';
 import DynamicInstallPrompt from '@/components/DynamicInstallPrompt';
+import { FirebaseClientInitializer } from '@/components/FirebaseClientInitializer';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -64,6 +65,7 @@ export default function RootLayout({
     <html lang="sk" suppressHydrationWarning>
       <body className={inter.className}>
         <Providers>
+            <FirebaseClientInitializer />
             {children}
             <DynamicInstallPrompt />
             <Toaster />
