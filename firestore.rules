@@ -18,10 +18,11 @@ service cloud.firestore {
       return exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
     }
 
-    // A helper function to check if the query contains a specific where clause.
-    function isQueryingPublished() {
-        // Ensures the query filters for 'published' status.
-        return request.query.where.size() > 0 && request.query.where[0].field == 'status' && request.query.where[0].op == '==' && request.query.where[0].value == 'published';
+    // A helper function to check if the query is securely filtering for published posts.
+    // It verifies that 'status' == 'published' is part of the query conditions.
+    function isQueryingOnlyPublished() {
+      let statusFilter = request.query.where.filter(w => w.field == 'status' && w.op == '==' && w.value == 'published');
+      return statusFilter.size() == 1;
     }
 
     // BLOG POSTS: Public can read published posts, admins can write anything.
@@ -31,7 +32,7 @@ service cloud.firestore {
 
       // Allow listing documents if the query is restricted to 'published' status,
       // or if the user is an admin (who can see all statuses).
-      allow list: if isQueryingPublished() || isAdmin();
+      allow list: if isQueryingOnlyPublished() || isAdmin();
 
       // Admins can write (create, update, delete) any post.
       allow write: if isAdmin();
