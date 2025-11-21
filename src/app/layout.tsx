@@ -1,6 +1,7 @@
 
 import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
+import Script from 'next/script';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { Providers } from '@/components/Providers';
@@ -67,6 +68,18 @@ export default function RootLayout({
             <DynamicInstallPrompt />
             <Toaster />
         </Providers>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-TT4HP7501H"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-TT4HP7501H');
+          `}
+        </Script>
       </body>
     </html>
   );
