@@ -73,3 +73,4 @@ Aplikácia bude dostupná na adrese [http://localhost:3000](http://localhost:300
 - **URL**: `/admin`
 - **Prístup**: Prístup do administrátorskej sekcie je chránený heslom, ktoré je definované v premennej prostredia `NEXT_PUBLIC_ADMIN_PASSWORD`.
 - **Funkcionalita**: Momentálne umožňuje vytvárať a upravovať blogové články, ktoré sú ukladané do Firestore databázy.
+# bratislava-stahovanie.info-firebase
