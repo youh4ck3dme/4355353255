@@ -2,8 +2,9 @@
 'use client';
 
 import { Metadata } from 'next';
-import { Users, Truck, Home } from 'lucide-react';
+import { Users, Truck, Home, Calculator } from 'lucide-react';
 import dynamic from 'next/dynamic';
+import GlassCard from '@/components/GlassCard';
 
 const DynamicPriceCalculator = dynamic(() => import('@/components/PriceCalculator').then(mod => mod.PriceCalculator), { 
   ssr: false,
@@ -73,55 +74,63 @@ export default function PricingPage() {
             <h2 className="text-3xl font-bold mb-8 text-center text-brand-dark-teal dark:text-brand-bg text-shadow-3d">Základný cenník sťahovania</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {priceItems.map((item) => (
-                <div key={item.id} className="bg-brand-light-gray dark:bg-brand-dark-teal/80 p-6 rounded-lg shadow-lg flex flex-col items-center text-center">
-                  <div className="bg-brand-bright-green p-3 rounded-full mb-4">
-                      <Home className="h-6 w-6 text-brand-dark-teal" />
+                <GlassCard key={item.id} className="flex flex-col items-center text-center p-6">
+                  <div className="bg-brand-bright-green/20 p-3 rounded-full mb-4">
+                      <Home className="h-6 w-6 text-brand-bright-green" />
                   </div>
-                  <h3 className="text-xl font-bold text-brand-dark-teal dark:text-brand-bg">{item.name}</h3>
+                  <h3 className="text-xl font-bold text-white flex-grow">{item.name}</h3>
                   <p className="text-2xl font-extrabold text-brand-bright-green mt-2">{item.price}</p>
-                </div>
+                </GlassCard>
               ))}
             </div>
-            <p className="text-center text-sm text-brand-secondary-grey dark:text-slate-400 mt-4">* Uvedené ceny sú orientačné a môžu sa líšiť v závislosti od rozsahu práce.</p>
+            <p className="text-center text-sm text-slate-400 mt-4">* Uvedené ceny sú orientačné a môžu sa líšiť v závislosti od rozsahu práce.</p>
           </section>
 
           <section className="mb-16">
             <h2 className="text-3xl font-bold mb-8 text-center text-brand-dark-teal dark:text-brand-bg text-shadow-3d">Ceny za pracovníkov a dopravu</h2>
             <div className="grid md:grid-cols-2 gap-8">
-                <div className="bg-brand-light-gray dark:bg-brand-dark-teal/80 p-6 rounded-lg shadow-lg text-center md:text-left">
+                <GlassCard className="p-6 text-center md:text-left">
                     <div className="flex items-center justify-center md:justify-start mb-4">
-                        <div className="bg-brand-bright-green p-3 rounded-full mr-4">
-                            <Users className="h-6 w-6 text-brand-dark-teal" />
+                        <div className="bg-brand-bright-green/20 p-3 rounded-full mr-4">
+                            <Users className="h-6 w-6 text-brand-bright-green" />
                         </div>
-                        <h3 className="text-2xl font-bold text-brand-dark-teal dark:text-brand-bg">Pracovníci</h3>
+                        <h3 className="text-2xl font-bold text-white">Pracovníci</h3>
                     </div>
-                    <ul className="space-y-2 text-brand-secondary-grey dark:text-slate-300 list-disc list-inside">
-                        <li>Jeden pracovník (šofér + sťahovák): <span className="font-bold">40 € / hod.</span></li>
-                        <li>Dvaja pracovníci: <span className="font-bold">od 50 € / hod.</span></li>
-                        <li>Traja a viac pracovníkov: <span className="font-bold">Cena dohodou</span></li>
+                    <ul className="space-y-2 text-slate-300 list-disc list-inside">
+                        <li>Jeden pracovník (šofér + sťahovák): <span className="font-bold text-white">40 € / hod.</span></li>
+                        <li>Dvaja pracovníci: <span className="font-bold text-white">od 50 € / hod.</span></li>
+                        <li>Traja a viac pracovníkov: <span className="font-bold text-white">Cena dohodou</span></li>
                     </ul>
-                </div>
-                 <div className="bg-brand-light-gray dark:bg-brand-dark-teal/80 p-6 rounded-lg shadow-lg text-center md:text-left">
+                </GlassCard>
+                 <GlassCard className="p-6 text-center md:text-left">
                     <div className="flex items-center justify-center md:justify-start mb-4">
-                        <div className="bg-brand-bright-green p-3 rounded-full mr-4">
-                            <Truck className="h-6 w-6 text-brand-dark-teal" />
+                        <div className="bg-brand-bright-green/20 p-3 rounded-full mr-4">
+                            <Truck className="h-6 w-6 text-brand-bright-green" />
                         </div>
-                        <h3 className="text-2xl font-bold text-brand-dark-teal dark:text-brand-bg">Doprava</h3>
+                        <h3 className="text-2xl font-bold text-white">Doprava</h3>
                     </div>
-                    <ul className="space-y-2 text-brand-secondary-grey dark:text-slate-300 list-disc list-inside">
-                        <li>V rámci Bratislavy: <span className="font-bold">do 30 €</span></li>
-                        <li>Mimo mesta: <span className="font-bold">0,80 € / kilometer</span></li>
-                        <li className="pt-2 border-t border-slate-300 dark:border-slate-600 mt-2">Minimálna suma výjazdu: <span className="font-bold">70 €</span></li>
+                    <ul className="space-y-2 text-slate-300 list-disc list-inside">
+                        <li>V rámci Bratislavy: <span className="font-bold text-white">do 30 €</span></li>
+                        <li>Mimo mesta: <span className="font-bold text-white">0,80 € / kilometer</span></li>
+                        <li className="pt-2 border-t border-white/10 mt-2">Minimálna suma výjazdu: <span className="font-bold text-white">70 €</span></li>
                     </ul>
-                </div>
+                </GlassCard>
             </div>
           </section>
 
           <section>
-            <h2 className="text-3xl font-bold mb-8 text-center text-brand-dark-teal dark:text-brand-bg text-shadow-3d">Online Kalkulačka Ceny</h2>
-            <div className="bg-brand-dark-teal/90 p-8 rounded-2xl shadow-2xl max-w-2xl mx-auto">
+            <GlassCard>
+              <div className="p-8">
+                <div className="text-center mb-8">
+                  <div className="inline-block bg-brand-bright-green/20 p-4 rounded-full mb-4">
+                      <Calculator className="h-8 w-8 text-brand-bright-green" />
+                  </div>
+                  <h2 className="text-3xl font-bold text-white text-shadow-md">Online Kalkulačka Ceny</h2>
+                  <p className="text-slate-300 mt-2">Získajte rýchly a nezáväzný odhad ceny vášho sťahovania.</p>
+                </div>
                 <DynamicPriceCalculator />
-            </div>
+              </div>
+            </GlassCard>
           </section>
         </div>
       </div>
