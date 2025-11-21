@@ -1,23 +1,27 @@
-'use client';
 
-import { useState, useEffect, useMemo } from 'react';
-import { notFound, useParams } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import { format } from 'date-fns';
 import { BlogCard } from '@/components/BlogCard';
 import Link from 'next/link';
-import { useFirebase } from '@/firebase/provider';
 import { Post } from '@/lib/types';
-import { doc, onSnapshot, collection, query, where, getDocs, limit } from 'firebase/firestore';
-import { Loader2 } from 'lucide-react';
+import { getPostBySlug, getPublishedPosts } from '@/lib/mdx';
+import { Metadata } from 'next';
+import { Loader2 } from 'lucide-react'; // Placeholder, loading is handled by Next.js
 
-// Helper function to extract FAQ schema data from post content using regex
+type BlogPostPageProps = {
+    params: {
+        slug: string;
+    };
+};
+
+// Helper to extract FAQ schema data from post content using regex
 const getFaqSchema = (content: string): object | null => {
     const faqRegex = /<h2>FAQ<\/h2>([\s\S]*)/;
     const faqSectionMatch = content.match(faqRegex);
     if (!faqSectionMatch) return null;
 
-    const questionRegex = /<h3>(.*?)<\/h3>\s*<p>(.*?)<\/p>/g;
+    const questionRegex = /<h3>(.*?)<\/h3>[\s\S]*?<p>(.*?)<\/p>/g;
     let match;
     const mainEntity = [];
     while ((match = questionRegex.exec(faqSectionMatch[1])) !== null) {
@@ -40,109 +44,73 @@ const getFaqSchema = (content: string): object | null => {
     };
 };
 
-export default function BlogPostPage() {
-    const params = useParams();
-    const slug = params.slug as string;
-    const { firestore, isLoading: isFirebaseLoading } = useFirebase();
+export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
+    const post = await getPostBySlug(params.slug);
 
-    const [post, setPost] = useState<Post | null>(null);
-    const [relatedPosts, setRelatedPosts] = useState<Post[]>([]);
-    const [isLoadingPost, setIsLoadingPost] = useState(true);
-    
-    const postRef = useMemo(() => {
-        if (!firestore || !slug) return null;
-        return doc(firestore, 'blogPosts', slug);
-    }, [firestore, slug]);
-
-    useEffect(() => {
-        if (!postRef) {
-            if(!isFirebaseLoading) setIsLoadingPost(false);
-            return;
-        };
-
-        setIsLoadingPost(true);
-        const unsubscribe = onSnapshot(postRef, (docSnap) => {
-            if (docSnap.exists()) {
-                const postData = {
-                    slug: docSnap.id,
-                    ...docSnap.data()
-                } as Post;
-                
-                if (postData.status === 'published') {
-                    setPost(postData);
-                } else {
-                    setPost(null); // Treat draft as not found for public
-                }
-            } else {
-                setPost(null);
-            }
-            setIsLoadingPost(false);
-        }, (error) => {
-            console.error("Error fetching post:", error);
-            setIsLoadingPost(false);
-        });
-
-        return () => unsubscribe();
-    }, [postRef, isFirebaseLoading]);
-
-    useEffect(() => {
-        if (!post || !firestore || !post.tags || post.tags.length === 0) {
-            setRelatedPosts([]);
-            return;
+    if (!post || post.status !== 'published') {
+        return {
+            title: 'Článok nenájdený'
         }
-
-        const fetchRelated = async () => {
-            // Firestore 'array-contains-any' requires a maximum of 10 values in the array.
-            // Let's take the first tag for simplicity and to ensure the query is valid.
-            const primaryTag = post.tags![0]; 
-            
-            const q = query(
-                collection(firestore, "blogPosts"),
-                where('status', '==', 'published'),
-                where('tags', 'array-contains', primaryTag),
-                limit(4) // Fetch 4, as one might be the current post itself
-            );
-            try {
-                const snapshot = await getDocs(q);
-                const related = snapshot.docs
-                    .map(doc => ({ slug: doc.id, ...doc.data() } as Post))
-                    .filter(p => p.slug !== post.slug) // Exclude current post
-                    .slice(0, 3); // Ensure we only have 3 related posts
-                setRelatedPosts(related);
-            } catch (error) {
-                console.error("Error fetching related posts:", error);
-                // This could be a permission error if the rules are not set up correctly.
-                // For now, we just log it and show no related posts.
-                setRelatedPosts([]);
-            }
-        };
-
-        fetchRelated();
-
-    }, [post, firestore]);
-
-    if (isLoadingPost || isFirebaseLoading) {
-        return (
-             <div className="container mx-auto px-4 py-20 text-center min-h-[70vh] flex flex-col justify-center items-center">
-                <Loader2 className="h-16 w-16 animate-spin text-brand-bright-green" />
-                <p className="mt-4 text-slate-300">Načítavam článok...</p>
-            </div>
-        );
     }
-    
-    if (!post) {
+
+    const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://stahovanie.website';
+    const postUrl = `${siteUrl}/blog/${post.slug}`;
+    const title = post.metaTitle || `${post.title} | Blog | VI&MO`;
+    const description = post.metaDescription || post.excerpt || `Prečítajte si viac o téme "${post.title}" a získajte cenné tipy od expertov z VI&MO.`;
+
+    return {
+        title,
+        description,
+        keywords: post.tags?.join(', '),
+        alternates: {
+            canonical: postUrl,
+        },
+        openGraph: {
+            title,
+            description,
+            url: postUrl,
+            type: 'article',
+            publishedTime: post.date,
+            modifiedTime: post.updatedAt || post.date,
+            authors: [post.author || 'VI&MO Team'],
+            images: [
+                {
+                    url: post.imageUrl || `${siteUrl}/opengraph-image.png`,
+                    width: 1200,
+                    height: 630,
+                    alt: post.title,
+                },
+            ],
+        },
+    }
+}
+
+export default async function BlogPostPage({ params }: BlogPostPageProps) {
+    const post = await getPostBySlug(params.slug);
+
+    if (!post || post.status !== 'published') {
         notFound();
     }
     
+    // Fetch related posts (simple logic based on the first tag)
+    const allPosts = await getPublishedPosts();
+    const relatedPosts = post.tags && post.tags.length > 0
+        ? allPosts
+            .filter(p => p.slug !== post.slug && p.tags?.includes(post.tags![0]))
+            .slice(0, 3)
+        : [];
+    
     const siteUrl = 'https://stahovanie.website';
     const postUrl = `${siteUrl}/blog/${post.slug}`;
+    const finalContent = post.content || '';
+    const faqSchema = getFaqSchema(finalContent);
 
     const blogPostJsonLd = {
         '@context': 'https://schema.org',
         '@type': 'BlogPosting',
         headline: post.title,
-        description: post.metaDescription || `Prečítajte si viac o téme "${post.title}" a získajte cenné tipy od expertov z VI&MO.`,
-        image: post.imageUrl || `${siteUrl}/placeholder-logo.png`,
+        description: post.metaDescription || post.excerpt || `Prečítajte si viac o téme "${post.title}"`,
+        image: post.imageUrl || `${siteUrl}/opengraph-image.png`,
         author: {
             '@type': 'Organization',
             name: post.author || 'VI&MO Team',
@@ -150,10 +118,10 @@ export default function BlogPostPage() {
         },
         publisher: {
             '@type': 'Organization',
-            name: 'VI&MO S.R.O.',
+            name: 'VI and MO s. r. o.',
             logo: {
                 '@type': 'ImageObject',
-                url: `${siteUrl}/logo.png`,
+                url: `${siteUrl}/logo.svg`,
             },
         },
         datePublished: post.date,
@@ -162,72 +130,39 @@ export default function BlogPostPage() {
             '@type': 'WebPage',
             '@id': postUrl,
         },
-        keywords: post.tags?.join(', ')
     };
 
     const breadcrumbJsonLd = {
       "@context": "https://schema.org",
       "@type": "BreadcrumbList",
       "itemListElement": [
-        {
-          "@type": "ListItem",
-          "position": 1,
-          "name": "Domov",
-          "item": siteUrl
-        },
-        {
-          "@type": "ListItem",
-          "position": 2,
-          "name": "Blog",
-          "item": `${siteUrl}/blog`
-        },
-        {
-          "@type": "ListItem",
-          "position": 3,
-          "name": post.title
-        }
+        { "@type": "ListItem", "position": 1, "name": "Domov", "item": siteUrl },
+        { "@type": "ListItem", "position": 2, "name": "Blog", "item": `${siteUrl}/blog` },
+        { "@type": "ListItem", "position": 3, "name": post.title },
       ]
     };
 
-    let finalContent = post.content || '';
-    let faqSchema = getFaqSchema(finalContent);
-
     return (
         <>
-            <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(blogPostJsonLd) }}
-            />
-            <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
-            />
-            {faqSchema && (
-                 <script
-                    type="application/ld+json"
-                    dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-                />
-            )}
-            <div className="bg-brand-bg text-brand-text dark:bg-brand-dark-teal dark:text-brand-bg">
+            <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(blogPostJsonLd) }} />
+            <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+            {faqSchema && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />}
+            
+            <div className="bg-brand-bg dark:bg-brand-dark-teal text-brand-text dark:text-brand-bg">
                 <div className="container mx-auto px-4 py-8 max-w-5xl">
-                    <article className="bg-brand-light-gray dark:bg-brand-dark-teal/80 shadow-xl rounded-lg p-6 lg:p-10">
-                        <h1 className="text-3xl md:text-5xl font-extrabold mb-2 text-brand-dark-teal dark:text-brand-bg text-center md:text-left">{post.title}</h1>
-                        <div className="text-brand-secondary-grey dark:text-slate-300 text-sm mb-4 flex flex-col md:flex-row justify-center md:justify-between items-center text-center md:text-left">
-                            <span>Autor: <span className="font-medium">{post.author || 'VI&MO Team'}</span> | Publikované: {format(new Date(post.date), 'd. M. yyyy')}</span>
-                        </div>
+                    <nav aria-label="Breadcrumb" className="mb-6 text-sm text-brand-secondary-grey dark:text-slate-400">
+                        <ol className="flex items-center space-x-2">
+                            <li><Link href="/" className="hover:underline">Domov</Link></li>
+                            <li><span className="mx-2">/</span></li>
+                            <li><Link href="/blog" className="hover:underline">Blog</Link></li>
+                             <li><span className="mx-2">/</span></li>
+                             <li className="truncate" aria-current="page">{post.title}</li>
+                        </ol>
+                    </nav>
 
-                        {post.tags && post.tags.length > 0 && (
-                            <div className="flex flex-wrap gap-2 mb-6 justify-center md:justify-start">
-                                {post.tags.map(tag => (
-                                    <Link key={tag} href={`/blog?category=${encodeURIComponent(tag)}`} className="bg-brand-bright-green/20 text-brand-dark-teal dark:bg-brand-bright-green dark:text-brand-dark-teal text-xs font-bold px-3 py-1 rounded-full hover:bg-brand-bright-green/40 transition-colors">
-                                        {tag}
-                                    </Link>
-                                ))}
-                            </div>
-                        )}
-                        
+                    <article className="bg-brand-light-gray dark:bg-brand-dark-teal/80 shadow-xl rounded-lg overflow-hidden">
                         {post.imageUrl && (
-                            <div className="relative w-full h-64 md:h-96 mb-8 rounded-lg overflow-hidden">
+                            <div className="relative w-full h-64 md:h-96">
                                 <Image 
                                     src={post.imageUrl} 
                                     alt={post.title} 
@@ -236,20 +171,44 @@ export default function BlogPostPage() {
                                     priority
                                     sizes="(max-width: 1024px) 100vw, 896px"
                                  />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                             </div>
                         )}
 
-                        {finalContent && (
-                            <div 
-                                className="prose prose-lg dark:prose-invert max-w-none text-left"
-                                dangerouslySetInnerHTML={{ __html: finalContent }}
-                            />
-                        )}
+                        <div className="p-6 lg:p-10">
+                            <h1 className="text-3xl md:text-5xl font-extrabold mb-4 text-brand-dark-teal dark:text-brand-bg">{post.title}</h1>
+                            
+                            <div className="text-brand-secondary-grey dark:text-slate-300 text-sm mb-4 flex flex-wrap items-center gap-x-4 gap-y-2">
+                                <span>Autor: <span className="font-medium text-brand-dark-teal dark:text-slate-200">{post.author || 'VI&MO Team'}</span></span>
+                                <span className="hidden md:inline">|</span>
+                                <span>Publikované: <span className="font-medium text-brand-dark-teal dark:text-slate-200">{format(new Date(post.date), 'd. M. yyyy')}</span></span>
+                            </div>
+
+                            {post.tags && post.tags.length > 0 && (
+                                <div className="flex flex-wrap gap-2 mb-8">
+                                    {post.tags.map(tag => (
+                                        <Link key={tag} href={`/blog?category=${encodeURIComponent(tag)}`} className="bg-brand-bright-green/20 text-brand-dark-teal dark:bg-brand-bright-green dark:text-brand-dark-teal text-xs font-bold px-3 py-1 rounded-full hover:bg-brand-bright-green/40 transition-colors">
+                                            #{tag.replace(/\s+/g, '-').toLowerCase()}
+                                        </Link>
+                                    ))}
+                                </div>
+                            )}
+
+                            {finalContent && (
+                                <div 
+                                    className="prose prose-lg dark:prose-invert max-w-none text-left"
+                                    dangerouslySetInnerHTML={{ __html: finalContent }}
+                                />
+                            )}
+                        </div>
                     </article>
 
                     {relatedPosts.length > 0 && (
-                        <section className="mt-12">
-                            <h2 className="text-2xl font-bold mb-6 text-center text-brand-dark-teal dark:text-brand-bg text-shadow-3d-green">Mohlo by vás zaujímať</h2>
+                        <section className="mt-16">
+                            <div className="text-center mb-8">
+                                <h2 className="text-3xl font-bold text-center text-brand-dark-teal dark:text-brand-bg text-shadow-3d-green">Mohlo by vás zaujímať</h2>
+                                <p className="text-lg text-brand-secondary-grey dark:text-slate-300 mt-2">Podobné články na súvisiace témy.</p>
+                            </div>
                             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
                                 {relatedPosts.map(relPost => (
                                     <BlogCard key={relPost.slug} post={relPost} />
@@ -262,3 +221,5 @@ export default function BlogPostPage() {
         </>
     );
 }
+
+    
