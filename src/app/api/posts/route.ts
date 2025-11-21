@@ -1,23 +1,22 @@
 
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { getFirestore, doc, setDoc, getDoc, collection, getDocs, query } from 'firebase/firestore';
-import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAdminApp } from '@/lib/firebase-admin';
 
-// Initialize Firebase app if not already initialized
+// Ensure this runs on the Node.js runtime, not the edge.
+export const runtime = 'nodejs';
+
+// Initialize Firebase Admin SDK
 const app = getAdminApp();
 const db = app.firestore();
+const auth = app.auth();
 
-
-// This is a Route Handler, which is executed on the server.
+// GET all blog posts (admin-style)
 export async function GET() {
   try {
-    const postsCollection = collection(db, 'blogPosts');
-    const q = query(postsCollection);
-    const postSnapshot = await getDocs(q);
+    const snapshot = await db.collection('blogPosts').get();
     
-    const allPosts = postSnapshot.docs.map(doc => ({
+    const allPosts = snapshot.docs.map(doc => ({
         slug: doc.id,
         ...doc.data()
     }));
@@ -29,6 +28,7 @@ export async function GET() {
   }
 }
 
+// Zod schema for validation
 const postSchema = z.object({
   slug: z.string(),
   title: z.string().min(3, 'Titulok musí mať aspoň 3 znaky.'),
@@ -40,37 +40,41 @@ const postSchema = z.object({
 });
 
 
+// POST a new or updated blog post
 export async function POST(request: Request) {
     try {
+        // 1. Authenticate the request
         const token = request.headers.get('Authorization')?.split('Bearer ')[1];
         if (!token) {
             return NextResponse.json({ message: 'Authentication required.' }, { status: 401 });
         }
         
-        const auth = app.auth();
-        
         const decodedToken = await auth.verifyIdToken(token);
         const uid = decodedToken.uid;
 
+        // 2. Authorize the user (check for admin role)
         const adminRoleDoc = await db.collection('roles_admin').doc(uid).get();
-
         if (!adminRoleDoc.exists) {
             return NextResponse.json({ message: 'Insufficient permissions. User is not an admin.' }, { status: 403 });
         }
         
+        // 3. Validate the request body
         const json = await request.json();
         const postData = postSchema.parse(json);
         
+        // 4. Prepare and save data using Admin SDK
         const { slug, ...data } = postData;
         const postRef = db.collection('blogPosts').doc(slug);
-        const docSnapshot = await getDoc(postRef);
+        const docSnapshot = await postRef.get();
 
         const dataToSave = {
             ...data,
             updatedAt: new Date().toISOString(),
-            ...(!docSnapshot.exists() && { date: new Date().toISOString() }),
+            // If the document doesn't exist, set the initial creation date
+            ...(!docSnapshot.exists && { date: new Date().toISOString() }),
         };
     
+        // Use set with merge: true to create or update
         await postRef.set(dataToSave, { merge: true });
 
         return NextResponse.json({ message: 'Post saved successfully' });

@@ -1,34 +1,32 @@
+
 import * as admin from 'firebase-admin';
 
-let app: admin.app.App | null = null;
+let app: admin.app.App;
 
-export const getAdminApp = () => {
-  if (app) {
-    return app;
-  }
-
+function initializeAdminApp(): admin.app.App {
   if (admin.apps.length > 0 && admin.apps[0]) {
-    app = admin.apps[0];
-    return app;
+    return admin.apps[0];
   }
 
-  try {
-    const serviceAccount: admin.ServiceAccount = {
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey: (process.env.FIREBASE_PRIVATE_KEY || '').replace(/\\n/g, '\n'),
-    };
+  const serviceAccount: admin.ServiceAccount = {
+    projectId: process.env.FIREBASE_PROJECT_ID!,
+    clientEmail: process.env.FIREBASE_CLIENT_EMAIL!,
+    privateKey: (process.env.FIREBASE_PRIVATE_KEY! || '').replace(/\\n/g, '\n'),
+  };
 
-    if (serviceAccount.projectId && serviceAccount.clientEmail && serviceAccount.privateKey) {
-        app = admin.initializeApp({
-            credential: admin.credential.cert(serviceAccount),
-            databaseURL: `https://${serviceAccount.projectId}.firebaseio.com`
-        });
-        return app;
+  return admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: `https://${serviceAccount.projectId}.firebaseio.com`
+  });
+}
+
+function getAdminApp(): admin.app.App {
+    if (!app) {
+        app = initializeAdminApp();
     }
-  } catch (error) {
-      console.error("Firebase Admin SDK initialization failed:", error);
-  }
+    return app;
+}
 
-  return null;
-};
+export const adminApp = getAdminApp();
+export const db = adminApp.firestore();
+export const auth = adminApp.auth();
