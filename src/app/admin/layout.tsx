@@ -5,7 +5,6 @@ import { ShieldCheck, LogIn, Loader2 } from 'lucide-react';
 import GlassCard from '@/components/GlassCard';
 import { useFirebase } from '@/firebase/provider';
 import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import { FirebaseProvider } from '@/firebase/provider';
 
 const ADMIN_EMAIL = "admin@vimo.com";
 const PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD;
@@ -93,12 +92,10 @@ function AuthGuard({ children }: { children: ReactNode }) {
     setIsLoggingIn(true);
 
     try {
-        // Sign out any anonymous user first, to avoid context conflicts.
         if (auth.currentUser && auth.currentUser.isAnonymous) {
             await signOut(auth);
         }
 
-        // Now, sign in with admin credentials.
         await signInWithEmailAndPassword(auth, ADMIN_EMAIL, password);
         
         sessionStorage.setItem(SESSION_STORAGE_KEY, 'true');
@@ -106,7 +103,7 @@ function AuthGuard({ children }: { children: ReactNode }) {
         setError('');
 
     } catch (e) {
-        const firebaseError = e as { code?: string, message: string };
+        const firebaseError = e as { code?: string; message: string };
         let errorMessage = 'Neznáma chyba pri prihlasovaní.';
         if (firebaseError.code) {
           switch (firebaseError.code) {
@@ -115,7 +112,10 @@ function AuthGuard({ children }: { children: ReactNode }) {
               errorMessage = 'Nesprávne heslo alebo e-mail.';
               break;
             case 'auth/user-not-found':
-              errorMessage = 'Používateľ neexistuje.';
+              errorMessage = 'Používateľ s týmto e-mailom neexistuje.';
+              break;
+            case 'auth/too-many-requests':
+              errorMessage = 'Príliš veľa neúspešných pokusov. Skúste to neskôr.';
               break;
             default:
               errorMessage = firebaseError.message;
@@ -125,7 +125,6 @@ function AuthGuard({ children }: { children: ReactNode }) {
         }
 
         setError(`Prihlásenie zlyhalo: ${errorMessage}`);
-        console.error("Authentication failed:", e);
         try {
           sessionStorage.removeItem(SESSION_STORAGE_KEY);
         } catch (sessionError) {
@@ -181,12 +180,10 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-      <FirebaseProvider>
-        <div className="min-h-screen bg-brand-dark-teal text-white">
-          <AuthGuard>
-              {children}
-          </AuthGuard>
-        </div>
-      </FirebaseProvider>
+    <div className="min-h-screen bg-brand-dark-teal text-white">
+      <AuthGuard>
+          {children}
+      </AuthGuard>
+    </div>
   );
 }

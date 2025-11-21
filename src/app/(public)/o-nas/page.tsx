@@ -65,10 +65,10 @@ export default function AboutPage() {
       />
       <div className="container mx-auto px-4 py-12 max-w-6xl">
         <header className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-extrabold mb-4 text-brand-dark-teal dark:text-brand-bright-green text-shadow-3d-green">
+          <h1 className="text-4xl md:text-5xl font-extrabold mb-4 text-white text-shadow-3d">
             Profesionálne sťahovanie a upratovanie v Bratislave
           </h1>
-          <p className="text-lg text-brand-secondary-grey dark:text-brand-light-gray max-w-3xl mx-auto">
+          <p className="text-lg text-slate-300 max-w-3xl mx-auto">
             Sme VI&MO - váš spoľahlivý partner pre sťahovanie bytov, domov, firiem, odvoz odpadu a upratovanie. Rýchlo, spoľahlivo a výhodne už 7 rokov.
           </p>
         </header>
@@ -103,7 +103,7 @@ export default function AboutPage() {
           <Services services={services.slice(0, 4)} />
         </div>
 
-        <GlassCard className="mb-16 text-center text-white">
+        <GlassCard className="mb-16 text-center text-white p-8">
           <MapPin className="h-12 w-12 mx-auto mb-4 text-brand-bright-green"/>
           <h2 className="text-3xl font-bold mb-4 text-white text-shadow-md">Pôsobíme v Bratislave a širokom okolí</h2>
           <p className="max-w-4xl mx-auto text-slate-300">

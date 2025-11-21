@@ -7,6 +7,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { Providers } from '@/components/Providers';
 import DynamicInstallPrompt from '@/components/DynamicInstallPrompt';
 import { FirebaseClientInitializer } from '@/components/FirebaseClientInitializer';
+import { FirebaseProvider } from '@/firebase/provider';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -65,10 +66,12 @@ export default function RootLayout({
     <html lang="sk" suppressHydrationWarning>
       <body className={inter.className}>
         <Providers>
+          <FirebaseProvider>
             <FirebaseClientInitializer />
             {children}
             <DynamicInstallPrompt />
             <Toaster />
+          </FirebaseProvider>
         </Providers>
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-TT4HP7501H"
