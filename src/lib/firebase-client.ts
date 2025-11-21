@@ -3,6 +3,7 @@
 import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
+import { getAnalytics, isSupported } from 'firebase/analytics';
 import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check';
 
 const firebaseConfig = {
@@ -18,21 +19,27 @@ const firebaseConfig = {
 // Initialize Firebase
 const app: FirebaseApp = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
-// Initialize App Check
+// Initialize App Check, Auth, and Firestore
 if (typeof window !== 'undefined') {
-  // Pass your reCAPTCHA v3 site key (public key) to activate().
-  // You can get this key from the reCAPTCHA Admin console.
+  // Ensure App Check is initialized for all services.
   const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
-
   if (siteKey) {
-    initializeAppCheck(app, {
-      provider: new ReCaptchaV3Provider(siteKey),
-
-      // Optional: Set to true if you want to allow clients that don't have valid App Check tokens
-      // to access your Firebase resources. Recommended to keep false for production.
-      isTokenAutoRefreshEnabled: true
-    });
+    try {
+      initializeAppCheck(app, {
+        provider: new ReCaptchaV3Provider(siteKey),
+        isTokenAutoRefreshEnabled: true,
+      });
+    } catch (error) {
+      console.error("Failed to initialize App Check:", error);
+    }
   }
+
+  // Initialize Analytics only on client and if supported
+  isSupported().then((supported) => {
+    if (supported) {
+      getAnalytics(app);
+    }
+  });
 }
 
 export const auth = getAuth(app);

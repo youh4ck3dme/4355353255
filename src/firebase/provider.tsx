@@ -4,7 +4,7 @@
 import React, { createContext, useContext, ReactNode, useState, useEffect } from 'react';
 import { FirebaseApp } from 'firebase/app';
 import { Firestore } from 'firebase/firestore';
-import { Auth, User, onAuthStateChanged, signInAnonymously } from 'firebase/auth';
+import { Auth, User, onAuthStateChanged } from 'firebase/auth';
 import { Loader2 } from 'lucide-react';
 import { app, auth, firestore } from '@/lib/firebase-client';
 
@@ -41,23 +41,12 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     // Set up the auth state listener
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      // If user is already signed in, we are good
-      if (currentUser) {
-        setUser(currentUser);
-        setIsLoading(false);
-      } else {
-        // If no user, try to sign in anonymously. Show loader until this is done.
-        try {
-          const userCredential = await signInAnonymously(auth);
-          setUser(userCredential.user);
-        } catch (error) {
-          console.error("Anonymous sign-in failed:", error);
-          // Even on failure, we stop loading to not block the app forever
-        } finally {
-            setIsLoading(false);
-        }
-      }
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setIsLoading(false);
+    }, (error) => {
+      console.error("Auth state listener error:", error);
+      setIsLoading(false);
     });
 
     // Cleanup subscription on unmount
