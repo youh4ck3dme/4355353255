@@ -8,6 +8,8 @@ import DynamicInstallPrompt from '@/components/DynamicInstallPrompt';
 import { FirebaseClientInitializer } from '@/components/FirebaseClientInitializer';
 import { FirebaseProvider } from '@/firebase/provider';
 import { ToastProvider } from '@/components/ui/use-toast';
+import PushNotificationManager from '@/components/PushNotificationManager';
+
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -69,6 +71,7 @@ export default function RootLayout({
           <FirebaseProvider>
             <ToastProvider>
               <FirebaseClientInitializer />
+              <PushNotificationManager />
               {children}
               <DynamicInstallPrompt />
             </ToastProvider>
