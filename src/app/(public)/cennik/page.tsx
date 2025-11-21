@@ -1,7 +1,6 @@
 
 'use client';
 
-import { Metadata } from 'next';
 import { Users, Truck, Home, Calculator } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import GlassCard from '@/components/GlassCard';
@@ -10,18 +9,6 @@ const DynamicPriceCalculator = dynamic(() => import('@/components/PriceCalculato
   ssr: false,
   loading: () => <p className="text-white">Načítavam kalkulačku...</p> 
 });
-
-/*
-// Metadata can't be exported from a client component. 
-// It should be defined in a parent layout or page.
-export const metadata: Metadata = {
-  title: 'Cenník Služieb | Bratislava sťahovanie | VI&MO',
-  description: 'Prehľadný cenník sťahovacích a upratovacích služieb v Bratislave. Vypočítajte si odhadovanú cenu pomocou našej online kalkulačky.',
-  alternates: {
-    canonical: '/cennik',
-  }
-};
-*/
 
 const priceItems = [
     { id: 'garsonka', name: 'Garsónka', price: 'od 65 €', priceNumeric: 65 },
