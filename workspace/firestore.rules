@@ -18,25 +18,21 @@ service cloud.firestore {
       return exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
     }
 
-    // A helper function to check if the query is securely filtering for published posts.
-    // It verifies that 'status' == 'published' is part of the query conditions.
-    function isQueryingOnlyPublished() {
-      // This rule can be complex to debug.
-      // A simpler rule is to check on resource level for GET, and query level for LIST.
-      return request.query.where.filter(w => w.field == 'status' && w.op == '==' && w.value == 'published').size() == 1;
+    // Securely check if a list query is for published posts only.
+    function isQueryingPublished() {
+        return request.query.where.get('status', ['=='], 'published') != null;
     }
 
     // BLOG POSTS: Public can read published posts, admins can write anything.
     match /blogPosts/{postId} {
       // Anyone can read a single document if it's published.
-      // Admins can read any post regardless of status.
       allow get: if resource.data.status == 'published' || isAdmin();
 
-      // Anyone can list documents as long as the query is filtered by status=='published'.
-      // Admins can list all documents without restrictions.
-      allow list: if request.query.where.status == 'published' || isAdmin();
+      // Allow listing documents if the query is restricted to 'published' status,
+      // or if the user is an admin (who can see all statuses).
+      allow list: if isQueryingPublished() || isAdmin();
 
-      // Only admins can write (create, update, delete) any post.
+      // Admins can write (create, update, delete) any post.
       allow write: if isAdmin();
     }
 
