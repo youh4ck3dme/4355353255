@@ -1,0 +1,65 @@
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      // Check if a document for the user's UID exists in the roles_admin collection.
+      // This is a secure way to check for admin privileges.
+      return exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
+    }
+
+    // A helper function to check if the query is securely filtering for published posts.
+    // It verifies that 'status' == 'published' is part of the query conditions.
+    function isQueryingOnlyPublished() {
+      // This rule can be complex to debug.
+      // A simpler rule is to check on resource level for GET, and query level for LIST.
+      return request.query.where.filter(w => w.field == 'status' && w.op == '==' && w.value == 'published').size() == 1;
+    }
+
+    // BLOG POSTS: Public can read published posts, admins can write anything.
+    match /blogPosts/{postId} {
+      // Anyone can read a single document if it's published.
+      // Admins can read any post regardless of status.
+      allow get: if resource.data.status == 'published' || isAdmin();
+
+      // Anyone can list documents as long as the query is filtered by status=='published'.
+      // Admins can list all documents without restrictions.
+      allow list: if request.query.where.status == 'published' || isAdmin();
+
+      // Only admins can write (create, update, delete) any post.
+      allow write: if isAdmin();
+    }
+
+    // USER CHECKLISTS: Only the owner can read or write their own checklist.
+    match /checklists/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // CONTACT FORM SUBMISSIONS: Anyone can create, but no one can read/update from the client.
+    match /contact_submissions/{submissionId} {
+      allow create: if true;
+      allow read, update, delete: if false; // Data should only be read by a backend/admin console.
+    }
+
+    // USER PROFILES: Only the owner can manage their profile.
+    match /users/{userId} {
+       allow read, write: if isOwner(userId);
+    }
+    
+    // ADMIN ROLES: Only other admins can see who is an admin. No client-side writes.
+    match /roles_admin/{userId} {
+      allow get, list: if isAdmin();
+      allow write: if false; // Should be managed from the server or console.
+    }
+  }
+}
