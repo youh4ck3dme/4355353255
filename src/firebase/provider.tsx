@@ -5,6 +5,8 @@ import { FirebaseApp } from 'firebase/app';
 import { Firestore } from 'firebase/firestore';
 import { Auth, User, onAuthStateChanged } from 'firebase/auth';
 import { app, auth, firestore } from '@/lib/firebase-client';
+import { Loader2 } from 'lucide-react';
+
 
 // Define the shape of the context
 interface FirebaseContextType {
@@ -45,6 +47,14 @@ export const FirebaseProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const value = { app, firestore, auth, user, isLoading };
+
+  if (isLoading) {
+    return (
+      <div className="flex h-screen w-screen items-center justify-center bg-brand-dark-teal">
+        <Loader2 className="h-12 w-12 animate-spin text-brand-bright-green" />
+      </div>
+    )
+  }
 
   return (
     <FirebaseContext.Provider value={value}>
