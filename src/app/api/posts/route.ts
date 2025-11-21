@@ -48,6 +48,9 @@ export async function POST(request: Request) {
         }
 
         const adminApp = getAdminApp();
+        if (!adminApp) {
+             throw new Error('Admin SDK not initialized');
+        }
         const auth = adminApp.auth();
         const dbAdmin = adminApp.firestore();
         
