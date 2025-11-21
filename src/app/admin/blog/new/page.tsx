@@ -1,4 +1,3 @@
-
 import { Metadata } from 'next';
 import { PostForm } from '../_components/PostForm';
 import { PlusSquare } from 'lucide-react';

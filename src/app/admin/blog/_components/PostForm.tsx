@@ -114,35 +114,37 @@ export const PostForm = ({ post }: PostFormProps) => {
     }
   };
 
+  const formInputStyle = "w-full p-3 rounded-lg bg-white/5 border-2 focus:border-brand-bright-green focus:ring focus:ring-brand-bright-green/50 outline-none transition-colors backdrop-blur-sm placeholder-slate-400";
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div>
         <label htmlFor="title" className="block text-sm font-medium text-slate-300 mb-1">Titulok *</label>
-        <input {...register('title')} id="title" className={cn("w-full p-3 rounded-lg bg-white/10 backdrop-blur-sm border-2 text-white", errors.title ? "border-red-500" : "border-white/20")} />
+        <input {...register('title')} id="title" className={cn(formInputStyle, errors.title ? "border-red-500 text-red-400" : "border-white/20 text-white")} />
         {errors.title && <p className="text-red-400 text-sm mt-1">{errors.title.message}</p>}
         <p className="text-xs text-slate-400 mt-1">Slug: <code className="bg-white/10 p-1 rounded">{slug}</code></p>
       </div>
 
       <div>
         <label htmlFor="content" className="block text-sm font-medium text-slate-300 mb-1">Obsah (HTML)</label>
-        <textarea {...register('content')} id="content" rows={15} className="w-full p-3 rounded-lg bg-white/10 backdrop-blur-sm border-2 border-white/20 font-mono text-sm text-white" placeholder='<p>Váš text...</p>' />
+        <textarea {...register('content')} id="content" rows={15} className={cn(formInputStyle, "font-mono text-sm border-white/20 text-white")} placeholder='<p>Váš text...</p>' />
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">
          <div>
           <label htmlFor="author" className="block text-sm font-medium text-slate-300 mb-1">Autor</label>
-          <input {...register('author')} id="author" className="w-full p-3 rounded-lg bg-white/10 backdrop-blur-sm border-2 border-white/20 text-white" />
+          <input {...register('author')} id="author" className={cn(formInputStyle, "border-white/20 text-white")} />
         </div>
          <div>
           <label htmlFor="imageUrl" className="block text-sm font-medium text-slate-300 mb-1">URL adresa obrázka</label>
-          <input {...register('imageUrl')} id="imageUrl" placeholder="https://..." className={cn("w-full p-3 rounded-lg bg-white/10 backdrop-blur-sm border-2 text-white", errors.imageUrl ? "border-red-500" : "border-white/20")} />
+          <input {...register('imageUrl')} id="imageUrl" placeholder="https://..." className={cn(formInputStyle, errors.imageUrl ? "border-red-500 text-red-400" : "border-white/20 text-white")} />
            {errors.imageUrl && <p className="text-red-400 text-sm mt-1">{errors.imageUrl.message}</p>}
         </div>
       </div>
 
        <div>
           <label htmlFor="tags" className="block text-sm font-medium text-slate-300 mb-1">Tagy (oddelené čiarkou)</label>
-          <input {...register('tags')} id="tags" placeholder="Tipy na sťahovanie, Novinky, ..." className="w-full p-3 rounded-lg bg-white/10 backdrop-blur-sm border-2 border-white/20 text-white" />
+          <input {...register('tags')} id="tags" placeholder="Tipy na sťahovanie, Novinky, ..." className={cn(formInputStyle, "border-white/20 text-white")} />
       </div>
 
       <div className="flex flex-col sm:flex-row justify-end items-center gap-4 pt-6 border-t border-white/20">
@@ -161,7 +163,7 @@ export const PostForm = ({ post }: PostFormProps) => {
              <button
                 type="submit"
                 disabled={isSubmitting}
-                className="flex items-center gap-2 px-6 py-3 bg-slate-500 text-white font-bold rounded-lg hover:bg-slate-600 transition-colors duration-300 shadow-md disabled:opacity-50 disabled:cursor-wait"
+                className="flex items-center gap-2 px-6 py-3 bg-brand-bright-green text-brand-dark-teal font-bold rounded-lg hover:bg-opacity-80 transition-colors duration-300 shadow-md disabled:opacity-50 disabled:cursor-wait"
             >
                 {isSubmitting ? <Loader2 className="animate-spin" size={20}/> : <Save size={20} />}
                 <span>Uložiť</span>

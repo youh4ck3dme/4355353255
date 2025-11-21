@@ -182,9 +182,11 @@ export default function AdminLayout({
 }) {
   return (
       <FirebaseProvider>
-        <AuthGuard>
-            {children}
-        </AuthGuard>
+        <div className="min-h-screen bg-brand-dark-teal text-white">
+          <AuthGuard>
+              {children}
+          </AuthGuard>
+        </div>
       </FirebaseProvider>
   );
 }
