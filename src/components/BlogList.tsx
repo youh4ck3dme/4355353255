@@ -38,18 +38,15 @@ export const BlogList = ({ initialCategory, postLimit }: { initialCategory?: str
     const postsQuery: Query<DocumentData> | null = useMemo(() => {
         if (!firestore) return null;
         
-        // Base query that complies with security rules by always filtering for published status.
         let queryConstraints: any[] = [
             where('status', '==', 'published'),
             orderBy('date', 'desc')
         ];
         
-        // Add category filter if one is selected.
         if (selectedCategory) {
           queryConstraints.push(where('tags', 'array-contains', selectedCategory));
         }
 
-        // Add a limit if specified (e.g., for the homepage).
         if (postLimit) {
             queryConstraints.push(limit(postLimit));
         }
@@ -108,33 +105,41 @@ export const BlogList = ({ initialCategory, postLimit }: { initialCategory?: str
     
     const isLoading = isFirebaseLoading || isLoadingPosts;
 
+    const availableTags = useMemo(() => {
+        const allTags = new Set<string>();
+        posts.forEach(post => {
+            post.tags?.forEach(tag => allTags.add(tag));
+        });
+        return Array.from(allTags);
+    }, [posts]);
+
     return (
         <div>
             {showControls && (
-                <div className="mb-8 max-w-2xl mx-auto flex flex-col items-center gap-4">
+                <div className="mb-8 max-w-3xl mx-auto flex flex-col items-center gap-4">
                     <div className="flex flex-wrap justify-center gap-2">
                         <button
                             onClick={() => handleCategoryClick(null)}
                             className={cn(
-                                "px-4 py-2 text-sm font-bold rounded-full transition-colors glass-button-sm",
+                                "px-4 py-2 text-sm font-bold rounded-full transition-colors liquid-glass-button",
                                 !selectedCategory ? 'bg-brand-bright-green text-brand-dark-teal' : 'text-white'
                             )}
                         >
                             Všetky
                         </button>
-                        {ALL_CATEGORIES.map(category => (
+                        {availableTags.map(category => (
                             <button
                                 key={category}
                                 onClick={() => handleCategoryClick(category)}
                                 className={cn(
-                                    "px-4 py-2 text-sm font-bold rounded-full transition-colors glass-button-sm",
+                                    "px-4 py-2 text-sm font-bold rounded-full transition-colors liquid-glass-button",
                                     selectedCategory === category ? 'bg-brand-bright-green text-brand-dark-teal' : 'text-white'
                                 )}
                             >
                                 {category}
                             </button>))}
                     </div>
-                    <input
+                     <input
                         type="text"
                         placeholder="Hľadať v článkoch..."
                         value={searchQuery}
@@ -161,7 +166,7 @@ export const BlogList = ({ initialCategory, postLimit }: { initialCategory?: str
             ) : (
                  <GlassCard>
                      <p className="text-xl text-center text-slate-300 py-16 px-4">
-                        Nenašli sa žiadne články pre kategóriu &apos;{selectedCategory}&apos;.
+                        { selectedCategory ? `Nenašli sa žiadne články pre kategóriu "${selectedCategory}".` : "Nenašli sa žiadne články."}
                     </p>
                 </GlassCard>
             )}
