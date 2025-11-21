@@ -3,11 +3,11 @@ import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import Script from 'next/script';
 import './globals.css';
-import { Toaster } from '@/components/ui/toaster';
 import { Providers } from '@/components/Providers';
 import DynamicInstallPrompt from '@/components/DynamicInstallPrompt';
 import { FirebaseClientInitializer } from '@/components/FirebaseClientInitializer';
 import { FirebaseProvider } from '@/firebase/provider';
+import { ToastProvider } from '@/components/ui/use-toast';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -67,10 +67,11 @@ export default function RootLayout({
       <body className={inter.className}>
         <Providers>
           <FirebaseProvider>
-            <FirebaseClientInitializer />
-            {children}
-            <DynamicInstallPrompt />
-            <Toaster />
+            <ToastProvider>
+              <FirebaseClientInitializer />
+              {children}
+              <DynamicInstallPrompt />
+            </ToastProvider>
           </FirebaseProvider>
         </Providers>
         <Script

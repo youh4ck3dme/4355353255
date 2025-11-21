@@ -3,9 +3,11 @@ import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import Script from 'next/script';
 import './globals.css';
-import { Toaster } from '@/components/ui/toaster';
+import { ToastProvider } from '@/components/ui/use-toast';
 import { Providers } from '@/components/Providers';
 import DynamicInstallPrompt from '@/components/DynamicInstallPrompt';
+import { FirebaseClientInitializer } from '@/components/FirebaseClientInitializer';
+import { FirebaseProvider } from '@/firebase/provider';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -64,9 +66,13 @@ export default function RootLayout({
     <html lang="sk" suppressHydrationWarning>
       <body className={inter.className}>
         <Providers>
-            {children}
-            <DynamicInstallPrompt />
-            <Toaster />
+          <FirebaseProvider>
+            <ToastProvider>
+              <FirebaseClientInitializer />
+              {children}
+              <DynamicInstallPrompt />
+            </ToastProvider>
+          </FirebaseProvider>
         </Providers>
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-TT4HP7501H"
