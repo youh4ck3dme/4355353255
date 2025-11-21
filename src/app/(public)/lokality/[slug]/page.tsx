@@ -113,17 +113,23 @@ export default function LocationDetailPage({ params }: LocationPageProps) {
                         <div className="prose prose-lg dark:prose-invert max-w-none mb-10">
                             <p>Plánujete sťahovanie do, z, alebo v rámci lokality <strong>{location.name}</strong>? Náš tím Stahovanie.Website je vám plne k dispozícii. S našimi dlhoročnými skúsenosťami zabezpečíme, aby vaše sťahovanie prebehlo hladko, rýchlo a bez zbytočného stresu. Poznáme špecifiká každej mestskej časti, od dopravnej situácie až po možnosti parkovania.</p>
 
-                            <h3>Naše služby v lokalite {location.name}:</h3>
+                            {/* START: Sekcia pre unikátny obsah */}
+                            <div className="p-6 bg-brand-dark-teal/10 dark:bg-brand-dark-teal/50 rounded-lg my-8">
+                                <h3 className="!mt-0">Prečo si vybrať nás pre sťahovanie v lokalite {location.name}?</h3>
+                                <p>
+                                    {/* Tento obsah bude nahradený unikátnym textom */}
+                                    Každá mestská časť má svoje jedinečné výzvy. V lokalite {location.name} si zakladáme na profesionálnom prístupe, spoľahlivosti a férových cenách. Náš tím je pripravený poradiť si s akoukoľvek výzvou, ktorú sťahovanie v tejto oblasti prináša.
+                                </p>
+                            </div>
+                            {/* END: Sekcia pre unikátny obsah */}
+
+                            <h3>Naše hlavné služby v tejto lokalite:</h3>
                             <ul className="space-y-3">
                                 <li className="flex items-start">
                                     <CheckCircle className="h-6 w-6 mr-3 text-brand-bright-green flex-shrink-0 mt-1" />
-                                    <span>Kompletné sťahovanie bytov a rodinných domov.</span>
+                                    <span>Kompletné sťahovanie bytov, domov a kancelárií.</span>
                                 </li>
                                 <li className="flex items-start">
-                                    <CheckCircle className="h-6 w-6 mr-3 text-brand-bright-green flex-shrink-0 mt-1" />
-                                    <span>Sťahovanie kancelárií a firiem s minimálnym dopadom na prevádzku.</span>
-                                </li>
-                                  <li className="flex items-start">
                                     <CheckCircle className="h-6 w-6 mr-3 text-brand-bright-green flex-shrink-0 mt-1" />
                                     <span>Bezpečná preprava nábytku, spotrebičov a osobných vecí.</span>
                                 </li>
@@ -132,14 +138,11 @@ export default function LocationDetailPage({ params }: LocationPageProps) {
                                     <span>Vypratávanie priestorov a ekologická likvidácia odpadu.</span>
                                 </li>
                             </ul>
-
-                             <h4>Prečo si vybrať nás?</h4>
-                             <p>V Stahovanie.Website si zakladáme na profesionálnom prístupe, spoľahlivosti a férových cenách. Náš tím je pripravený poradiť si s akoukoľvek výzvou, ktorú sťahovanie v lokalite {location.name} prináša.</p>
                         </div>
 
                         <div className="mt-12 text-center border-t border-slate-200 dark:border-slate-700 pt-8 bg-brand-dark-teal/20 dark:bg-brand-dark-teal/60 p-8 rounded-lg">
-                            <h2 className="text-2xl font-bold mb-4 text-brand-dark-teal dark:text-brand-bg">Získajte cenovú ponuku na mieru</h2>
-                            <p className="text-brand-secondary-grey dark:text-slate-300 mb-6">Kontaktujte nás a my vám radi pripravíme nezáväznú cenovú ponuku pre vaše sťahovanie v lokalite {location.name}.</p>
+                            <h2 className="text-2xl font-bold mb-4 text-brand-dark-teal dark:text-brand-bg">Získajte ponuku na mieru pre {location.name}</h2>
+                            <p className="text-brand-secondary-grey dark:text-slate-300 mb-6">Kontaktujte nás a my vám radi pripravíme nezáväznú cenovú ponuku pre vaše sťahovanie.</p>
                             <Link 
                                 href="/kontakt"
                                 className="inline-flex items-center gap-2 px-8 py-4 bg-brand-bright-green text-brand-dark-teal font-bold rounded-lg hover:bg-opacity-80 transition-colors duration-300 shadow-xl"
