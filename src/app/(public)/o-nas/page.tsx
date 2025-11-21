@@ -5,6 +5,7 @@ import { Phone, Mail, Building, MapPin } from 'lucide-react';
 import placeholderImages from '@/lib/placeholder-images.json';
 import { services } from '@/lib/services';
 import Link from 'next/link';
+import Services from '@/components/Services';
 
 export const metadata: Metadata = {
   title: 'O nás - Profesionálne sťahovanie a upratovanie v Bratislave | VI&MO',
@@ -94,27 +95,8 @@ export default function AboutPage() {
             </div>
         </section>
 
-        <section className="mb-16">
-          <h2 className="text-3xl font-bold mb-8 text-center text-brand-dark-teal dark:text-brand-bg text-shadow-3d">Naše kľúčové služby</h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              {services.slice(0, 4).map(service => {
-                  const Icon = service.icon;
-                  return (
-                      <Link href={`/sluzby/${service.id}`} key={service.id} className="block group">
-                        <div className="bg-brand-light-gray dark:bg-brand-dark-teal/80 p-6 rounded-lg shadow-lg flex flex-col text-center items-center h-full transition-transform transform group-hover:-translate-y-2">
-                            <div className="bg-brand-bright-green p-4 rounded-full mb-4">
-                                <Icon className="h-8 w-8 text-brand-dark-teal" />
-                            </div>
-                            <h3 className="text-xl font-bold mb-2 text-brand-dark-teal dark:text-brand-bg h-14 flex items-center justify-center">{service.name}</h3>
-                            <p className="text-brand-secondary-grey dark:text-slate-300 text-sm flex-grow">{service.shortDescription}</p>
-                            <span className="mt-4 text-sm font-bold text-brand-bright-green group-hover:underline underline-offset-4">
-                              Zistiť viac &rarr;
-                            </span>
-                        </div>
-                      </Link>
-                  );
-              })}
-          </div>
+        <section className="bg-brand-dark-teal/90 rounded-lg py-16 mb-16 text-white">
+          <Services services={services.slice(0, 4)} />
         </section>
 
         <section className="bg-brand-dark-teal/90 rounded-lg p-8 md:p-12 mb-16 text-center text-white">
