@@ -11,11 +11,16 @@ function AuthHandler({ children }: { children: React.ReactNode }) {
   const { auth, user, isLoading } = useFirebase();
 
   useEffect(() => {
-    // If Firebase isn't loading and there's no user, sign in anonymously.
+    // If Firebase isn't loading and there's no user, try to sign in anonymously
+    // after a short delay. This delay gives App Check enough time to initialize.
     if (!isLoading && !user && auth) {
-      signInAnonymously(auth).catch((error) => {
-        console.error("Delayed anonymous sign-in failed:", error);
-      });
+      const timer = setTimeout(() => {
+        signInAnonymously(auth).catch((error) => {
+          console.error("Delayed anonymous sign-in failed:", error);
+        });
+      }, 500); // Small delay to ensure App Check is ready
+
+      return () => clearTimeout(timer); // Cleanup timeout on unmount
     }
   }, [isLoading, user, auth]);
 
