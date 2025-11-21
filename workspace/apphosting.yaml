@@ -1,0 +1,28 @@
+# Settings for Backend (on Cloud Run).
+# See https://firebase.google.com/docs/app-hosting/configure#cloud-run
+runConfig:
+  minInstances: 0
+  # maxInstances: 100
+  # concurrency: 80
+  # cpu: 1
+  # memoryMiB: 512
+
+# Environment variables and secrets.
+# See https://firebase.google.com/docs/app-hosting/configure#user-defined-environment
+env:
+  # Grant access to secrets in Cloud Secret Manager.
+  # See https://firebase.google.com/docs/app-hosting/configure#secret-parameters
+  # It's recommended to store sensitive data like API keys and passwords in Secret Manager.
+  # Replace 'your-secret-id' and 'latest' with your actual secret ID and version.
+  # - variable: NEXT_PUBLIC_ADMIN_PASSWORD
+  #   secret: ADMIN_PASSWORD # Example: Reference to a secret named ADMIN_PASSWORD
+  #   availability: [RUNTIME]
+  - variable: FIREBASE_PROJECT_ID
+    secret: FIREBASE_PROJECT_ID
+    availability: [RUNTIME]
+  - variable: FIREBASE_CLIENT_EMAIL
+    secret: FIREBASE_CLIENT_EMAIL
+    availability: [RUNTIME]
+  - variable: FIREBASE_PRIVATE_KEY
+    secret: FIREBASE_PRIVATE_KEY
+    availability: [RUNTIME]
