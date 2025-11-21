@@ -14,8 +14,8 @@ env:
   # See https://firebase.google.com/docs/app-hosting/configure#secret-parameters
   # It's recommended to store sensitive data like API keys and passwords in Secret Manager.
   # Replace 'your-secret-id' and 'latest' with your actual secret ID and version.
-  - variable: NEXT_PUBLIC_ADMIN_PASSWORD
-    secret: ADMIN_PASSWORD # Example: Reference to a secret named ADMIN_PASSWORD
+  # - variable: NEXT_PUBLIC_ADMIN_PASSWORD
+  #   secret: ADMIN_PASSWORD # Example: Reference to a secret named ADMIN_PASSWORD
   - variable: FIREBASE_PROJECT_ID
     secret: FIREBASE_PROJECT_ID
   - variable: FIREBASE_CLIENT_EMAIL
